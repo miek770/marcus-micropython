@@ -122,7 +122,19 @@ def main():
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
 
     marcus = Marcus(args=parser.parse_args())
-    marcus.loop()
+
+    try:
+        marcus.loop()
+
+    except KeyboardInterrupt:
+        marcus.quit()
+        sys.exit(2)
+
+    except:
+        sub.check_call(("ifup", "wlan0"))
+        print "Erreur imprévue : ", sys.exc_info()[0]
+        logging.error(sys.exc_info())
+        raise
 
 if __name__ == '__main__':
     main()
