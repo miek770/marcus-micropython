@@ -28,18 +28,6 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 [(vitesse_gauche, vitesse_droite, duree), ...]
 """
 
-# Variables
-#===========
-duree_min_recul = 1 # en seconde
-duree_min_rotation = 0.5 # en seconde
-
-passe = dict()
-memoire = 30 # en cycles
-passe["pare_chocs"] = (None, deque(maxlen=memoire))
-passe["camera"] = (None, deque(maxlen=memoire))
-passe["gp2d12"] = (None, deque(maxlen=memoire))
-#passe["boucliers"] = deque(maxlen=memoire)
-
 class Statisme(Comportement):
     """Ce comportement sert à détection une absence de changement dans
     les capteurs qui pourrait indiquer que le robot est coincé quelque
@@ -47,30 +35,42 @@ class Statisme(Comportement):
     probablement de reculer pour se déloger, puis de tourner.
     """
 
+    def variables(self):
+
+        self.duree_min_recul = 1 # en seconde
+        self.duree_min_rotation = 0.5 # en seconde
+
+        self.passe = dict()
+        self.memoire = 30 # en cycles
+        self.passe["pare_chocs"] = (None, deque(maxlen=memoire))
+        self.passe["camera"] = (None, deque(maxlen=memoire))
+        self.passe["gp2d12"] = (None, deque(maxlen=memoire))
+        #self.passe["boucliers"] = deque(maxlen=memoire)
+
     def decision(self):
 
         actuel = (not get_input("P8_7"), not get_input("P8_8"), not get_input("P8_9"), not get_input("P8_10"))
-        passe["pare_chocs"][0] = actuel
-        passe["pare_chocs"][1].append(actuel)
+        self.passe["pare_chocs"][0] = actuel
+        self.passe["pare_chocs"][1].append(actuel)
 
         actuel = config.track
-        passe["camera"][0] = actuel
-        passe["camera"][1].append(actuel)
+        self.passe["camera"][0] = actuel
+        self.passe["camera"][1].append(actuel)
 
         actuel = (get_dist("AIN0"), get_dist("AIN1"), get_dist("AIN2"))
-        passe["gp2d12"][0] = actuel
-        passe["gp2d12"][1].append(actuel)
+        self.passe["gp2d12"][0] = actuel
+        self.passe["gp2d12"][1].append(actuel)
 
         statisme = True
-        for key in passe.keys():
-            if not all(x == passe[key][0] for x in passe[key][1]):
+        for key in self.passe.keys():
+            if not all(x == self.passe[key][0] for x in self.passe[key][1]):
                 statisme = False
                 break
 
         if statisme:
-            logging.info("Comportement {} : Aucune variation de capteurs en {} cycles".format(self.nom, memoire))
-            duree_recul = duree_min_recul + random()
-            duree_rotation = duree_min_rotation + random()
+            logging.info("Comportement {} : Aucune variation de capteurs en {} cycles".format(self.nom, self.memoire))
+            duree_recul = self.duree_min_recul + random()
+            duree_rotation = self.duree_min_rotation + random()
             tourne_gauche = choice(True, False)
             
             if tourne_gauche:
@@ -81,4 +81,3 @@ class Statisme(Comportement):
                         (100, -100, duree_rotation)]
 
         return None
-

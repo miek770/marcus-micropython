@@ -24,12 +24,6 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 [(vitesse_gauche, vitesse_droite, duree), ...]
 """
 
-# Constantes
-#============
-seuil_mx = 5 # Seuil d'alignement sur mx, en pixels
-seuil_conf = 10 # Seuil de détection (10 est peut-être trop sensible)
-centre_x = 50 # Centre de la fenêtre de détection, en pixels
-
 class Viser(Comportement):
     """Comportement qui vise la cible lorsqu'elle est repérée par la
     caméra. Le résultat du tracking est mis à jour dans la variable
@@ -40,9 +34,15 @@ class Viser(Comportement):
     mx my x1 y1 x2 y2 pixels confidence
     """
 
+    def variables(self):
+
+        self.seuil_mx = 5 # Seuil d'alignement sur mx, en pixels
+        self.seuil_conf = 10 # Seuil de détection (10 est peut-être trop sensible)
+        self.centre_x = 50 # Centre de la fenêtre de détection, en pixels
+
     def decision(self):
 
-        if int(config.track["confidence"]) < seuil_conf:
+        if int(config.track["confidence"]) < self.seuil_conf:
             return None
 
         else:
@@ -53,11 +53,11 @@ class Viser(Comportement):
             logging.debug("Comportement {} : Détection de la couleur recherchée".format(self.nom))
             logging.debug("".format(config.track))
 
-            if config.track["mx"] < (centre_x - seuil_mx):
+            if config.track["mx"] < (self.centre_x - self.seuil_mx):
                 logging.debug("Cible à gauche, tourne à gauche")
                 return [(-100, 100, 0)]
 
-            elif config.track["mx"] > (centre_x + seuil_mx):
+            elif config.track["mx"] > (self.centre_x + self.seuil_mx):
                 logging.debug("Cibre à droite, tourne à droite")
                 return [(100, -100, 0)]
 

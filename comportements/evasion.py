@@ -27,11 +27,13 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 
 # Constantes
 #============
-seuil_avant = 45 # Seuil de détection, en cm
-seuil_cote = 20 # Seuil de détection, en cm
-duree_rotation_min = 1 # en s
-
 class Evasion(Comportement):
+
+    def variables(self):
+
+        self.seuil_avant = 45 # Seuil de détection, en cm
+        self.seuil_cote = 20 # Seuil de détection, en cm
+        self.duree_rotation_min = 1 # en s
 
     def decision(self):
         av_mi = get_dist('AIN0') # Avant milieu
@@ -39,39 +41,39 @@ class Evasion(Comportement):
         av_dr = get_dist('AIN2') # Avant droit
 
         # Obstacle à gauche (pas à droite)
-        if av_ga <= seuil_cote and av_dr > seuil_cote:
+        if av_ga <= self.seuil_cote and av_dr > self.seuil_cote:
 
             # Obstacle devant aussi (tourne plus longtemps)
-            if av_mi <= seuil_avant:
+            if av_mi <= self.seuil_avant:
                 logging.info("Comportement {} : Obstacle devant et à gauche, tourne à droite".format(self.nom))
-                duree_rotation = duree_rotation_min + 2*random()
+                duree_rotation = self.duree_rotation_min + 2*random()
 
             # Sinon (gauche seulement)
             else:
                 logging.info("Comportement {} : Obstacle à gauche, tourne à droite".format(self.nom))
-                duree_rotation = duree_rotation_min + random()
+                duree_rotation = self.duree_rotation_min + random()
 
             return [(100, -100, duree_rotation)]
 
         # Obstacle à droite (pas à gauche)
-        elif av_dr <= seuil_cote and av_ga > seuil_cote:
+        elif av_dr <= self.seuil_cote and av_ga > self.seuil_cote:
 
             # Obstacle devant aussi (tourne plus longtemps)
-            if av_mi <= seuil_avant:
+            if av_mi <= self.seuil_avant:
                 logging.info("Comportement {} : Obstacle devant et à droite, tourne à gauche".format(self.nom))
-                duree_rotation = duree_rotation_min + 2*random()
+                duree_rotation = self.duree_rotation_min + 2*random()
 
             # Sinon (droite seulement)
             else:
                 logging.info("Comportement {} : Obstacle à droite, tourne à gauche".format(self.nom))
-                duree_rotation = duree_rotation_min + random()
+                duree_rotation = self.duree_rotation_min + random()
 
             return [(100, -100, duree_rotation)]
 
         # Obstacle à gauche et à droite
-        elif av_ga <= seuil_cote and av_dr <= seuil_cote:
+        elif av_ga <= self.seuil_cote and av_dr <= self.seuil_cote:
 
-            duree_rotation = duree_rotation_min + 2*random()
+            duree_rotation = self.duree_rotation_min + 2*random()
             tourne_gauche = choice((True, False))
 
             if tourne_gauche:
@@ -82,8 +84,8 @@ class Evasion(Comportement):
                 return [(100, -100, duree_rotation)]
 
         # Obstacle devant seulement
-        elif av_mi <= seuil_avant:
-            duree_rotation = duree_rotation_min + random()
+        elif av_mi <= self.seuil_avant:
+            duree_rotation = self.duree_rotation_min + random()
             tourne_gauche = choice((True, False))
 
             if tourne_gauche:

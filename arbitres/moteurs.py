@@ -86,7 +86,8 @@ class Moteurs(Arbitre):
 
             # S'il n'y a pas d'action à prendre...
             else:
-                logging.debug("Comportement {} : Aucune action".format(self.comportements[i][0].nom))
+                #logging.debug("Comportement {} : Aucune action".format(self.comportements[i][0].nom))
+                pass
 
     def traite_vecteur(self, vecteur):
         """Interprétation de vecteur de commande de moteurs.

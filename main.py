@@ -9,7 +9,7 @@ from multiprocessing import Process, Pipe
 # Librairies spéciales
 #======================
 from peripheriques.pins import set_input, get_input
-from comportements import *
+from comportements import collision, evasion, viser, approche, statisme, exploration
 from peripheriques import cmucam
 from arbitres import moteurs
 import config
@@ -46,13 +46,14 @@ class Marcus:
         set_input('P8_10') # Arrière gauche
 
         # Initialisation de la CMUCam2+
-        self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
-        self.cmucam_sub.start()
-        message = self.cmucam_parent_conn.recv()
+        if not self.args.nocam:
+            self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
+            self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
+            self.cmucam_sub.start()
+            message = self.cmucam_parent_conn.recv()
 
-        if message:
-            logging.info("Sous-routine lancée : cmucam_sub")
+            if message:
+                logging.info("Sous-routine lancée : cmucam_sub")
 
         # Initialisation des arbitres
         self.arbitres = dict()
@@ -62,9 +63,10 @@ class Marcus:
         self.arbitres[m.nom] = m
         self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
         self.arbitres[m.nom].active(evasion.Evasion(nom="evasion"), 5)
-        #self.arbitres[m.nom].active(viser.Viser(nom="viser"), 4)
-        #self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
-        #self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
+        if not self.args.nocam:
+            self.arbitres[m.nom].active(viser.Viser(nom="viser"), 4)
+            self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
+            #self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
         self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
         #self.arbitres[m.nom].active(.(nom=""), )
 
@@ -101,18 +103,20 @@ def main():
     parser.add_argument('-v',
                         '--verbose',
                         action='store_true',
-                        help='Imprime l\'aide sur l\'exécution du script.')
-
+                        help="Imprime l'aide sur l'exécution du script.")
     parser.add_argument('-l',
                         '--logfile',
                         action='store',
                         default=None,
-                        help='Spécifie le chemin du journal d\'événement.')
-
+                        help="Spécifie le chemin du journal d'événement.")
     parser.add_argument('-s',
                         '--stop',
                         action='store_true',
                         help="Arrête l'exécution lorsqu'un impact est détecté.")
+    parser.add_argument('-n',
+                        '--nocam',
+                        action='store_true',
+                        help="Lance le programme sans la caméra et les comportements qui en dépendent.")
     parser.add_argument('--scan',
                         action='store_true',
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")

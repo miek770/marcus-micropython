@@ -24,12 +24,6 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 [(vitesse_gauche, vitesse_droite, duree), ...]
 """
 
-# Constantes
-#============
-seuil_conf = 10 # Seuil de détection (10 est peut-être trop sensible)
-cible_pixels = 50 # Nombre de pixels désirés (à ajuster, pas testé)
-ecart_pixels = 10 # Écart acceptable, à ajuster
-
 class Approche(Comportement):
     """Comportement qui se rapproche de la cible lorsqu'elle est
     repérée par la caméra. Le résultat du tracking est mis à jour dans
@@ -43,16 +37,23 @@ class Approche(Comportement):
     mx my x1 y1 x2 y2 pixels confidence
     """
 
+    def variables(self):
+
+        self.seuil_conf = 10 # Seuil de détection (10 est peut-être trop sensible)
+        self.cible_pixels = 50 # Nombre de pixels désirés (à ajuster, pas testé)
+        self.ecart_pixels = 10 # Écart acceptable, à ajuster
+
+
     def decision(self):
 
-        if int(config.track["confidence"]) < seuil_conf:
+        if int(config.track["confidence"]) < self.seuil_conf:
             return None
 
-        elif config.track["pixels"] < (cible_pixels - ecart_pixels):
+        elif config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):
             logging.debug("Cible trop loin, on s'approche")
             return [(100, 100, 0)]
 
-        elif config.track["pixels"] > (cible_pixels + ecart_pixels):
+        elif config.track["pixels"] > (self.cible_pixels + self.ecart_pixels):
             logging.debug("Cible trop proche, on s'éloigne")
             return [(-100, -100, 0)]
 
