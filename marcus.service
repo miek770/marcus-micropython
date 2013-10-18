@@ -5,9 +5,7 @@
 Description=Robot de combat Marcus3
 
 [Service]
-PreExecStart=source /root/marcus/bin/activate
-ExecStart=/root/bin/python2 /root/marcus/main.py --logfile=/var/log/marcus.log
-ExecStop=deactivate
+ExecStart=/usr/bin/bash -c 'source /root/marcus/bin/activate; /root/marcus/main.py --logfile=/var/log/marcus.log'
 
 [Install]
 WantedBy=multi-user.target
