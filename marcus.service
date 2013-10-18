@@ -1,0 +1,13 @@
+# Créer un lien vers /usr/lib/systemd/system avec la commande suivante :
+# ln -s /root/marcus/marcus.service /usr/lib/systemd/system
+
+[Unit]
+Description=Robot de combat Marcus3
+
+[Service]
+PreExecStart=source /root/marcus/bin/activate
+ExecStart=/root/bin/python2 /root/marcus/main.py --logfile=/var/log/marcus.log
+ExecStop=deactivate
+
+[Install]
+WantedBy=multi-user.target
