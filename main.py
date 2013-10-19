@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/root/marcus/bin/python
 # -*- coding: utf-8 -*-
 #
 #  main.py
@@ -32,6 +32,7 @@ from multiprocessing import Process, Pipe
 #======================
 import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM
+import bumpers
 
 # Dictionnaire de pins digitales
 #================================
@@ -135,7 +136,7 @@ def set_input(pin):
 # Fonction :
 # Description :
 #===============================================================================
-def blink(pin, conn, verbose, delay=1.0):
+def blink(pin, conn, delay=1.0):
     set_output(pin)
     while(True):
         set_low(pin)
@@ -149,11 +150,11 @@ def blink(pin, conn, verbose, delay=1.0):
 # Fonction :
 # Description :
 #===============================================================================
-def message(msg, args, lvl=logging.INFO):
+def msg(msg, args, lvl=logging.INFO):
     if args.verbose:
-        print msg
+        print str(msg)
     if args.logfile:
-        logging.log(lvl, msg)
+        logging.log(lvl, str(msg))
 
 #===============================================================================
 # Fonction :    main
@@ -176,24 +177,53 @@ def main():
                             format='%(asctime)s[%(levelname)s] %(message)s',
                             datefmt='%Y/%m/%d %H:%M:%S ',
                             level=logging.DEBUG)
-        message('Logger initié : ' + args.logfile, args)
+        msg('Logger initié : ' + args.logfile, args)
 
-    message('Programme lancé.', args)
+    msg('Programme lancé.', args)
 
     # Lancement des sous-routines (subprocesses)
     blink_parent_conn, blink_child_conn = Pipe()
-    blink_sub = Process(target=blink,
-                        args=('P9_11',
-                              blink_child_conn,
-                              args.verbose))
+    blink_sub = Process(target=blink, args=('P9_11', blink_child_conn))
     blink_sub.start()
-    message('Sous-routines lancées : sub_blink', args)
+    msg('Sous-routine lancée : sub_blink', args)
+
+    bumpers_parent_conn, bumpers_child_conn = Pipe()
+    bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn))
+    bumpers_sub.start()
+    msg('Sous-routine lancée : sub_bumpers', args)
 
     # Boucle principale
-    while(True):
-        sleep(0.1)
-        if blink_parent_conn.poll():
-            message(blink_parent_conn.recv(), args)
+    # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
+    # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
+    # élevés).
+    count_10ms = 0
+    count_100ms = 0
+    count_1000ms = 0
+    while True:
+
+        # S'exécute toutes les 10ms
+        if count_10ms == 10:
+            count_10ms = 0
+
+            if bumpers_parent_conn.poll():
+                impact = bumpers_parent_conn.recv()
+                msg(impact, args)
+
+        # S'exécute toutes les 100ms
+        if count_100ms == 100:
+            count_100ms = 0
+
+            if blink_parent_conn.poll():
+                msg(blink_parent_conn.recv(), args)
+
+        # S'exécute toutes les 1s
+        if count_1000ms == 1000:
+            count_1000ms = 0
+
+        count_10ms += 1
+        count_100ms += 1
+        count_1000ms += 1
+        sleep(0.001)
 
     return 0
 
