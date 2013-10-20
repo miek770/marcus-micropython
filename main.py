@@ -32,7 +32,7 @@ from multiprocessing import Process, Pipe
 #======================
 import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM
-import bumpers
+from modules import bumpers
 
 # Dictionnaire de pins digitales
 #================================

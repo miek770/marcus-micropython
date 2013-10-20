@@ -4,13 +4,11 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 ## Prochaines tâches
 
-1. Créer un sous-répertoire modules et y déplacer "bumpers.py"
-2. L'exclure du dépôt marcus-base et l'inclure dans un nouveau dépôt marcus-modules
-3. Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py)
-4. Il y a actuellement un bug avec la librairie ADC qui créée une "Segmentation Fault". Ç'aurait dû avoir été réglé il y a longtemps selon Adafruit
-5. Développer le module CMUCam2+ (sur I2C si possible)
-6. Créer un module "mémoire" avec SQLite3
-7. Développer les autres modules en fonction de mon programme précédent (Marcus 2)
+1. Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py)
+2. Il y a actuellement un bug avec la librairie ADC qui créée une "Segmentation Fault". Ç'aurait dû avoir été réglé il y a longtemps selon Adafruit
+3. Développer le module CMUCam2+ (sur I2C si possible)
+4. Créer un module "mémoire" avec SQLite3
+5. Développer les autres modules en fonction de mon programme précédent (Marcus 2)
 
 ## Guide d'installation BBB - Marcus 3
 

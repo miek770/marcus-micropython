@@ -1,5 +1,5 @@
-bin/*
-lib/*
-include/*
+bin/
+lib/
+include/
 *.geany
 *.pyc
