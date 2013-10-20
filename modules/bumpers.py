@@ -7,7 +7,7 @@ from time import sleep
 
 # Librairies spéciales
 #======================
-import Adafruit_BBIO.ADC as ADC
+import Adafruit_BBIO.ADC as ADC # Segmentation Fault (0.0.18)
 
 # La fonction ADC.read(pin) renvoie une valeur de 0 à 1. Les pins suivantes
 # peuvent être utiliées :

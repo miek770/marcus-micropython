@@ -183,12 +183,14 @@ def main():
 
     # Lancement des sous-routines (subprocesses)
     blink_parent_conn, blink_child_conn = Pipe()
-    blink_sub = Process(target=blink, args=('P9_11', blink_child_conn))
+    blink_sub = Process(target=blink, args=('P9_11',
+                                            blink_child_conn))
     blink_sub.start()
     msg('Sous-routine lancée : sub_blink', args)
 
     bumpers_parent_conn, bumpers_child_conn = Pipe()
-    bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn))
+    bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn,
+                                                     ))
     bumpers_sub.start()
     msg('Sous-routine lancée : sub_bumpers', args)
 
