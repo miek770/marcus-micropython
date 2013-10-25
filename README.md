@@ -16,9 +16,6 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 ### Installation d'Arch Linux
 
 - Suivre les étapes données sur le site d'ARM Arch Linux pour le BBB
-- Dans les étapes il manque :
-
-        pacman -Syy dostools wget i2c-tools
 
 ### Préparation de l'environnement
 
@@ -26,7 +23,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 - Mise à jour d'Arch Linux ARM :
 
-        pacman -Syu
+        pacman -Syu i2c-tools
 
 - Régler le temps et le fuseau horaire :
 
