@@ -136,7 +136,7 @@ def set_input(pin):
 # Fonction :
 # Description :
 #===============================================================================
-def blink(pin, conn, delay=1.0):
+def blink(pin, conn, delay=0.1):
     set_output(pin)
     while(True):
         set_low(pin)

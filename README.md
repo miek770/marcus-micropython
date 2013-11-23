@@ -11,7 +11,8 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
     - Actuellement j'ai quelques problèmes avec i2c, plus particulièrement le module smbus-cffi qui refuse de s'installer avec PIP. Je vais plutôt débugger avec i2cget, i2cdetect, i2cset, etc. qui sont accessibles en CLI. Au pire je pourrai me développer un module Python i2c qui va appeler ces programmes. Par contre pour tout ça il serait préférable d'attendre d'avoir mon oscilloscope.
 
 4. Créer un module "mémoire" avec SQLite3;
-5. Développer les autres modules en fonction de mon programme précédent (Marcus 2).
+5. Développer les autres modules en fonction de mon programme précédent (Marcus 2);
+6. Songer à créer un environnement virtuel.
 
 ## Guide d'installation BBB - Marcus 3
 
