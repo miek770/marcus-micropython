@@ -146,6 +146,16 @@ def blink(pin, conn, delay=0.1):
         conn.send('Off')
         sleep(delay)
 
+def pulse(pin):
+    set_output(pin)
+    set_low(pin)
+    sleep(0.002)
+    set_high(pin)
+    sleep(0.002)
+    set_low(pin)
+    sleep(0.001)
+    set_high(pin)
+
 #===============================================================================
 # Fonction :
 # Description :
@@ -221,6 +231,8 @@ def main():
         # S'exécute toutes les 1s
         if count_1000ms == 1000:
             count_1000ms = 0
+
+            pulse('P9_12')
 
         count_10ms += 1
         count_100ms += 1
