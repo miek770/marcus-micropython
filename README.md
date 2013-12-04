@@ -7,9 +7,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 1. Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
 2. Il y a actuellement un bug avec la librairie ADC qui créée une "Segmentation Fault". Ç'aurait dû avoir été réglé il y a longtemps selon Adafruit (j'utilise la version 0.0.18);
 3. Développer le module CMUCam2+ (sur I2C si possible);
-
     - Actuellement j'ai quelques problèmes avec i2c, plus particulièrement le module smbus-cffi qui refuse de s'installer avec PIP. Je vais plutôt débugger avec i2cget, i2cdetect, i2cset, etc. qui sont accessibles en CLI. Au pire je pourrai me développer un module Python i2c qui va appeler ces programmes. Par contre pour tout ça il serait préférable d'attendre d'avoir mon oscilloscope.
-
 4. Créer un module "mémoire" avec SQLite3;
 5. Développer les autres modules en fonction de mon programme précédent (Marcus 2);
 6. Songer à créer un environnement virtuel.
@@ -19,9 +17,6 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 ### Installation d'Arch Linux
 
 - Suivre les étapes données sur le site d'ARM Arch Linux pour le BBB
-- Dans les étapes il manque :
-
-        pacman -Syy dostools wget i2c-tools
 
 ### Préparation de l'environnement
 
@@ -29,7 +24,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 - Mise à jour d'Arch Linux ARM :
 
-        pacman -Syu
+        pacman -Syu i2c-tools
 
 - Régler le temps et le fuseau horaire :
 
