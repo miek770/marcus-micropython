@@ -6,11 +6,12 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 1. Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
 2. Il y a actuellement un bug avec la librairie ADC qui créée une "Segmentation Fault". Ç'aurait dû avoir été réglé il y a longtemps selon Adafruit (j'utilise la version 0.0.18);
-3. Développer le module CMUCam2+ (sur I2C si possible);
-    - Actuellement j'ai quelques problèmes avec i2c, plus particulièrement le module smbus-cffi qui refuse de s'installer avec PIP. Je vais plutôt débugger avec i2cget, i2cdetect, i2cset, etc. qui sont accessibles en CLI. Au pire je pourrai me développer un module Python i2c qui va appeler ces programmes. Par contre pour tout ça il serait préférable d'attendre d'avoir mon oscilloscope.
+3. Développer le module CMUCam2+;
 4. Créer un module "mémoire" avec SQLite3;
 5. Développer les autres modules en fonction de mon programme précédent (Marcus 2);
-6. Songer à créer un environnement virtuel.
+6. Songer à créer un environnement virtuel;
+7. J'ai désactivé systemd-getty-generator (en supprimant le binary dans /usr/lib/systemd) et j'ai exclu le fichier dans pacman.conf (NoExtract);
+8. Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider).
 
 ## Guide d'installation BBB - Marcus 3
 
