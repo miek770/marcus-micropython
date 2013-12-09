@@ -77,3 +77,7 @@ Par contre ça ne règle rien pour le moment, la prochaine étape est d'installe
 
         ln -s /root/marcus/marcus.service /usr/lib/systemd/system/marcus.service
         systemctl status marcus
+
+#### systemd-getty-generator
+
+Le générateur 'systemd-getty-generator' doit être désactivé pour permettre l'utilisation du port série /dev/ttyO0 (pour communiquer avec la CMUCam2+). Malheureusement la seule façon que j'ai trouvée pour le désactiver est d'effacer le fichier binaire dans /usr/lib/systemd/system-generators et de l'exclure de pacman (NoExtract = usr/lib/systemd/system-generators/systemd-getty-generator dans /etc/pacman.conf).

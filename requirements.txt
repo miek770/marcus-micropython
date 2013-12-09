@@ -1,4 +1,6 @@
-Adafruit-BBIO==0.0.18
+Adafruit-BBIO==0.0.19
+Adafruit-Libraries==0.1
 cffi==0.7.2
 pycparser==2.10
+pyserial==2.7
 wsgiref==0.1.2
