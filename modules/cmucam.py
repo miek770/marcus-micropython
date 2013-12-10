@@ -4,6 +4,7 @@
 # Librairies standard
 #=====================
 from time import sleep
+import re
 
 # Librairies spéciales
 #=====================
@@ -20,24 +21,22 @@ class Cmucam:
         self.ser.bytesize = 8
         self.ser.parity = 'N'
         self.ser.stopbits = 1
-        self.ser.timeout = 1
+        self.ser.timeout = 0.1
         self.ser.xonxoff = 0
         self.ser.rtscts = 0
 
         # Raw Mode (disable ACK\r et NCK\r)
         self.ser.write('rm 2\r')
+        self.ser.readline()
 
-        # Packets Skipped (à confirmer)
-        # Pour ralentir le débit de données
-        self.ser.write('ps 1\r')
+        # Poll Mode
+        self.poll_mode(True)
+        self.ser.readline()
 
         # Set Tracked
         # (Rmin Rmax Gmin Gmax Bmin Bmax)
         self.tc = None
         self.set_tracked()
-
-        # Poll Mode
-        self.poll_mode(False)
 
     def save_tc(self):
         with open('tc.txt', 'w') as f:
@@ -46,49 +45,52 @@ class Cmucam:
     def load_tc(self):
         try:
             with open('tc.txt', 'r') as f:
-                self.tc = f.readline(eol='\r')
+                self.tc = f.readline()
         except IOError:
-            self.tc = self.get_mean()
-            self.save_tc()
+            pass
 
     def get_mean(self):
         self.ser.write('gm\r')
-        self.tc = self.ser.readline(eol='\r')[2:]
+        s = self.ser.readline()
+        return re.sub('[A-Z\r:]', '', s)[1:]
 
     def poll_mode(self, state):
         if state:
             self.pm = True
             self.ser.write('pm 1\r')
+            self.ser.readline()
         else:
             self.pm = False
             self.ser.write('pm 0\r')
+            self.ser.readline()
 
-    def set_tracked(self):
-        if self.tc is None:
+    def set_tracked(self, color=None):
+        if color is None:
             self.load_tc()
+        else:
+            self.tc = color
         self.ser.write('st {0}\r'.format(self.tc))
+        self.ser.readline()
 
     def track(self):
         self.ser.write('tc\r')
+        s = self.ser.readline()
+        return re.sub('[A-Z\r:]', '', s)[1:]
 
-#===============================================================================
-# Fonction :
-# Description :
-#===============================================================================
-def track(cam, conn, delay=0.01):
-    cam.poll_mode(False)
-    cam.track()
-    while True:
-        print cam.ser.readline()
-        sleep(delay)
+    def write(self, s, raw=False):
+        self.ser.write('{0}\r'.format(s))
+        r = self.ser.readline()
+        if not raw:
+            return re.sub('[A-Z\r:]', '', r)[1:]
+        else:
+            return r
 
 #===============================================================================
 # Fonction :
 # Description :
 #===============================================================================
 def main():
-    cam = Cmucam()
-    track(cam)
+    pass
 
 if __name__ == '__main__':
     main()
