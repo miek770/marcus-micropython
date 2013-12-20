@@ -11,8 +11,9 @@ import re
 import serial
 
 #===============================================================================
-# Classe :
-# Description :
+# Classe :      Cmucam
+# Description : Wrapper pour gerer la communication avec la CMUCam2+ (incluant
+#               la configuration et la recherche de l'autre robot).
 #===============================================================================
 class Cmucam:
     def __init__(self):
@@ -38,10 +39,14 @@ class Cmucam:
         self.tc = None
         self.set_tracked()
 
+    # Enregistre la couleur trackee dans un fichier texte
+    #===================================================
     def save_tc(self):
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
 
+    # Recupere la couleur prealablement enregistree
+    #===============================================
     def load_tc(self):
         try:
             with open('tc.txt', 'r') as f:
@@ -49,11 +54,15 @@ class Cmucam:
         except IOError:
             pass
 
+    # Lit la couleur moyenne vue par la camera
+    #==========================================
     def get_mean(self):
         self.ser.write('gm\r')
         s = self.ser.readline()
         return re.sub('[A-Z\r:]', '', s)[1:]
 
+    # Configure le poll_mode
+    #========================
     def poll_mode(self, state):
         if state:
             self.pm = True
@@ -64,6 +73,8 @@ class Cmucam:
             self.ser.write('pm 0\r')
             self.ser.readline()
 
+    # Regle la couleur a reperer
+    #============================
     def set_tracked(self, color=None):
         if color is None:
             self.load_tc()
@@ -72,11 +83,15 @@ class Cmucam:
         self.ser.write('st {0}\r'.format(self.tc))
         self.ser.readline()
 
+    # Repere la couleur prealablement configuree
+    #============================================
     def track(self):
         self.ser.write('tc\r')
         s = self.ser.readline()
         return re.sub('[A-Z\r:]', '', s)[1:]
 
+    # Ecrit une commande et retourne le resultat
+    #============================================
     def write(self, s, raw=False):
         self.ser.write('{0}\r'.format(s))
         r = self.ser.readline()

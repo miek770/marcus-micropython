@@ -32,7 +32,9 @@ from multiprocessing import Process, Pipe
 #======================
 import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM
+import Adafruit_BBIO.ADC as ADC
 from modules import bumpers
+from modules import cmucam
 
 # Dictionnaire de pins digitales
 #================================
@@ -90,9 +92,19 @@ pins['P9_30'] = (None, None)
 pins['P9_31'] = (None, None)
 pins['P9_42'] = (None, None)
 
+# Pins analogiques
+#==================
+# P9_39 - AIN0
+# P9_40 - AIN1
+# P9_37 - AIN2
+# P9_38 - AIN3
+# P9_33 - AIN4
+# P9_36 - AIN5
+# P9_35 - AIN6
+
 #===============================================================================
-# Fonction :
-# Description :
+# Fonction :    set_low(pin)
+# Description : Regle la pin digitale a 0V.
 #===============================================================================
 def set_low(pin):
     if pins[pin][0] == 'out':
@@ -103,8 +115,8 @@ def set_low(pin):
         print 'Erreur:', pin, 'n\'est pas configurée correctement.'
 
 #===============================================================================
-# Fonction :
-# Description :
+# Fonction :    set_high(pin)
+# Description : Regle la pin digitale a 3.3V.
 #===============================================================================
 def set_high(pin):
     if pins[pin][0] == 'out':
@@ -115,8 +127,8 @@ def set_high(pin):
         print 'Erreur:', pin, 'n\'est pas configurée correctement.'
 
 #===============================================================================
-# Fonction :
-# Description :
+# Fonction :    set_output(pin)
+# Description : Configure la pin en mode sortie.
 #===============================================================================
 def set_output(pin):
     pins[pin] = ('out', 1)
@@ -125,16 +137,16 @@ def set_output(pin):
     set_high(pin)
 
 #===============================================================================
-# Fonction :
-# Description :
+# Fonction :    set_input(pin)
+# Description : Configure la pin en mode entree.
 #===============================================================================
 def set_input(pin):
     pins[pin] = ('in', None)
     GPIO.setup(pin, GPIO.IN)
 
 #===============================================================================
-# Fonction :
-# Description :
+# Fonction :    blink(pin, conn, delay)
+# Description : Fait alterner une pin digitale 0-3.3V (pour tester).
 #===============================================================================
 def blink(pin, conn, delay=0.1):
     set_output(pin)
@@ -146,6 +158,10 @@ def blink(pin, conn, delay=0.1):
         conn.send('Off')
         sleep(delay)
 
+#===============================================================================
+# Fonction :    pulse(pin)
+# Description : Genere une impulsion sur une pine digitale 0-3.3V (pour tester).
+#===============================================================================
 def pulse(pin):
     set_output(pin)
     set_low(pin)
@@ -157,8 +173,11 @@ def pulse(pin):
     set_high(pin)
 
 #===============================================================================
-# Fonction :
-# Description :
+# Fonction :    msg(msg, args, lvl)
+# Description : Cette fonction permet d'utiliser une seule fonction pour toute
+#               impression (print ou log) dependamment des arguments en ligne
+#               de commande. On ne devrait jamais utiliser directement 'print'
+#               et 'logging.log' dans le reste du programme, toujours 'msg'.
 #===============================================================================
 def msg(msg, args, lvl=logging.INFO):
     if args.verbose:
