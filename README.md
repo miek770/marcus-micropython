@@ -26,6 +26,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 - Mise à jour d'Arch Linux ARM :
 
         pacman -Syu i2c-tools
+        pacman -S linux-am33x-legacy
 
 - Régler le temps et le fuseau horaire :
 
