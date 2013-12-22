@@ -11,6 +11,12 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 ## Guide d'installation BBB - Marcus 3
 
+Faire attention, le guide n'est pas parfaitement chronologique et pourrait être pas mal amélioré, mais c'est #1 pour quelqu'un qui sait ce qu'il fait :)
+
+Ne pas oublier le (après avoir installé git naturellement). Le virtualenv2 peut être créé après :
+
+        git clone https://github.com/miek770/marcus-base.git /root/marcus
+
 ### Installation d'Arch Linux
 
 - Suivre les étapes données sur le site d'ARM Arch Linux pour le BBB
