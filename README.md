@@ -5,13 +5,9 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 ## Prochaines tâches
 
 1. Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
-2. Il y a actuellement un bug avec la librairie ADC qui créée une "Segmentation Fault". Ç'aurait dû avoir été réglé il y a longtemps selon Adafruit (j'utilise la version 0.0.18);
-3. Développer le module CMUCam2+;
-4. Créer un module "mémoire" avec SQLite3;
-5. Développer les autres modules en fonction de mon programme précédent (Marcus 2);
-6. Songer à créer un environnement virtuel;
-7. J'ai désactivé systemd-getty-generator (en supprimant le binary dans /usr/lib/systemd) et j'ai exclu le fichier dans pacman.conf (NoExtract);
-8. Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider).
+2. Créer un module "mémoire" avec SQLite3;
+3. Songer à créer un environnement virtuel;
+4. Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider).
 
 ## Guide d'installation BBB - Marcus 3
 
@@ -26,6 +22,9 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 - Mise à jour d'Arch Linux ARM :
 
         pacman -Syu i2c-tools
+
+- Pour donner accès à certains fonctions telles que l'ADC :
+
         pacman -S linux-am33x-legacy
 
 - Régler le temps et le fuseau horaire :
