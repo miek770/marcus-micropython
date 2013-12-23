@@ -73,7 +73,7 @@ pins['P8_43'] = (None, None) # Non-testée
 pins['P8_44'] = (None, None) # Non-testée
 pins['P8_45'] = (None, None) # Non-testée
 pins['P8_46'] = (None, None) # Non-testée
-pins['P9_11'] = (None, None)
+pins['P9_11'] = (None, None) # Utilisée par blink_sub
 pins['P9_12'] = (None, None)
 pins['P9_13'] = (None, None)
 pins['P9_14'] = (None, None) # Peut être utilisée en PWM
@@ -211,19 +211,35 @@ def main():
     msg('Programme lancé.', args)
 
     # Lancement des sous-routines (subprocesses)
+    #============================================
+
+    # Blink
     blink_parent_conn, blink_child_conn = Pipe()
     blink_sub = Process(target=blink, args=('P9_11',
                                             blink_child_conn))
     blink_sub.start()
-    msg('Sous-routine lancée : sub_blink', args)
+    msg('Sous-routine lancée : blink_sub', args)
 
+    # Bumpers
     bumpers_parent_conn, bumpers_child_conn = Pipe()
     bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn,
                                                      ))
     bumpers_sub.start()
-    msg('Sous-routine lancée : sub_bumpers', args)
+    msg('Sous-routine lancée : bumpers_sub', args)
+
+    # CMUCam2+
+    cmucam_parent_conn, cmucam_child_conn = Pipe()
+    cmucam_sub = Process(target=cmucam.cam, args=((cmucam_child_conn,
+                                                   ))
+    cmucam_sub.start()
+    msg('Sous-routine lancée : cmucam_sub', args)
+
+    cmucam_parent_conn.send('track_mean')
+    #cmucam_parent_conn.send('track_on')
 
     # Boucle principale
+    #===================
+
     # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
     # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
     # élevés).
@@ -240,6 +256,12 @@ def main():
                 impact = bumpers_parent_conn.recv()
                 msg(impact, args)
 
+            if cmucam_parent_conn.poll():
+                detection = cmucam_parent_conn.recv()
+                msg(detection, args)
+
+            pass
+
         # S'exécute toutes les 100ms
         if count_100ms == 100:
             count_100ms = 0
@@ -247,11 +269,13 @@ def main():
             if blink_parent_conn.poll():
                 msg(blink_parent_conn.recv(), args)
 
+            pass
+
         # S'exécute toutes les 1s
         if count_1000ms == 1000:
             count_1000ms = 0
 
-            pulse('P9_12')
+            pass
 
         count_10ms += 1
         count_100ms += 1

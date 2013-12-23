@@ -7,15 +7,17 @@ from time import sleep
 import re
 
 # Librairies spéciales
-#=====================
+#======================
 import serial
 
 #===============================================================================
 # Classe :      Cmucam
-# Description : Wrapper pour gerer la communication avec la CMUCam2+ (incluant
+# Description : Wrapper pour gérer la communication avec la CMUCam2+ (incluant
 #               la configuration et la recherche de l'autre robot).
 #===============================================================================
 class Cmucam:
+    # Initialisation
+    #================
     def __init__(self):
         self.ser = serial.Serial('/dev/ttyO0')
         self.ser.baudrate = 115200
@@ -39,22 +41,23 @@ class Cmucam:
         self.tc = None
         self.set_tracked()
 
-    # Enregistre la couleur trackee dans un fichier texte
+    # Enregistre la couleur trackée dans un fichier texte
     #===================================================
     def save_tc(self):
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
 
-    # Recupere la couleur prealablement enregistree
+    # Récupère la couleur préalablement enregistrée
     #===============================================
     def load_tc(self):
         try:
             with open('tc.txt', 'r') as f:
                 self.tc = f.readline()
+            return True
         except IOError:
-            pass
+            return False
 
-    # Lit la couleur moyenne vue par la camera
+    # Lit la couleur moyenne vue par la caméra
     #==========================================
     def get_mean(self):
         self.ser.write('gm\r')
@@ -73,25 +76,32 @@ class Cmucam:
             self.ser.write('pm 0\r')
             self.ser.readline()
 
-    # Regle la couleur a reperer
+    # Règle la couleur a repérer
     #============================
     def set_tracked(self, color=None):
         if color is None:
-            self.load_tc()
+
+            # Si aucune couleur n'est spécifiée
+            if not self.load_tc():
+
+                # Si aucune couleur n'a été enregistrée
+                return False
         else:
             self.tc = color
+
         self.ser.write('st {0}\r'.format(self.tc))
         self.ser.readline()
+        return True
 
-    # Repere la couleur prealablement configuree
+    # Repère la couleur préalablement configurée
     #============================================
     def track(self):
         self.ser.write('tc\r')
         s = self.ser.readline()
         return re.sub('[A-Z\r:]', '', s)[1:]
 
-    # Ecrit une commande et retourne le resultat
-    #============================================
+    # Écrit une commande et retourne le résultat (nettoyé)
+    #======================================================
     def write(self, s, raw=False):
         self.ser.write('{0}\r'.format(s))
         r = self.ser.readline()
@@ -99,6 +109,44 @@ class Cmucam:
             return re.sub('[A-Z\r:]', '', r)[1:]
         else:
             return r
+
+#===============================================================================
+# Fonction :    cam
+# Description : [...]
+#===============================================================================
+def cam(conn, delay=0.01):
+    cmucam = Cmucam()
+    track = False
+
+    while True:
+
+        if conn.poll():
+            # Si l'application principale a envoyé une commande
+            cmd = conn.recv()
+
+            if cmd == 'track_mean':
+                # Utilise la couleur moyenne comme cible
+                cmucam.set_tracked(cmucam.get_mean())
+
+            elif cmd == 'track_on':
+                # Active le tracking automatique
+                track = True
+
+            elif cmd == 'track_off':
+                # Active le tracking automatique
+                track = False
+
+            elif cmd == 'save':
+                # Sauvegarde la couleur recherchée
+                cmucam.save_tc()
+
+        if track:
+            # Si le tracking automatique est activé
+            result = cmucam.track()
+            # Ajouter une analyse du résultat et la communication avec le
+            # programme principal (via conn).
+
+        sleep(delay)
 
 #===============================================================================
 # Fonction :
