@@ -9,6 +9,10 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 3. Songer à créer un environnement virtuel;
 4. Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider).
 
+### Pour la CMUCam2+
+
+- CR 18 44 # RGB Auto White Balance On
+
 ## Guide d'installation BBB - Marcus 3
 
 Faire attention, le guide n'est pas parfaitement chronologique et pourrait être pas mal amélioré, mais c'est #1 pour quelqu'un qui sait ce qu'il fait :)
