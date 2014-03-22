@@ -28,13 +28,10 @@ class Cmucam:
         self.ser.xonxoff = 0
         self.ser.rtscts = 0
 
-        # Raw Mode (disable ACK\r et NCK\r)
-        self.ser.write('rm 2\r')
-        self.ser.readline()
-
-        # Poll Mode
-        self.poll_mode(True)
-        self.ser.readline()
+        # Configuration de la CMUCam2+
+        self.write('rm 2') # Raw mode (disable ACK\r et NCK\r)
+        self.write('pm 1') # Poll mode
+        self.write('cr 18 44') # RGB auto white balance on
 
         # Set Tracked
         # (Rmin Rmax Gmin Gmax Bmin Bmax)
@@ -58,26 +55,28 @@ class Cmucam:
             return False
 
     # Lit la couleur moyenne vue par la caméra
+    # Rmean Gmean Bmean Rdev Gdev Bdev
     #==========================================
     def get_mean(self):
         self.ser.write('gm\r')
         s = self.ser.readline()
         return re.sub('[A-Z\r:]', '', s)[1:]
 
-    # Configure le poll_mode
-    #========================
-    def poll_mode(self, state):
-        if state:
-            self.pm = True
-            self.ser.write('pm 1\r')
-            self.ser.readline()
-        else:
-            self.pm = False
-            self.ser.write('pm 0\r')
-            self.ser.readline()
+    # Converti de GM à TC
+    #=====================
+    def mean_to_track(self, m, facteur=1.5):
+        [Rm, Gm, Bm, Rd, Gd, Bd] = m.split()
+        Rmin = int(Rm) - facteur*int(Rd)
+        Rmax = int(Rm) + facteur*int(Rd)
+        Gmin = int(Gm) - facteur*int(Gd)
+        Gmax = int(Gm) + facteur*int(Gd)
+        Bmin = int(Bm) - facteur*int(Bd)
+        Bmax = int(Bm) + facteur*int(Bd)
+        return '%i %i %i %i %i %i' %(Rmin, Rmax, Gmin, Gmax, Bmin, Bmax)
 
     # Règle la couleur a repérer
-    #============================
+    # Rmin Rmax Gmin Gmax Bmin Bmax
+    #===============================
     def set_tracked(self, color=None):
         if color is None:
 
@@ -94,6 +93,7 @@ class Cmucam:
         return True
 
     # Repère la couleur préalablement configurée
+    # mx my x1 y1 x2 y2 pixels confidence
     #============================================
     def track(self):
         self.ser.write('tc\r')
@@ -126,7 +126,7 @@ def cam(conn, delay=0.01):
 
             if cmd == 'track_mean':
                 # Utilise la couleur moyenne comme cible
-                cmucam.set_tracked(cmucam.get_mean())
+                cmucam.set_tracked(cmucam.mean_to_track(cmucam.get_mean()))
 
             elif cmd == 'track_on':
                 # Active le tracking automatique
@@ -142,6 +142,7 @@ def cam(conn, delay=0.01):
 
         if track:
             # Si le tracking automatique est activé
+            # mx my x1 y1 x2 y2 pixels confidence
             result = cmucam.track()
             # Ajouter une analyse du résultat et la communication avec le
             # programme principal (via conn).
