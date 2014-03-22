@@ -215,27 +215,26 @@ def main():
 
     # Blink
     blink_parent_conn, blink_child_conn = Pipe()
-    blink_sub = Process(target=blink, args=('P9_11',
-                                            blink_child_conn))
+    blink_sub = Process(target=blink, args=('P9_11', blink_child_conn))
     blink_sub.start()
     msg('Sous-routine lancée : blink_sub', args)
 
     # Bumpers
     bumpers_parent_conn, bumpers_child_conn = Pipe()
-    bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn,
-                                                     ))
+    bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn, ))
     bumpers_sub.start()
     msg('Sous-routine lancée : bumpers_sub', args)
 
     # CMUCam2+
     cmucam_parent_conn, cmucam_child_conn = Pipe()
-    cmucam_sub = Process(target=cmucam.cam, args=((cmucam_child_conn,
-                                                   ))
+    cmucam_sub = Process(target=cmucam.cam, args=(cmucam_child_conn, ))
     cmucam_sub.start()
     msg('Sous-routine lancée : cmucam_sub', args)
 
+#    sleep(3.0) # Attend avant de lire la couleur à tracker
     cmucam_parent_conn.send('track_mean')
-    #cmucam_parent_conn.send('track_on')
+    sleep(0.5)
+    cmucam_parent_conn.send('track_on')
 
     # Boucle principale
     #===================

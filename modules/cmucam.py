@@ -58,9 +58,7 @@ class Cmucam:
     # Rmean Gmean Bmean Rdev Gdev Bdev
     #==========================================
     def get_mean(self):
-        self.ser.write('gm\r')
-        s = self.ser.readline()
-        return re.sub('[A-Z\r:]', '', s)[1:]
+        return self.write('gm')
 
     # Converti de GM à TC
     #=====================
@@ -96,9 +94,7 @@ class Cmucam:
     # mx my x1 y1 x2 y2 pixels confidence
     #============================================
     def track(self):
-        self.ser.write('tc\r')
-        s = self.ser.readline()
-        return re.sub('[A-Z\r:]', '', s)[1:]
+        return self.write('tc')
 
     # Écrit une commande et retourne le résultat (nettoyé)
     #======================================================
@@ -143,7 +139,9 @@ def cam(conn, delay=0.01):
         if track:
             # Si le tracking automatique est activé
             # mx my x1 y1 x2 y2 pixels confidence
-            result = cmucam.track()
+            r = cmucam.track()
+            if r != '0 0 0 0 0 0 0 0':
+                conn.send(r)
             # Ajouter une analyse du résultat et la communication avec le
             # programme principal (via conn).
 
