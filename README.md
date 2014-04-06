@@ -4,10 +4,12 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 ## Prochaines tâches
 
+- Extraire le contrôle d'E/S et la fonction msg() dans un module indépendant qui sera appelé par les fonctions en ayant besoin, plutôt que de dupliquer le code dans les autres modules. De plus laisser faire la réservation de pins, ce n'est pas nécessaire de le faire via le code, je peux très bien le tracker manuellement;
 - Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
 - Créer un module "mémoire" avec SQLite3;
-- Songer à créer un environnement virtuel;
-- Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider).
+- Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);
+- Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider). De toute façon il suffit de monter le circuit de contrôle de l'alimentation de la CMUCam que j'ai développé pour lui donner son alimentation au moment opportun;
+- Ajouter une lecture de la tension de la batterie pour faire un historique (l'enregistrer dans la base de données) et soulever une alarme lorsque le niveau est critique.
 
 ## Guide d'installation BBB - Marcus 3
 
