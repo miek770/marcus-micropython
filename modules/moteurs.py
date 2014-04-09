@@ -28,7 +28,7 @@ class Moteurs:
         set_output('P9_16')
         set_output('P9_21')
 
-        self.stop()
+        self.arret()
 
     # Fonctions globales
     #====================
@@ -44,9 +44,9 @@ class Moteurs:
         self.droit_freine()
         self.gauche_freine()
 
-    def stop(self):
-        self.droit_stop()
-        self.gauche_freine()
+    def arret(self):
+        self.droit_arret()
+        self.gauche_arret()
 
     def tourne_droite(self):
         self.droit_recule()
@@ -58,7 +58,7 @@ class Moteurs:
 
     # Fonctions par moteur
     #======================
-    def droit_stop(self):
+    def droit_arret(self):
         set_low('P9_14') # Disable
 
     def droit_freine(self):
@@ -76,7 +76,7 @@ class Moteurs:
         set_low('P9_13')
         set_high('P9_14') # Enable
 
-    def gauche_stop(self):
+    def gauche_arret(self):
         set_low('P9_16') # Disable
 
     def gauche_freine(self):
