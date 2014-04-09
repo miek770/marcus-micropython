@@ -110,7 +110,7 @@ class Cmucam:
 # Fonction :    cam
 # Description : [...]
 #===============================================================================
-def cam(conn, delay=0.01):
+def cam(conn, args, delay=0.01):
     cmucam = Cmucam()
     track = False
 
@@ -147,12 +147,3 @@ def cam(conn, delay=0.01):
 
         sleep(delay)
 
-#===============================================================================
-# Fonction :
-# Description :
-#===============================================================================
-def main():
-    pass
-
-if __name__ == '__main__':
-    main()

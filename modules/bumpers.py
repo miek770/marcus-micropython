@@ -7,37 +7,14 @@ from time import sleep
 
 # Librairies spéciales
 #======================
-import Adafruit_BBIO.ADC as ADC # Segmentation Fault (0.0.18)
-
-# La fonction ADC.read(pin) renvoie une valeur de 0 à 1. Les pins suivantes
-# peuvent être utiliées :
-
-# P9_33
-# P9_35
-# P9_36
-# P9_37
-# P9_38
-# P9_39
-# P9_40
+import Adafruit_BBIO.ADC as ADC
+from pins import get_adc
 
 #===============================================================================
 # Fonction :
 # Description :
 #===============================================================================
-def get_adc(pin):
-    # Selon la documentation de Adafruit_BBIO.ADC, il faut lire la valeur deux
-    # fois pour avoir le bon résultat. Ils disent que c'est un bug dans le
-    # pilote ADC, donc ce sera possiblement corrigé dans le futur (quoiqu'il
-    # n'y a pas vraiment d'impact pour nous).
-    ADC.read(pin)
-    reading = ADC.read(pin)
-    return reading
-
-#===============================================================================
-# Fonction :
-# Description :
-#===============================================================================
-def scan(conn, delay=0.01):
+def scan(conn, args, delay=0.01):
 
     ADC.setup()
     last_impact = (False, False, False, False)
@@ -87,13 +64,3 @@ def scan(conn, delay=0.01):
 
         sleep(delay)
 
-#===============================================================================
-# Fonction :
-# Description :
-#===============================================================================
-def main():
-    ADC.setup()
-    print ADC.read('P9_33')
-
-if __name__ == '__main__':
-    main()

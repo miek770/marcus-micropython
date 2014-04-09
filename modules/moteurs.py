@@ -3,41 +3,14 @@
 
 # Librairies spéciales
 #======================
-import Adafruit_BBIO.GPIO as GPIO
-import Adafruit_BBIO.PWM as PWM
+#from pins import *
 
-# Dictionnaire de pins digitales
-#================================
-
-# pins[index] = in/out
-
-pins = dict()
-pins['P9_12'] = None # Direction moteur droit
-pins['P9_13'] = None # Direction moteur droit
-pins['P9_14'] = None # Enable moteur droit (PWM)
-pins['P9_15'] = None # Direction moteur gauche
-pins['P9_16'] = None # Enable moteur gauche (PWM)
-pins['P9_21'] = None # Direction moteur gauche
-
-# Fonctions simplifiées de contrôle de pins numériques
-#======================================================
-
-def set_low(pin):
-    if pins[pin] == 'out':
-        GPIO.output(pin, GPIO.LOW)
-
-def set_high(pin):
-    if pins[pin] == 'out':
-        GPIO.output(pin, GPIO.HIGH)
-
-def set_output(pin):
-    GPIO.setup(pin, GPIO.OUT)
-    pins[pin] = 'out'
-    set_high(pin)
-
-def set_input(pin):
-    GPIO.setup(pin, GPIO.IN)
-    pins[pin] = 'in'
+# P9_12 - Direction moteur droit
+# P9_13 - Direction moteur droit
+# P9_14 - Enable moteur droit (PWM)
+# P9_15 - Direction moteur gauche
+# P9_16 - Enable moteur gauche (PWM)
+# P9_21 - Direction moteur gauche
 
 #===============================================================================
 # Classe :      Moteurs
