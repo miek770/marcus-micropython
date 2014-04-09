@@ -4,7 +4,6 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 ## Prochaines tâches
 
-- Extraire le contrôle d'E/S et la fonction msg() dans un module indépendant qui sera appelé par les fonctions en ayant besoin, plutôt que de dupliquer le code dans les autres modules. De plus laisser faire la réservation de pins, ce n'est pas nécessaire de le faire via le code, je peux très bien le tracker manuellement;
 - Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
 - Créer un module "mémoire" avec SQLite3;
 - Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);

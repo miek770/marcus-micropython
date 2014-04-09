@@ -106,75 +106,51 @@ pins['P9_42'] = (None, None)
 # Description : Regle la pin digitale a 0V.
 #===============================================================================
 def set_low(pin, args):
-    # Vérifie si la pin est réservée par une sous-routine
-    if pins[pin][2] != True:
+    # Vérifie si la pin est configurée en sortie
+    if pins[pin][0] == 'out':
+        GPIO.output(pin, GPIO.LOW)
+        pins[pin][1] = 0
 
-        # Vérifie si la pin est configurée en sortie
-        if pins[pin][0] == 'out':
-            GPIO.output(pin, GPIO.LOW)
-            pins[pin][1] = 0
-
-        elif pins[pin][0] == 'in':
-            msg('Erreur : ' + pin + ' est configurée en entrée.', args)
-
-        else:
-            msg('Erreur : ' + pin + ' n\'est pas configurée correctement.', args)
+    elif pins[pin][0] == 'in':
+        msg('Erreur : ' + pin + ' est configurée en entrée.', args)
 
     else:
-        msg('Erreur : ' + pin + ' est réservée par une sous-routine.', args)
+        msg('Erreur : ' + pin + ' n\'est pas configurée correctement.', args)
 
 #===============================================================================
 # Fonction :    set_high(pin, args)
 # Description : Regle la pin digitale a 3.3V.
 #===============================================================================
 def set_high(pin, args):
-    # Vérifie si la pin est réservée par une sous-routine
-    if pins[pin][2] != True:
+    # Vérifie si la pin est configurée en sortie
+    if pins[pin][0] == 'out':
+        GPIO.output(pin, GPIO.HIGH)
+        pins[pin][1] = 1
 
-        # Vérifie si la pin est configurée en sortie
-        if pins[pin][0] == 'out':
-            GPIO.output(pin, GPIO.HIGH)
-            pins[pin][1] = 1
-
-        elif pins[pin][0] == 'in':
-            msg('Erreur : ' + pin + ' est configurée en entrée.', args)
-
-        else:
-            msg('Erreur : ' + pin + ' n\'est pas configurée correctement.', args)
+    elif pins[pin][0] == 'in':
+        msg('Erreur : ' + pin + ' est configurée en entrée.', args)
 
     else:
-        msg('Erreur : ' + pin + ' est réservée par une sous-routine.', args)
+        msg('Erreur : ' + pin + ' n\'est pas configurée correctement.', args)
 
 #===============================================================================
 # Fonction :    set_output(pin)
 # Description : Configure la pin en mode sortie.
 #===============================================================================
 def set_output(pin, args):
-    # Vérifie si la pin est réservée par une sous-routine
-    if pins[pin][2] != True:
+    GPIO.setup(pin, GPIO.OUT)
+    pins[pin][0] = 'out'
 
-        GPIO.setup(pin, GPIO.OUT)
-        pins[pin][0] = 'out'
-
-        # Met la pin à 3.3V (high) par défaut
-        set_high(pin, args)
-
-    else:
-        msg('Erreur : ' + pin + ' est réservée par une sous-routine.', args)
+    # Met la pin à 3.3V (high) par défaut
+    set_high(pin, args)
 
 #===============================================================================
 # Fonction :    set_input(pin)
 # Description : Configure la pin en mode entrée.
 #===============================================================================
 def set_input(pin, args):
-    # Vérifie si la pin est réservée par une sous-routine
-    if pins[pin][2] != True:
-
-        GPIO.setup(pin, GPIO.IN)
-        pins[pin][0] = 'in'
-
-    else:
-        msg('Erreur : ' + pin + ' est réservée par une sous-routine.', args)
+    GPIO.setup(pin, GPIO.IN)
+    pins[pin][0] = 'in'
 
 #===============================================================================
 # Fonction :    get_adc(pin)
