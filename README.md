@@ -39,6 +39,10 @@ Ne pas oublier le (après avoir installé git naturellement). Le virtualenv2 peu
         timedatectl set-timezone Canada/Eastern
         echo <hostname> > /etc/hostname
 
+- Pour eviter un bug avec pacman qui plante pendant la synchronisation :
+
+        echo 120 > /proc/sys/kernel/hung_task_timeout_secs
+
 #### Samba
 
 - Configurer samba :
