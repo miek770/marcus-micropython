@@ -100,6 +100,7 @@ pins['P9_42'] = (None, None)
 # P9_33 - AIN4
 # P9_36 - AIN5
 # P9_35 - AIN6
+#ADC.setup()
 
 #===============================================================================
 # Fonction :    set_low(pin, args)
@@ -158,10 +159,6 @@ def set_input(pin, args):
 #               entre 0 et 3,3V.
 #===============================================================================
 def get_adc(pin):
-    # Selon la documentation de Adafruit_BBIO.ADC, il faut lire la valeur deux
-    # fois pour avoir le bon résultat. Ils disent que c'est un bug dans le
-    # pilote ADC, donc ce sera possiblement corrigé dans le futur (quoiqu'il
-    # n'y a pas vraiment d'impact pour nous).
     ADC.read(pin)
     reading = ADC.read(pin)
     return reading
