@@ -93,9 +93,9 @@ pins['P9_42'] = (None, None)
 
 # Pins analogiques
 #==================
-# P9_39 - AIN0
-# P9_40 - AIN1
-# P9_37 - AIN2
+# P9_39 - AIN0 # GP2D12 avant milieu
+# P9_40 - AIN1 # GP2D12 avant gauche
+# P9_37 - AIN2 # GP2D12 avant droite
 # P9_38 - AIN3
 # P9_33 - AIN4
 # P9_36 - AIN5

@@ -32,6 +32,7 @@ from multiprocessing import Process, Pipe
 #======================
 from modules import bumpers
 from modules import cmucam
+from modules import gp2d12
 from modules.moteurs import Moteurs
 from modules.pins import *
 
@@ -87,6 +88,10 @@ def main():
     # Boucle principale
     #===================
 
+    # 0 = Exploration
+    # 1 = Combat
+    mode = 0
+
     # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
     # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
     # élevés).
@@ -99,10 +104,12 @@ def main():
         if count_10ms == 10:
             count_10ms = 0
 
+            # Collision
             if bumpers_parent_conn.poll():
                 impact = bumpers_parent_conn.recv()
                 msg(impact, args)
 
+            # Détection
             if cmucam_parent_conn.poll():
                 detection = cmucam_parent_conn.recv()
                 msg(detection, args)
@@ -112,6 +119,12 @@ def main():
         # S'exécute toutes les 100ms
         if count_100ms == 100:
             count_100ms = 0
+
+            # Exploration
+            if mode == 0:
+                avant_milieu = gp2d12.get_dist('AIN0')
+                avant_gauche = gp2d12.get_dist('AIN1')
+                avant_droite = gp2d12.get_dist('AIN2')
 
             pass
 
