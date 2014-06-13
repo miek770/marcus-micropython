@@ -27,6 +27,7 @@
 import argparse, logging, sys
 from time import sleep
 from multiprocessing import Process, Pipe
+from random import randint
 
 # Librairies spéciales
 #======================
@@ -90,7 +91,18 @@ def main():
 
     # 0 = Exploration
     # 1 = Combat
+    # 2 = ???
+    # 3 = Profit
     mode = 0
+
+    # Initialisation des moteurs. La variable manoeuvre sert à s'assurer qu'une
+    # manoeuvre est maintenue pendant suffisamment de temps pour être efficace
+    # (par exemple tourner). C'est un peu comme une hystérésie aléatoire. Il
+    # s'agit d'incréments de 100ms (dépend de l'endroit où elle est utilisée
+    # dans la boucle principale.
+    m = Moteurs()
+    manoeuvre = 0
+    patience = 0
 
     # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
     # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
@@ -98,6 +110,7 @@ def main():
     count_10ms = 0
     count_100ms = 0
     count_1000ms = 0
+
     while True:
 
         # S'exécute toutes les 10ms
@@ -109,10 +122,16 @@ def main():
                 impact = bumpers_parent_conn.recv()
                 msg(impact, args)
 
+                # À développer
+                m.arret()
+
             # Détection
             if cmucam_parent_conn.poll():
                 detection = cmucam_parent_conn.recv()
                 msg(detection, args)
+
+                # À développer
+                pass
 
             pass
 
@@ -122,11 +141,62 @@ def main():
 
             # Exploration
             if mode == 0:
-                avant_milieu = gp2d12.get_dist('AIN0')
-                avant_gauche = gp2d12.get_dist('AIN1')
-                avant_droite = gp2d12.get_dist('AIN2')
+                av_mi = gp2d12.get_dist('AIN0') # Avant milieu
+                av_ga = gp2d12.get_dist('AIN1') # Avant gauche
+                av_dr = gp2d12.get_dist('AIN2') # Avant droite
 
-            pass
+                # Manoeuvre en cours
+                if manoeuvre > 0:
+                    manoeuvre -= 1
+
+                else:
+                    # Obstacle devant et à gauche
+                    if av_mi < 60 and av_ga < 60 and av_dr > 60:
+                        m.tourne_droite()
+                        manoeuvre = 5 + randing(0, 5)
+
+                    # Obstacle devant et à droite
+                    elif av_mi < 60 and av_dr < 60 and av_ga > 60:
+                        m.tourne_gauche()
+                        manoeuvre = 5 + randing(0, 5)
+
+                    # Obstacle devant, à droite et à gauche
+                    elif av_mi < 60 and av_dr < 60 and av_ga < 60:
+                        i = randint(0, 1)
+                        if i == 0:
+                            m.tourne_gauche()
+                        else:
+                            m.tourne_droite()
+                        manoeuvre = 5 + randint(0, 5)
+
+                    # Obstacle devant uniquement
+                    elif av_mi < 60 and av_dr > 60 and av_ga > 60:
+                        i = randint(0, 1)
+                        if i == 0:
+                            m.tourne_gauche()
+                        else:
+                            m.tourne_droite()
+                        manoeuvre = 5 + randint(0, 5)
+
+                    # Aucun obstacle en avant
+                    else:
+
+                        # C'est trop tranquille
+                        if patience < 0:
+                            i = randint, 1)
+                            if i == 0:
+                                m.tourne_gauche()
+                            else:
+                                m.tourne_droite()
+                            manoeuvre = 5 + randint(0, 15)
+                            patience = 200 + randint(0, 200)
+
+                        # Rien à l'horizon
+                        else:
+                            m.avance()
+                            patience -= 1
+
+           pass
 
         # S'exécute toutes les 1s
         if count_1000ms == 1000:

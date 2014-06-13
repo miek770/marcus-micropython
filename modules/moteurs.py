@@ -28,6 +28,8 @@ class Moteurs:
         set_output('P9_16')
         set_output('P9_21')
 
+        self.etat = None
+
         self.arret()
 
     # Fonctions globales
@@ -35,26 +37,32 @@ class Moteurs:
     def avance(self):
         self.droit_avance()
         self.gauche_avance()
+        self.etat = 'av'
 
     def recule(self):
         self.droit_recule()
         self.gauche_recule()
+        self.etat = 're'
 
     def freine(self):
         self.droit_freine()
         self.gauche_freine()
+        self.etat = 'fr'
 
     def arret(self):
         self.droit_arret()
         self.gauche_arret()
+        self.etat = 'ar'
 
     def tourne_droite(self):
         self.droit_recule()
         self.gauche_avance()
+        self.etat = 'td'
 
     def tourne_gauche(self):
         self.droit_avance()
         self.gauche_recule()
+        self.etat = 'tg'
 
     # Fonctions par moteur
     #======================
