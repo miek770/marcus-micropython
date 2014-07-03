@@ -100,7 +100,7 @@ def main():
     # (par exemple tourner). C'est un peu comme une hystérésie aléatoire. Il
     # s'agit d'incréments de 100ms (dépend de l'endroit où elle est utilisée
     # dans la boucle principale.
-    m = Moteurs()
+    m = Moteurs(args)
     manoeuvre = 0
     patience = 0
 
@@ -152,29 +152,37 @@ def main():
                 else:
                     # Obstacle devant et à gauche
                     if av_mi < 60 and av_ga < 60 and av_dr > 60:
+                        msg('Obstacle devant et à gauche, tourne a droite', args)
                         m.tourne_droite()
-                        manoeuvre = 5 + randing(0, 5)
+                        manoeuvre = 5 + randint(0, 5)
 
                     # Obstacle devant et à droite
                     elif av_mi < 60 and av_dr < 60 and av_ga > 60:
+                        msg('Obstacle devant et à droite, tourne a gauche', args)
                         m.tourne_gauche()
-                        manoeuvre = 5 + randing(0, 5)
+                        manoeuvre = 5 + randint(0, 5)
 
                     # Obstacle devant, à droite et à gauche
                     elif av_mi < 60 and av_dr < 60 and av_ga < 60:
+                        msg('Obstacle devant, à droite et à gauche', args)
                         i = randint(0, 1)
                         if i == 0:
+                            msg('Tourne a gauche', args)
                             m.tourne_gauche()
                         else:
+                            msg('Tourne a droite', args)
                             m.tourne_droite()
                         manoeuvre = 5 + randint(0, 5)
 
                     # Obstacle devant uniquement
                     elif av_mi < 60 and av_dr > 60 and av_ga > 60:
+                        msg('Obstacle devant uniquement', args)
                         i = randint(0, 1)
                         if i == 0:
+                            msg('Tourne a gauche', args)
                             m.tourne_gauche()
                         else:
+                            msg('Tourne a droite', args)
                             m.tourne_droite()
                         manoeuvre = 5 + randint(0, 5)
 
@@ -183,20 +191,24 @@ def main():
 
                         # C'est trop tranquille
                         if patience < 0:
-                            i = randint, 1)
+                            msg('Trop tranquille', args)
+                            i = randint(0, 1)
                             if i == 0:
+                                msg('Tourne a gauche', args)
                                 m.tourne_gauche()
                             else:
+                                msg('Tourne a droite', args)
                                 m.tourne_droite()
                             manoeuvre = 5 + randint(0, 15)
                             patience = 200 + randint(0, 200)
 
                         # Rien à l'horizon
                         else:
+                            msg('.', args)
                             m.avance()
                             patience -= 1
 
-           pass
+            pass
 
         # S'exécute toutes les 1s
         if count_1000ms == 1000:

@@ -3,7 +3,7 @@
 
 # Librairies spéciales
 #======================
-#from pins import *
+from pins import set_output, set_low, set_high
 
 # P9_12 - Direction moteur droit
 # P9_13 - Direction moteur droit
@@ -20,13 +20,16 @@ class Moteurs:
 
     # Initialisation
     #================
-    def __init__(self):
-        set_output('P9_12')
-        set_output('P9_13')
-        set_output('P9_14')
-        set_output('P9_15')
-        set_output('P9_16')
-        set_output('P9_21')
+    def __init__(self, args):
+
+        self.args = args
+
+        set_output('P9_12', self.args)
+        set_output('P9_13', self.args)
+        set_output('P9_14', self.args)
+        set_output('P9_15', self.args)
+        set_output('P9_16', self.args)
+        set_output('P9_21', self.args)
 
         self.etat = None
 
@@ -67,38 +70,38 @@ class Moteurs:
     # Fonctions par moteur
     #======================
     def droit_arret(self):
-        set_low('P9_14') # Disable
+        set_low('P9_14', self.args) # Disable
 
     def droit_freine(self):
-        set_high('P9_12')
-        set_high('P9_13')
-        set_high('P9_14') # Enable
-
-    def droit_avance(self):
-        set_low('P9_12')
-        set_high('P9_13')
-        set_high('P9_14') # Enable
+        set_high('P9_12', self.args)
+        set_high('P9_13', self.args)
+        set_high('P9_14', self.args) # Enable
 
     def droit_recule(self):
-        set_high('P9_12')
-        set_low('P9_13')
-        set_high('P9_14') # Enable
+        set_low('P9_12', self.args)
+        set_high('P9_13', self.args)
+        set_high('P9_14', self.args) # Enable
+
+    def droit_avance(self):
+        set_high('P9_12', self.args)
+        set_low('P9_13', self.args)
+        set_high('P9_14', self.args) # Enable
 
     def gauche_arret(self):
-        set_low('P9_16') # Disable
+        set_low('P9_16', self.args) # Disable
 
     def gauche_freine(self):
-        set_high('P9_15')
-        set_high('P9_21')
-        set_high('P9_16') # Enable
-
-    def gauche_avance(self):
-        set_high('P9_15')
-        set_low('P9_21')
-        set_high('P9_16') # Enable
+        set_high('P9_15', self.args)
+        set_high('P9_21', self.args)
+        set_high('P9_16', self.args) # Enable
 
     def gauche_recule(self):
-        set_low('P9_15')
-        set_high('P9_21')
-        set_high('P9_16') # Enable
+        set_high('P9_15', self.args)
+        set_low('P9_21', self.args)
+        set_high('P9_16', self.args) # Enable
+
+    def gauche_avance(self):
+        set_low('P9_15', self.args)
+        set_high('P9_21', self.args)
+        set_high('P9_16', self.args) # Enable
 

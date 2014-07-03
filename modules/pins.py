@@ -35,61 +35,61 @@ import Adafruit_BBIO.ADC as ADC
 # Dictionnaire de pins digitales
 #================================
 
-# pins[index] = (in/out, 0/1)
+# pins[index] = in/out
 
 pins = dict()
-pins['P8_7'] = (None, None)
-pins['P8_8'] = (None, None)
-pins['P8_9'] = (None, None)
-pins['P8_10'] = (None, None)
-pins['P8_11'] = (None, None)
-pins['P8_12'] = (None, None)
-pins['P8_13'] = (None, None) # Peut être utilisée en PWM
-pins['P8_14'] = (None, None)
-pins['P8_15'] = (None, None)
-pins['P8_16'] = (None, None)
-pins['P8_17'] = (None, None)
-pins['P8_18'] = (None, None)
-pins['P8_19'] = (None, None) # Peut être utilisée en PWM
-pins['P8_26'] = (None, None) # Non-testée
-pins['P8_27'] = (None, None) # Non-testée
-pins['P8_28'] = (None, None) # Non-testée
-pins['P8_29'] = (None, None) # Non-testée
-pins['P8_30'] = (None, None) # Non-testée
-pins['P8_31'] = (None, None) # Non-testée
-pins['P8_32'] = (None, None) # Non-testée
-pins['P8_33'] = (None, None) # Non-testée
-pins['P8_34'] = (None, None) # Non-testée
-pins['P8_35'] = (None, None) # Non-testée
-pins['P8_36'] = (None, None) # Non-testée
-pins['P8_37'] = (None, None) # Non-testée
-pins['P8_38'] = (None, None) # Non-testée
-pins['P8_39'] = (None, None) # Non-testée
-pins['P8_40'] = (None, None) # Non-testée
-pins['P8_41'] = (None, None) # Non-testée
-pins['P8_42'] = (None, None) # Non-testée
-pins['P8_43'] = (None, None) # Non-testée
-pins['P8_44'] = (None, None) # Non-testée
-pins['P8_45'] = (None, None) # Non-testée
-pins['P8_46'] = (None, None) # Non-testée
-pins['P9_11'] = (None, None)
-pins['P9_12'] = (None, None) # Direction moteur droit
-pins['P9_13'] = (None, None) # Direction moteur droit
-pins['P9_14'] = (None, None) # Enable moteur droit (PWM)
-pins['P9_15'] = (None, None) # Direction moteur gauche
-pins['P9_16'] = (None, None) # Enable moteur gauche (PWM)
-pins['P9_21'] = (None, None) # Direction moteur gauche
-pins['P9_22'] = (None, None)
-pins['P9_23'] = (None, None)
-pins['P9_24'] = (None, None)
-pins['P9_25'] = (None, None)
-pins['P9_26'] = (None, None)
-pins['P9_27'] = (None, None)
-pins['P9_28'] = (None, None)
-pins['P9_29'] = (None, None)
-pins['P9_30'] = (None, None)
-pins['P9_31'] = (None, None)
-pins['P9_42'] = (None, None)
+pins['P8_7'] = None
+pins['P8_8'] = None
+pins['P8_9'] = None
+pins['P8_10'] = None
+pins['P8_11'] = None
+pins['P8_12'] = None
+pins['P8_13'] = None # Peut être utilisée en PWM
+pins['P8_14'] = None
+pins['P8_15'] = None
+pins['P8_16'] = None
+pins['P8_17'] = None
+pins['P8_18'] = None
+pins['P8_19'] = None # Peut être utilisée en PWM
+pins['P8_26'] = None # Non-testée
+pins['P8_27'] = None # Non-testée
+pins['P8_28'] = None # Non-testée
+pins['P8_29'] = None # Non-testée
+pins['P8_30'] = None # Non-testée
+pins['P8_31'] = None # Non-testée
+pins['P8_32'] = None # Non-testée
+pins['P8_33'] = None # Non-testée
+pins['P8_34'] = None # Non-testée
+pins['P8_35'] = None # Non-testée
+pins['P8_36'] = None # Non-testée
+pins['P8_37'] = None # Non-testée
+pins['P8_38'] = None # Non-testée
+pins['P8_39'] = None # Non-testée
+pins['P8_40'] = None # Non-testée
+pins['P8_41'] = None # Non-testée
+pins['P8_42'] = None # Non-testée
+pins['P8_43'] = None # Non-testée
+pins['P8_44'] = None # Non-testée
+pins['P8_45'] = None # Non-testée
+pins['P8_46'] = None # Non-testée
+pins['P9_11'] = None
+pins['P9_12'] = None # Direction moteur droit
+pins['P9_13'] = None # Direction moteur droit
+pins['P9_14'] = None # Enable moteur droit (PWM)
+pins['P9_15'] = None # Direction moteur gauche
+pins['P9_16'] = None # Enable moteur gauche (PWM)
+pins['P9_21'] = None # Direction moteur gauche
+pins['P9_22'] = None
+pins['P9_23'] = None
+pins['P9_24'] = None
+pins['P9_25'] = None
+pins['P9_26'] = None
+pins['P9_27'] = None
+pins['P9_28'] = None
+pins['P9_29'] = None
+pins['P9_30'] = None
+pins['P9_31'] = None
+pins['P9_42'] = None
 
 # Pins analogiques
 #==================
@@ -108,11 +108,10 @@ pins['P9_42'] = (None, None)
 #===============================================================================
 def set_low(pin, args):
     # Vérifie si la pin est configurée en sortie
-    if pins[pin][0] == 'out':
+    if pins[pin] == 'out':
         GPIO.output(pin, GPIO.LOW)
-        pins[pin][1] = 0
 
-    elif pins[pin][0] == 'in':
+    elif pins[pin] == 'in':
         msg('Erreur : ' + pin + ' est configurée en entrée.', args)
 
     else:
@@ -124,11 +123,10 @@ def set_low(pin, args):
 #===============================================================================
 def set_high(pin, args):
     # Vérifie si la pin est configurée en sortie
-    if pins[pin][0] == 'out':
+    if pins[pin] == 'out':
         GPIO.output(pin, GPIO.HIGH)
-        pins[pin][1] = 1
 
-    elif pins[pin][0] == 'in':
+    elif pins[pin] == 'in':
         msg('Erreur : ' + pin + ' est configurée en entrée.', args)
 
     else:
@@ -140,7 +138,7 @@ def set_high(pin, args):
 #===============================================================================
 def set_output(pin, args):
     GPIO.setup(pin, GPIO.OUT)
-    pins[pin][0] = 'out'
+    pins[pin] = 'out'
 
     # Met la pin à 3.3V (high) par défaut
     set_high(pin, args)
@@ -151,7 +149,7 @@ def set_output(pin, args):
 #===============================================================================
 def set_input(pin, args):
     GPIO.setup(pin, GPIO.IN)
-    pins[pin][0] = 'in'
+    pins[pin] = 'in'
 
 #===============================================================================
 # Fonction :    get_adc(pin)
