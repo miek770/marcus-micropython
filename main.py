@@ -150,17 +150,29 @@ def main():
                     manoeuvre -= 1
 
                 else:
+                    # Obstacle à gauche
+                    if av_mi > 60 and av_ga < 60 and av_dr > 60:
+                        msg('Obstacle à gauche, tourne a droite', args)
+                        m.tourne_droite()
+                        manoeuvre = 1 + randint(0, 1)
+
                     # Obstacle devant et à gauche
                     if av_mi < 60 and av_ga < 60 and av_dr > 60:
                         msg('Obstacle devant et à gauche, tourne a droite', args)
                         m.tourne_droite()
-                        manoeuvre = 5 + randint(0, 5)
+                        manoeuvre = 2 + randint(0, 2)
+
+                    # Obstacle à droite
+                    elif av_mi > 60 and av_dr < 60 and av_ga > 60:
+                        msg('Obstacle à droite, tourne a gauche', args)
+                        m.tourne_gauche()
+                        manoeuvre = 1 + randint(0, 1)
 
                     # Obstacle devant et à droite
                     elif av_mi < 60 and av_dr < 60 and av_ga > 60:
                         msg('Obstacle devant et à droite, tourne a gauche', args)
                         m.tourne_gauche()
-                        manoeuvre = 5 + randint(0, 5)
+                        manoeuvre = 2 + randint(0, 2)
 
                     # Obstacle devant, à droite et à gauche
                     elif av_mi < 60 and av_dr < 60 and av_ga < 60:
@@ -172,7 +184,7 @@ def main():
                         else:
                             msg('Tourne a droite', args)
                             m.tourne_droite()
-                        manoeuvre = 5 + randint(0, 5)
+                        manoeuvre = 3 + randint(0, 3)
 
                     # Obstacle devant uniquement
                     elif av_mi < 60 and av_dr > 60 and av_ga > 60:
@@ -184,7 +196,7 @@ def main():
                         else:
                             msg('Tourne a droite', args)
                             m.tourne_droite()
-                        manoeuvre = 5 + randint(0, 5)
+                        manoeuvre = 2 + randint(0, 2)
 
                     # Aucun obstacle en avant
                     else:
@@ -199,7 +211,7 @@ def main():
                             else:
                                 msg('Tourne a droite', args)
                                 m.tourne_droite()
-                            manoeuvre = 5 + randint(0, 15)
+                            manoeuvre = 5 + randint(0, 5)
                             patience = 200 + randint(0, 200)
 
                         # Rien à l'horizon

@@ -69,38 +69,38 @@ class Moteurs:
 
     # Fonctions par moteur
     #======================
-    def droit_arret(self):
+    def gauche_arret(self):
         set_low('P9_14', self.args) # Disable
 
-    def droit_freine(self):
+    def gauche_freine(self):
         set_high('P9_12', self.args)
         set_high('P9_13', self.args)
         set_high('P9_14', self.args) # Enable
 
-    def droit_recule(self):
+    def gauche_recule(self):
         set_low('P9_12', self.args)
         set_high('P9_13', self.args)
         set_high('P9_14', self.args) # Enable
 
-    def droit_avance(self):
+    def gauche_avance(self):
         set_high('P9_12', self.args)
         set_low('P9_13', self.args)
         set_high('P9_14', self.args) # Enable
 
-    def gauche_arret(self):
+    def droit_arret(self):
         set_low('P9_16', self.args) # Disable
 
-    def gauche_freine(self):
+    def droit_freine(self):
         set_high('P9_15', self.args)
         set_high('P9_21', self.args)
         set_high('P9_16', self.args) # Enable
 
-    def gauche_recule(self):
+    def droit_recule(self):
         set_high('P9_15', self.args)
         set_low('P9_21', self.args)
         set_high('P9_16', self.args) # Enable
 
-    def gauche_avance(self):
+    def droit_avance(self):
         set_low('P9_15', self.args)
         set_high('P9_21', self.args)
         set_high('P9_16', self.args) # Enable
