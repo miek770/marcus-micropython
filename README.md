@@ -4,6 +4,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 ## Prochaines tâches
 
+- Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
 - Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
 - Créer un module "mémoire" avec SQLite3;
 - Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);
