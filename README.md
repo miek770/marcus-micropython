@@ -4,17 +4,17 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 
 ## Prochaines tâches
 
-- Déterminer de quelle façon inclure le "raisonnement" du robot au programme de base (main.py);
+- Ajouter une option (argument) pour arrêter l'exécution si un bumper est actionné;
 - Créer un module "mémoire" avec SQLite3;
 - Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);
 - Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider). De toute façon il suffit de monter le circuit de contrôle de l'alimentation de la CMUCam que j'ai développé pour lui donner son alimentation au moment opportun;
-- Ajouter une lecture de la tension de la batterie pour faire un historique (l'enregistrer dans la base de données) et soulever une alarme lorsque le niveau est critique.
+- Ajouter une lecture de la tension de la batterie pour faire un historique (l'enregistrer dans la base de données) et soulever une alarme lorsque le niveau est critique. J'ai eu un problème dernièrement, la batterie a duré seulement quelques minutes après une recharge complète et le BBB s'est éteint. Je crois que la batterie est vieille et je vais la remplacer pour une de plus grande capacité mais si le problème se répète je devrai ajouter une batterie indépendante pour l'électronique.
 
 ## Guide d'installation BBB - Marcus 3
 
 Faire attention, le guide n'est pas parfaitement chronologique et pourrait être pas mal amélioré, mais c'est #1 pour quelqu'un qui sait ce qu'il fait :)
 
-Ne pas oublier le (après avoir installé git naturellement). Le virtualenv2 peut être créé après :
+Ne pas oublier le dépôt (après avoir installé git naturellement). Le virtualenv2 peut être créé après :
 
         git clone https://github.com/miek770/marcus-base.git /root/marcus
 
