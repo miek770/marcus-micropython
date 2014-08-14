@@ -5,6 +5,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 ## Prochaines tâches
 
 - Ajouter une option (argument) pour arrêter l'exécution si un bumper est actionné;
+- Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
 - Créer un module "mémoire" avec SQLite3;
 - Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);
 - Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider). De toute façon il suffit de monter le circuit de contrôle de l'alimentation de la CMUCam que j'ai développé pour lui donner son alimentation au moment opportun;
