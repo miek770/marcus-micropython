@@ -103,6 +103,7 @@ def main():
     m = Moteurs(args)
     manoeuvre = 0
     patience = 0
+    seuil = 45 # en cm
 
     # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
     # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
@@ -151,31 +152,31 @@ def main():
 
                 else:
                     # Obstacle à gauche
-                    if av_mi > 60 and av_ga < 60 and av_dr > 60:
+                    if av_mi > seuil and av_ga < seuil and av_dr > seuil:
                         msg('Obstacle à gauche, tourne a droite', args)
                         m.tourne_droite()
                         manoeuvre = 1 + randint(0, 1)
 
                     # Obstacle devant et à gauche
-                    if av_mi < 60 and av_ga < 60 and av_dr > 60:
+                    if av_mi < seuil and av_ga < seuil and av_dr > seuil:
                         msg('Obstacle devant et à gauche, tourne a droite', args)
                         m.tourne_droite()
-                        manoeuvre = 2 + randint(0, 2)
+                        manoeuvre = 1 + randint(0, 2)
 
                     # Obstacle à droite
-                    elif av_mi > 60 and av_dr < 60 and av_ga > 60:
+                    elif av_mi > seuil and av_dr < seuil and av_ga > seuil:
                         msg('Obstacle à droite, tourne a gauche', args)
                         m.tourne_gauche()
                         manoeuvre = 1 + randint(0, 1)
 
                     # Obstacle devant et à droite
-                    elif av_mi < 60 and av_dr < 60 and av_ga > 60:
+                    elif av_mi < seuil and av_dr < seuil and av_ga > seuil:
                         msg('Obstacle devant et à droite, tourne a gauche', args)
                         m.tourne_gauche()
-                        manoeuvre = 2 + randint(0, 2)
+                        manoeuvre = 1 + randint(0, 2)
 
                     # Obstacle devant, à droite et à gauche
-                    elif av_mi < 60 and av_dr < 60 and av_ga < 60:
+                    elif av_mi < seuil and av_dr < seuil and av_ga < seuil:
                         msg('Obstacle devant, à droite et à gauche', args)
                         i = randint(0, 1)
                         if i == 0:
@@ -184,10 +185,10 @@ def main():
                         else:
                             msg('Tourne a droite', args)
                             m.tourne_droite()
-                        manoeuvre = 3 + randint(0, 3)
+                        manoeuvre = 1 + randint(0, 3)
 
                     # Obstacle devant uniquement
-                    elif av_mi < 60 and av_dr > 60 and av_ga > 60:
+                    elif av_mi < seuil and av_dr > seuil and av_ga > seuil:
                         msg('Obstacle devant uniquement', args)
                         i = randint(0, 1)
                         if i == 0:
@@ -196,7 +197,7 @@ def main():
                         else:
                             msg('Tourne a droite', args)
                             m.tourne_droite()
-                        manoeuvre = 2 + randint(0, 2)
+                        manoeuvre = 1 + randint(0, 2)
 
                     # Aucun obstacle en avant
                     else:
@@ -211,7 +212,7 @@ def main():
                             else:
                                 msg('Tourne a droite', args)
                                 m.tourne_droite()
-                            manoeuvre = 5 + randint(0, 5)
+                            manoeuvre = 3 + randint(0, 5)
                             patience = 200 + randint(0, 200)
 
                         # Rien à l'horizon
