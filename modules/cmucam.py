@@ -19,7 +19,7 @@ class Cmucam:
     # Initialisation
     #================
     def __init__(self):
-        self.ser = serial.Serial('/dev/ttyO0')
+        self.ser = serial.Serial('/dev/ttyO1')
         self.ser.baudrate = 115200
         self.ser.bytesize = 8
         self.ser.parity = 'N'

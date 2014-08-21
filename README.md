@@ -10,7 +10,7 @@ Hey bro, voici quelques instructions, notes et rappel que je prévois surtout ut
 - Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
 - Créer un module "mémoire" avec SQLite3;
 - Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);
-- Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider). De toute façon il suffit de monter le circuit de contrôle de l'alimentation de la CMUCam que j'ai développé pour lui donner son alimentation au moment opportun;
+- [Probablement réglé par le premier item de la liste] Le BBB ne démarre pas si la caméra est alimentée. Je crois que la pin Rx est responsable, elle devrait être à zéro au démarrage plutôt qu'à 3.3V (à valider). De toute façon il suffit de monter le circuit de contrôle de l'alimentation de la CMUCam que j'ai développé pour lui donner son alimentation au moment opportun;
 - Ajouter une lecture de la tension de la batterie pour faire un historique (l'enregistrer dans la base de données) et soulever une alarme lorsque le niveau est critique. J'ai eu un problème dernièrement, la batterie a duré seulement quelques minutes après une recharge complète et le BBB s'est éteint. Je crois que la batterie est vieille et je vais la remplacer pour une de plus grande capacité mais si le problème se répète je devrai ajouter une batterie indépendante pour l'électronique.
 
 ## Guide d'installation BBB - Marcus 3
@@ -94,4 +94,13 @@ Par contre ça ne règle rien pour le moment, la prochaine étape est d'installe
 
 #### systemd-getty-generator
 
+Cette section pourrrait être rendue inutile puisque j'ai remplacé ttyO0 par ttyO1. À valider.
+
 Le générateur 'systemd-getty-generator' doit être désactivé pour permettre l'utilisation du port série /dev/ttyO0 (pour communiquer avec la CMUCam2+). Malheureusement la seule façon que j'ai trouvée pour le désactiver est d'effacer le fichier binaire dans /usr/lib/systemd/system-generators et de l'exclure de pacman (NoExtract = usr/lib/systemd/system-generators/systemd-getty-generator dans /etc/pacman.conf).
+
+#### uEnv.txt
+
+Ajouter le texte suivant à la dernière ligne de uEnv.txt (sur la partition de démarrage), après optargs :
+
+        ; capemgr.enable_partno=BB-UART1
+
