@@ -5,3 +5,4 @@ include/
 *.pyc
 *.jpg
 modules/tc.txt
+*~
