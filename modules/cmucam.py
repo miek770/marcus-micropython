@@ -8,6 +8,7 @@ import re
 
 # Librairies spéciales
 #======================
+import Adafruit_BBIO.UART as UART
 import serial
 
 #===============================================================================
@@ -19,6 +20,7 @@ class Cmucam:
     # Initialisation
     #================
     def __init__(self):
+        UART.setup('UART1')
         self.ser = serial.Serial('/dev/ttyO1')
         self.ser.baudrate = 115200
         self.ser.bytesize = 8
