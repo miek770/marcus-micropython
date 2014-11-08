@@ -38,10 +38,10 @@ import Adafruit_BBIO.ADC as ADC
 # pins[index] = in/out
 
 pins = dict()
-pins['P8_7'] = None
-pins['P8_8'] = None
-pins['P8_9'] = None
-pins['P8_10'] = None
+pins['P8_7'] = None # Bumper - Avant droit
+pins['P8_8'] = None # Bumper - Avant gauche
+pins['P8_9'] = None # Bumper - Arrière droit
+pins['P8_10'] = None # Bumper - Arrière gauche
 pins['P8_11'] = None
 pins['P8_12'] = None
 pins['P8_13'] = None # Peut être utilisée en PWM
@@ -150,6 +150,13 @@ def set_output(pin, args):
 def set_input(pin, args):
     GPIO.setup(pin, GPIO.IN)
     pins[pin] = 'in'
+
+#===============================================================================
+# Fonction :    get_input(pin)
+# Description : Retourne la valeur de la pin.
+#===============================================================================
+def get_input(pin, args):
+    return GPIO.input(pin)
 
 #===============================================================================
 # Fonction :    get_adc(pin)

@@ -8,3 +8,4 @@ modules/tc.txt
 modules/*.pyc
 *~
 *.log
+ressources/#*#
