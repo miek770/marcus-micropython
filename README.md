@@ -18,15 +18,16 @@ Il y avait aussi beaucoup de problèmes avec Arch pour le BBB : librairies mal p
 - Flasher le BBB avec l'image Debian;
 - Désinstaller les programmes inutiles (Apache2, Xorg, lightdm, etc.);
 - Configurer :
+
   - Fuseau horaire;
   - Samba;
 
-        apt-get install samba
-        mv /etc/samba/smb.conf /etc/samba/smb.conf.old
-        cp /root/marcus/smb.conf /etc/samba/smb.conf
-        testparm /etc/samba/smb.conf
-        systemctl start smbd
-        systemctl enable smbd
+            apt-get install samba
+            mv /etc/samba/smb.conf /etc/samba/smb.conf.old
+            cp /root/marcus/smb.conf /etc/samba/smb.conf
+            testparm /etc/samba/smb.conf
+            systemctl start smbd
+            systemctl enable smbd
 
   - Locales;
   - Hostname;
@@ -35,4 +36,3 @@ Il y avait aussi beaucoup de problèmes avec Arch pour le BBB : librairies mal p
   - bash;
   - marcus.service;
   - uEnv.txt.
-
