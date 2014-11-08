@@ -37,6 +37,197 @@ from modules import gp2d12
 from modules.moteurs import Moteurs
 from modules.pins import *
 
+class Marcus:
+
+    # Initialisation et sous-routines
+    #=================================
+    def __init__(self, args):
+        self.args = args
+
+        if self.args.logfile:
+            logging.basicConfig(filename=self.args.logfile,
+                                format='%(asctime)s[%(levelname)s] %(message)s',
+                                datefmt='%Y/%m/%d %H:%M:%S ',
+                                level=logging.DEBUG)
+
+            msg('Logger initié : ' + self.args.logfile, self.args)
+
+        msg('Programme lancé.', self.args)
+
+        # Bumpers
+        self.bumpers_parent_conn, self.bumpers_child_conn = Pipe()
+        self.bumpers_sub = Process(target=bumpers.scan, args=(self.bumpers_child_conn, self.args))
+        self.bumpers_sub.start()
+        msg('Sous-routine lancée : bumpers_sub', self.args)
+
+        # CMUCam2+
+        self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
+        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
+        self.cmucam_sub.start()
+        msg('Sous-routine lancée : cmucam_sub', self.args)
+
+#        sleep(3.0) # Attend avant de lire la couleur à tracker
+#        cmucam_parent_conn.send('track_mean')
+#        sleep(0.5)
+#        cmucam_parent_conn.send('track_on')
+
+    # Arrêt
+    #=======
+    def quit(self):
+        self.m.arret()
+        self.bumpers_sub.terminate()
+        self.cmucam_sub.terminate()
+        sys.exit()
+
+    # Boucle principale
+    #===================
+    def loop(self):
+        # 0 = Exploration
+        # 1 = Combat
+        # 2 = ???
+        # 3 = Profit
+        self.mode = 0
+
+        # Initialisation des moteurs. La variable manoeuvre sert à s'assurer qu'une
+        # manoeuvre est maintenue pendant suffisamment de temps pour être efficace
+        # (par exemple tourner). C'est un peu comme une hystérésie aléatoire. Il
+        # s'agit d'incréments de 100ms (dépend de l'endroit où elle est utilisée
+        # dans la boucle principale.
+        self.m = Moteurs(self.args)
+        self.manoeuvre = 0
+        self.patience = 0
+        self.seuil = 45 # en cm
+
+        # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
+        # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
+        # élevés).
+        self.count_10ms = 0
+        self.count_100ms = 0
+        self.count_1000ms = 0
+
+        while True:
+
+            # S'exécute toutes les 10ms
+            if self.count_10ms == 10:
+                self.count_10ms = 0
+
+                # Collision
+                if self.bumpers_parent_conn.poll():
+                    self.impact = self.bumpers_parent_conn.recv()
+                    msg(self.impact, self.args)
+
+                    # À développer (collision sur False)
+                    if False in self.impact:
+                        self.quit()
+
+                # Détection
+                if self.cmucam_parent_conn.poll():
+                    self.detection = self.cmucam_parent_conn.recv()
+                    msg(self.detection, self.args)
+
+                    # À développer
+                    pass
+
+                pass
+
+            # S'exécute toutes les 100ms
+            if self.count_100ms == 100:
+                self.count_100ms = 0
+
+                # Exploration
+                if self.mode == 0:
+                    self.av_mi = gp2d12.get_dist('AIN0') # Avant milieu
+                    self.av_ga = gp2d12.get_dist('AIN1') # Avant gauche
+                    self.av_dr = gp2d12.get_dist('AIN2') # Avant droite
+
+                    # Manoeuvre en cours
+                    if self.manoeuvre > 0:
+                        self.manoeuvre -= 1
+
+                    else:
+                        # Obstacle à gauche
+                        if self.av_mi > self.seuil and self.av_ga < self.seuil and self.av_dr > self.seuil:
+                            msg('Obstacle à gauche, tourne a droite', self.args)
+                            self.m.tourne_droite()
+                            self.manoeuvre = 1 + randint(0, 1)
+
+                        # Obstacle devant et à gauche
+                        if self.av_mi < self.seuil and self.av_ga < self.seuil and self.av_dr > self.seuil:
+                            msg('Obstacle devant et à gauche, tourne a droite', self.args)
+                            self.m.tourne_droite()
+                            self.manoeuvre = 1 + randint(0, 2)
+
+                        # Obstacle à droite
+                        elif self.av_mi > self.seuil and self.av_dr < self.seuil and self.av_ga > self.seuil:
+                            msg('Obstacle à droite, tourne a gauche', self.args)
+                            self.m.tourne_gauche()
+                            self.manoeuvre = 1 + randint(0, 1)
+
+                        # Obstacle devant et à droite
+                        elif self.av_mi < self.seuil and self.av_dr < self.seuil and self.av_ga > self.seuil:
+                            msg('Obstacle devant et à droite, tourne a gauche', self.args)
+                            self.m.tourne_gauche()
+                            self.manoeuvre = 1 + randint(0, 2)
+
+                        # Obstacle devant, à droite et à gauche
+                        elif self.av_mi < self.seuil and self.av_dr < self.seuil and self.av_ga < self.seuil:
+                            msg('Obstacle devant, à droite et à gauche', self.args)
+                            i = randint(0, 1)
+                            if i == 0:
+                                msg('Tourne a gauche', self.args)
+                                self.m.tourne_gauche()
+                            else:
+                                msg('Tourne a droite', self.args)
+                                self.m.tourne_droite()
+                            self.manoeuvre = 1 + randint(0, 3)
+
+                        # Obstacle devant uniquement
+                        elif self.av_mi < self.seuil and self.av_dr > self.seuil and self.av_ga > self.seuil:
+                            msg('Obstacle devant uniquement', self.args)
+                            i = randint(0, 1)
+                            if i == 0:
+                                msg('Tourne a gauche', self.args)
+                                self.m.tourne_gauche()
+                            else:
+                                msg('Tourne a droite', self.args)
+                                self.m.tourne_droite()
+                            self.manoeuvre = 1 + randint(0, 2)
+
+                        # Aucun obstacle en avant
+                        else:
+
+                            # C'est trop tranquille
+                            if self.patience < 0:
+                                msg('Trop tranquille', self.args)
+                                i = randint(0, 1)
+                                if i == 0:
+                                    msg('Tourne a gauche', self.args)
+                                    self.m.tourne_gauche()
+                                else:
+                                    msg('Tourne a droite', self.args)
+                                    self.m.tourne_droite()
+                                self.manoeuvre = 3 + randint(0, 5)
+                                self.patience = 200 + randint(0, 200)
+
+                            # Rien à l'horizon
+                            else:
+                                msg('.', self.args)
+                                self.m.avance()
+                                self.patience -= 1
+
+                pass
+
+            # S'exécute toutes les 1s
+            if self.count_1000ms == 1000:
+                self.count_1000ms = 0
+
+                pass
+
+            self.count_10ms += 1
+            self.count_100ms += 1
+            self.count_1000ms += 1
+            sleep(0.001)
+
 #===============================================================================
 # Fonction :    main
 # Description : Routine principale
@@ -48,193 +239,15 @@ def main():
                         '--verbose',
                         action='store_true',
                         help='Imprime l\'aide sur l\'exécution du script.')
-    
+
     parser.add_argument('-l',
                         '--logfile',
                         action='store',
                         help='Spécifie le chemin du journal d\'événement.')
-    
-    args = parser.parse_args()
 
-    if args.logfile:
-        logging.basicConfig(filename=args.logfile,
-                            format='%(asctime)s[%(levelname)s] %(message)s',
-                            datefmt='%Y/%m/%d %H:%M:%S ',
-                            level=logging.DEBUG)
-
-        msg('Logger initié : ' + args.logfile, args)
-
-    msg('Programme lancé.', args)
-
-    # Lancement des sous-routines (subprocesses)
-    #============================================
-
-    # Bumpers
-    bumpers_parent_conn, bumpers_child_conn = Pipe()
-    bumpers_sub = Process(target=bumpers.scan, args=(bumpers_child_conn, args))
-    bumpers_sub.start()
-    msg('Sous-routine lancée : bumpers_sub', args)
-
-    # CMUCam2+
-    cmucam_parent_conn, cmucam_child_conn = Pipe()
-    cmucam_sub = Process(target=cmucam.cam, args=(cmucam_child_conn, args))
-    cmucam_sub.start()
-    msg('Sous-routine lancée : cmucam_sub', args)
-
-#    sleep(3.0) # Attend avant de lire la couleur à tracker
-#    cmucam_parent_conn.send('track_mean')
-#    sleep(0.5)
-#    cmucam_parent_conn.send('track_on')
-
-    # Boucle principale
-    #===================
-
-    # 0 = Exploration
-    # 1 = Combat
-    # 2 = ???
-    # 3 = Profit
-    mode = 0
-
-    # Initialisation des moteurs. La variable manoeuvre sert à s'assurer qu'une
-    # manoeuvre est maintenue pendant suffisamment de temps pour être efficace
-    # (par exemple tourner). C'est un peu comme une hystérésie aléatoire. Il
-    # s'agit d'incréments de 100ms (dépend de l'endroit où elle est utilisée
-    # dans la boucle principale.
-    m = Moteurs(args)
-    manoeuvre = 0
-    patience = 0
-    seuil = 45 # en cm
-
-    # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
-    # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
-    # élevés).
-    count_10ms = 0
-    count_100ms = 0
-    count_1000ms = 0
-
-    while True:
-
-        # S'exécute toutes les 10ms
-        if count_10ms == 10:
-            count_10ms = 0
-
-            # Collision
-            if bumpers_parent_conn.poll():
-                impact = bumpers_parent_conn.recv()
-                msg(impact, args)
-
-                # À développer
-                m.arret()
-
-            # Détection
-            if cmucam_parent_conn.poll():
-                detection = cmucam_parent_conn.recv()
-                msg(detection, args)
-
-                # À développer
-                pass
-
-            pass
-
-        # S'exécute toutes les 100ms
-        if count_100ms == 100:
-            count_100ms = 0
-
-            # Exploration
-            if mode == 0:
-                av_mi = gp2d12.get_dist('AIN0') # Avant milieu
-                av_ga = gp2d12.get_dist('AIN1') # Avant gauche
-                av_dr = gp2d12.get_dist('AIN2') # Avant droite
-
-                # Manoeuvre en cours
-                if manoeuvre > 0:
-                    manoeuvre -= 1
-
-                else:
-                    # Obstacle à gauche
-                    if av_mi > seuil and av_ga < seuil and av_dr > seuil:
-                        msg('Obstacle à gauche, tourne a droite', args)
-                        m.tourne_droite()
-                        manoeuvre = 1 + randint(0, 1)
-
-                    # Obstacle devant et à gauche
-                    if av_mi < seuil and av_ga < seuil and av_dr > seuil:
-                        msg('Obstacle devant et à gauche, tourne a droite', args)
-                        m.tourne_droite()
-                        manoeuvre = 1 + randint(0, 2)
-
-                    # Obstacle à droite
-                    elif av_mi > seuil and av_dr < seuil and av_ga > seuil:
-                        msg('Obstacle à droite, tourne a gauche', args)
-                        m.tourne_gauche()
-                        manoeuvre = 1 + randint(0, 1)
-
-                    # Obstacle devant et à droite
-                    elif av_mi < seuil and av_dr < seuil and av_ga > seuil:
-                        msg('Obstacle devant et à droite, tourne a gauche', args)
-                        m.tourne_gauche()
-                        manoeuvre = 1 + randint(0, 2)
-
-                    # Obstacle devant, à droite et à gauche
-                    elif av_mi < seuil and av_dr < seuil and av_ga < seuil:
-                        msg('Obstacle devant, à droite et à gauche', args)
-                        i = randint(0, 1)
-                        if i == 0:
-                            msg('Tourne a gauche', args)
-                            m.tourne_gauche()
-                        else:
-                            msg('Tourne a droite', args)
-                            m.tourne_droite()
-                        manoeuvre = 1 + randint(0, 3)
-
-                    # Obstacle devant uniquement
-                    elif av_mi < seuil and av_dr > seuil and av_ga > seuil:
-                        msg('Obstacle devant uniquement', args)
-                        i = randint(0, 1)
-                        if i == 0:
-                            msg('Tourne a gauche', args)
-                            m.tourne_gauche()
-                        else:
-                            msg('Tourne a droite', args)
-                            m.tourne_droite()
-                        manoeuvre = 1 + randint(0, 2)
-
-                    # Aucun obstacle en avant
-                    else:
-
-                        # C'est trop tranquille
-                        if patience < 0:
-                            msg('Trop tranquille', args)
-                            i = randint(0, 1)
-                            if i == 0:
-                                msg('Tourne a gauche', args)
-                                m.tourne_gauche()
-                            else:
-                                msg('Tourne a droite', args)
-                                m.tourne_droite()
-                            manoeuvre = 3 + randint(0, 5)
-                            patience = 200 + randint(0, 200)
-
-                        # Rien à l'horizon
-                        else:
-                            msg('.', args)
-                            m.avance()
-                            patience -= 1
-
-            pass
-
-        # S'exécute toutes les 1s
-        if count_1000ms == 1000:
-            count_1000ms = 0
-
-            pass
-
-        count_10ms += 1
-        count_100ms += 1
-        count_1000ms += 1
-        sleep(0.001)
-
-    return 0
+    marcus = Marcus(args=parser.parse_args())
+    marcus.loop()
 
 if __name__ == '__main__':
     main()
+
