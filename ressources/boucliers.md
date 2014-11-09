@@ -12,26 +12,26 @@
 
 ## Borniers d'interface
 - TB0 : Alimentation
-  1. Masse
-  2. V+
+  - 1. Masse
+  - 2. V+
 - TB1 : Contrôleur
-  3. Mort
-  4. Bouclier 1
-  5. Bouclier 2
-  6. Bouclier 3
-  7. Bouclier 4
-  8. Réinitialise
-  9. Auxiliaire 1
-  10. Auxiliaire 2
+  - 3. Mort
+  - 4. Bouclier 1
+  - 5. Bouclier 2
+  - 6. Bouclier 3
+  - 7. Bouclier 4
+  - 8. Réinitialise
+  - 9. Auxiliaire 1
+  - 10. Auxiliaire 2
 - TB2 : Boucliers
-  11. Bouclier 1A
-  12. Bouclier 1B
-  13. Bouclier 2A
-  14. Bouclier 2B
-  15. Bouclier 3A
-  16. Bouclier 3B
-  17. Bouclier 4A
-  18. Bouclier 4B
+  - 11. Bouclier 1A
+  - 12. Bouclier 1B
+  - 13. Bouclier 2A
+  - 14. Bouclier 2B
+  - 15. Bouclier 3A
+  - 16. Bouclier 3B
+  - 17. Bouclier 4A
+  - 18. Bouclier 4B
 
 ### TB0 – Alimentation
 
