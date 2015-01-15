@@ -96,7 +96,10 @@ class Marcus:
         self.m = Moteurs(self.args)
         self.manoeuvre = 0
         self.patience = 0
-        self.seuil = 45 # en cm
+
+        # Seuil de détection pour les GP2D12
+        self.seuil_avant = 45 # en cm
+        self.seuil_cote = 20 # en cm
 
         # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
         # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
@@ -189,31 +192,31 @@ class Marcus:
 
                     else:
                         # Obstacle à gauche
-                        if self.av_mi > self.seuil and self.av_ga < self.seuil and self.av_dr > self.seuil:
+                        if self.av_mi > self.seuil_avant and self.av_ga < self.seuil_cote and self.av_dr > self.seuil_cote:
                             msg('Obstacle à gauche, tourne a droite', self.args)
                             self.m.tourne_droite()
                             self.manoeuvre = 1 + randint(0, 1)
 
                         # Obstacle devant et à gauche
-                        if self.av_mi < self.seuil and self.av_ga < self.seuil and self.av_dr > self.seuil:
+                        if self.av_mi < self.seuil_avant and self.av_ga < self.seuil_cote and self.av_dr > self.seuil_cote:
                             msg('Obstacle devant et à gauche, tourne a droite', self.args)
                             self.m.tourne_droite()
                             self.manoeuvre = 1 + randint(0, 2)
 
                         # Obstacle à droite
-                        elif self.av_mi > self.seuil and self.av_dr < self.seuil and self.av_ga > self.seuil:
+                        elif self.av_mi > self.seuil_avant and self.av_dr < self.seuil_cote and self.av_ga > self.seuil_cote:
                             msg('Obstacle à droite, tourne a gauche', self.args)
                             self.m.tourne_gauche()
                             self.manoeuvre = 1 + randint(0, 1)
 
                         # Obstacle devant et à droite
-                        elif self.av_mi < self.seuil and self.av_dr < self.seuil and self.av_ga > self.seuil:
+                        elif self.av_mi < self.seuil_avant and self.av_dr < self.seuil_cote and self.av_ga > self.seuil_cote:
                             msg('Obstacle devant et à droite, tourne a gauche', self.args)
                             self.m.tourne_gauche()
                             self.manoeuvre = 1 + randint(0, 2)
 
                         # Obstacle devant, à droite et à gauche
-                        elif self.av_mi < self.seuil and self.av_dr < self.seuil and self.av_ga < self.seuil:
+                        elif self.av_mi < self.seuil_avant and self.av_dr < self.seuil_cote and self.av_ga < self.seuil_cote:
                             msg('Obstacle devant, à droite et à gauche', self.args)
                             i = randint(0, 1)
                             if i == 0:
@@ -225,7 +228,7 @@ class Marcus:
                             self.manoeuvre = 1 + randint(0, 3)
 
                         # Obstacle devant uniquement
-                        elif self.av_mi < self.seuil and self.av_dr > self.seuil and self.av_ga > self.seuil:
+                        elif self.av_mi < self.seuil_avant and self.av_dr > self.seuil_cote and self.av_ga > self.seuil_cote:
                             msg('Obstacle devant uniquement', self.args)
                             i = randint(0, 1)
                             if i == 0:
