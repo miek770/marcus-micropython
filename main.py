@@ -116,6 +116,12 @@ class Marcus:
 
                 # Collision
                 if self.bumpers_parent_conn.poll():
+
+                    # Arrête l'exécution sur tout impact (argument stop)
+                    if self.args.stop:
+                        msg("Impact détecté, arrêt du programme (argument stop).", self.args)
+                        self.quit()
+
                     self.impact = self.bumpers_parent_conn.recv()
 
                     # Impact avant droit
@@ -290,6 +296,11 @@ def main():
                         '--logfile',
                         action='store',
                         help='Spécifie le chemin du journal d\'événement.')
+
+    parser.add_argument('-s',
+                        '--stop',
+                        action='store_true',
+                        help="Arrête l'exécution lorsqu'un impact est détecté.")
 
     marcus = Marcus(args=parser.parse_args())
     marcus.loop()
