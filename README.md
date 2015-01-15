@@ -4,22 +4,16 @@ Cette branche sert à faire la migration de Arch vers Debian pour le Beaglebone 
 
 Il y avait aussi beaucoup de problèmes avec Arch pour le BBB : librairies mal placées, synchronisation qui "timeout" avec pacman, DTO qui plante si on tente de retirer un module, etc.
 
-## Notes
-
-- Activer une entrée de bumper pour interrompre le programme proprement.
-
 ## Prochaines tâches
 
-- Installer la CMUCam2+ sur le chassis;
-- Raccorder les bumpers et leur circuit de pull-up;
+- Intégrer les bumpers à la logique du robot;
 - Réduire le seuil de détection des GP2D12 sur les côtés, et l'augmenter ou le garder tel quel en avant. Autrement le robot a de la difficulté à circuler dans un corridor étroit sans être "distrait" par les murs;
 - Ajouter une option (argument) pour arrêter l'exécution si un bumper est actionné;
 - Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
 - Créer un module "mémoire" avec SQLite3;
-- Songer à créer un environnement virtuel pour simuler le fonctionnement du robot (probablement lorsque la plateforme de base sera beaucoup plus avancée);
 - Ajouter une lecture de la tension de la batterie pour faire un historique (l'enregistrer dans la base de données) et soulever une alarme lorsque le niveau est critique. J'ai eu un problème dernièrement, la batterie a duré seulement quelques minutes après une recharge complète et le BBB s'est éteint. Je crois que la batterie est vieille et je vais la remplacer pour une de plus grande capacité mais si le problème se répète je devrai ajouter une batterie indépendante pour l'électronique.
 
-### Installation
+## Installation
 
 - Flasher le BBB avec l'image Debian;
 - Désinstaller les programmes inutiles (Apache2, Xorg, lightdm, etc.);
