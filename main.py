@@ -114,12 +114,55 @@ class Marcus:
                 # Collision
                 if self.bumpers_parent_conn.poll():
                     self.impact = self.bumpers_parent_conn.recv()
-                    msg(self.impact, self.args)
 
-                    # À développer (collision sur False)
-                    if False in self.impact:
-                        self.quit()
+                    # Impact avant droit
+                    if self.impact[0] and not self.impact[1]:
+                        msg('Impact avant droit, recule et tourne à gauche', self.args)
+                        self.m.freine()
+                        sleep(0.2)
+                        self.m.recule()
+                        sleep(0.5)
+                        self.m.tourne_gauche()
+                        self.manoeuvre = 1 + randint(0, 1)
 
+                    # Impact avant droit et gauche
+                    elif self.impact[0] and self.impact[1]:
+                        msg('Impact avant droit, recule...', self.args)
+                        self.m.freine()
+                        sleep(0.2)
+                        self.m.recule()
+                        sleep(0.5)
+                        i = randint(0, 1)
+                        if i == 0:
+                            msg('et tourne à gauche', self.args)
+                            self.m.tourne_gauche()
+                        else:
+                            msg('et tourne à droite', self.args)
+                            self.m.tourne_droite()
+                        self.manoeuvre = 1 + randint(0, 3)
+
+                    # Impact avant gauche
+                    elif not self.impact[0] and self.impact[1]:
+                        msg('Impact avant gauche, recule et tourne à droite', self.args)
+                        self.m.freine()
+                        sleep(0.2)
+                        self.m.recule()
+                        sleep(0.5)
+                        self.m.tourne_droite()
+                        self.manoeuvre = 1 + randint(0, 1)
+ 
+                    # Impact arrière droit
+                    elif self.impact[2] and not self.impact[3]:
+                        self.quit() # Temporaire
+
+                    # Impact arrière droit et gauche
+                    elif self.impact[2] and self.impact[3]:
+                        self.quit() # Temporaire
+
+                    # Impact arrière gauche
+                    elif not self.impact[2] and self.impact[3]:
+                        pass # À développer
+ 
                 # Détection
                 if self.cmucam_parent_conn.poll():
                     self.detection = self.cmucam_parent_conn.recv()

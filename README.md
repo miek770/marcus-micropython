@@ -6,7 +6,6 @@ Il y avait aussi beaucoup de problèmes avec Arch pour le BBB : librairies mal p
 
 ## Prochaines tâches
 
-- Intégrer les bumpers à la logique du robot;
 - Réduire le seuil de détection des GP2D12 sur les côtés, et l'augmenter ou le garder tel quel en avant. Autrement le robot a de la difficulté à circuler dans un corridor étroit sans être "distrait" par les murs;
 - Ajouter une option (argument) pour arrêter l'exécution si un bumper est actionné;
 - Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;

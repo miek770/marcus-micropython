@@ -24,10 +24,10 @@ def scan(conn, args, delay=0.01):
 
     while True:
 
-        impact = (get_input('P8_7', args),
-                  get_input('P8_8', args),
-                  get_input('P8_9', args),
-                  get_input('P8_10', args))
+        impact = (not get_input('P8_7', args),
+                  not get_input('P8_8', args),
+                  not get_input('P8_9', args),
+                  not get_input('P8_10', args))
 
         # Renvoie le nouvel état seulement s'il y a eu un changement, pour
         # éviter le SPAM.
