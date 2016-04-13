@@ -263,7 +263,7 @@ class Marcus:
 
                             # Rien à l'horizon
                             else:
-                                msg('.', self.args)
+                                #msg('.', self.args)
                                 self.m.avance()
                                 self.patience -= 1
 
