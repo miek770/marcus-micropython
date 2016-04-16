@@ -41,13 +41,39 @@ class Cmucam:
 
         # Configuration de la CMUCam2+
         self.write('rm 2') # Raw mode (disable ACK\r et NCK\r)
+        self.blink()
+
         self.write('pm 1') # Poll mode
+        self.blink()
         self.write('cr 18 44') # RGB auto white balance on
+        self.blink()
+        self.write('cr 19 33') # Auto gain on
+        self.leds_on()
+
+        sleep(5.0)
+
+        self.track_window()
+        self.write('cr 18 40') # RGB auto white balance off
+        self.write('cr 19 32') # Auto gain off
+        self.leds_off()
 
         # Set Tracked
         # (Rmin Rmax Gmin Gmax Bmin Bmax)
         self.tc = None
         self.set_tracked()
+
+    def leds_on(self):
+        self.write('l0 1')
+        self.write('l1 1')
+
+    def leds_off(self):
+        self.write('l0 0')
+        self.write('l1 0')
+ 
+    def blink(self):
+        self.leds_on()
+        sleep(0.1)
+        self.leds.off()
 
     # Enregistre la couleur trackée dans un fichier texte
     #===================================================
@@ -101,6 +127,9 @@ class Cmucam:
         self.ser.write('st {0}\r'.format(self.tc))
         self.ser.readline()
         return True
+
+    def track_window(self):
+        self.write(
 
     # Écrit une commande et retourne le résultat (nettoyé)
     #======================================================
