@@ -11,6 +11,15 @@ import re
 import Adafruit_BBIO.UART as UART
 import serial
 
+# GM # Get Mean
+# GT # Get Tracked
+# L0 1 # LED0 ON
+# PM 0 # Poll Mode (Ã  confirmer)
+# PS 1 # Packets Skipped (Ã  confirmer)
+# RM 2 # Raw Mode - Disable ACK\r and NCK\r
+# ST Rmin Rmax Gmin Gmax Bmin Bmax # Set Tracking
+# TC # Track Color
+
 #===============================================================================
 # Classe :      Cmucam
 # Description : Wrapper pour gérer la communication avec la CMUCam2+ (incluant
@@ -63,8 +72,9 @@ class Cmucam:
         return self.write('gm')
 
     # Converti de GM à TC
+    # Avant mes tests le facteur était à 1.5
     #=====================
-    def mean_to_track(self, m, facteur=1.5):
+    def mean_to_track(self, m, facteur=5):
         [Rm, Gm, Bm, Rd, Gd, Bd] = m.split()
         Rmin = int(Rm) - facteur*int(Rd)
         Rmax = int(Rm) + facteur*int(Rd)
@@ -92,12 +102,6 @@ class Cmucam:
         self.ser.readline()
         return True
 
-    # Repère la couleur préalablement configurée
-    # mx my x1 y1 x2 y2 pixels confidence
-    #============================================
-    def track(self):
-        return self.write('tc')
-
     # Écrit une commande et retourne le résultat (nettoyé)
     #======================================================
     def write(self, s, raw=False):
@@ -107,6 +111,27 @@ class Cmucam:
             return re.sub('[A-Z\r:]', '', r)[1:]
         else:
             return r
+
+    # Repère la couleur préalablement configurée
+    # mx my x1 y1 x2 y2 pixels confidence
+    #============================================
+    def track(self):
+        return self.write('tc')
+
+    # Converti de "T packet" à un dictionnaire
+    #==========================================
+    def t_packet_to_dict(self, t_packet):
+        t_dict = dict()
+        l = t_packet.split()
+        t_dict['mx'] = l.pop(0) # The middle of mass x value
+        t_dict['my'] = l.pop(0) # The middle of mass y value
+        t_dict['x1'] = l.pop(0) # The left most corner's x value
+        t_dict['y1'] = l.pop(0) # The left most corner's y value
+        t_dict['x2'] = l.pop(0) # The right most corner's x value
+        t_dict['y2'] = l.pop(0) # The right most corner's y value
+        t_dict['pixels'] = l.pop(0) # Number of Pixels in the tracked region, scaled and capped at 255: (pixels+4)/8
+        t_dict['confidence'] = l.pop(0) # The (# of pixels / area)*256 of the bounded rectangle and capped at 255
+        return t_dict
 
 #===============================================================================
 # Fonction :    cam
@@ -143,9 +168,7 @@ def cam(conn, args, delay=0.01):
             # mx my x1 y1 x2 y2 pixels confidence
             r = cmucam.track()
             if r != '0 0 0 0 0 0 0 0':
-                conn.send(r)
-            # Ajouter une analyse du résultat et la communication avec le
-            # programme principal (via conn).
+                conn.send(cmucam.t_packet_to_dict(r))
 
         sleep(delay)
 
