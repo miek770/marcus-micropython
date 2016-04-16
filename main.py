@@ -64,12 +64,12 @@ class Marcus:
         self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
         self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
         self.cmucam_sub.start()
-        msg('Sous-routine lancée : cmucam_sub', self.args)
+        message = self.cmucam_parent_conn.recv()
 
-#        sleep(3.0) # Attend avant de lire la couleur à tracker
-#        self.cmucam_parent_conn.send('track_mean')
-        sleep(2.0)
-        self.cmucam_parent_conn.send('track_on')
+        if 'Erreur' in message:
+            msg(message, self.args)
+        else:
+            msg('Sous-routine lancée : cmucam_sub', self.args)
 
     # Arrêt
     #=======

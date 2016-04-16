@@ -4,7 +4,7 @@
 # Librairies standard
 #=====================
 from time import sleep
-import re
+import re, sys
 
 # Librairies spéciales
 #======================
@@ -50,17 +50,12 @@ class Cmucam:
         self.write('cr 19 33') # Auto gain on
         self.leds_on()
 
-        sleep(5.0)
+        sleep(3.0)
 
         self.track_window()
         self.write('cr 18 40') # RGB auto white balance off
         self.write('cr 19 32') # Auto gain off
         self.leds_off()
-
-        # Set Tracked
-        # (Rmin Rmax Gmin Gmax Bmin Bmax)
-        self.tc = None
-        self.set_tracked()
 
     def leds_on(self):
         self.write('l0 1')
@@ -73,7 +68,11 @@ class Cmucam:
     def blink(self):
         self.leds_on()
         sleep(0.1)
-        self.leds.off()
+        self.leds_off()
+        sleep(0.1)
+
+    def get_version(self):
+        return self.write('gv')
 
     # Enregistre la couleur trackée dans un fichier texte
     #===================================================
@@ -129,7 +128,8 @@ class Cmucam:
         return True
 
     def track_window(self):
-        self.write(
+        self.write('tw')
+        self.tc = self.write('gt')
 
     # Écrit une commande et retourne le résultat (nettoyé)
     #======================================================
@@ -168,7 +168,14 @@ class Cmucam:
 #===============================================================================
 def cam(conn, args, delay=0.01):
     cmucam = Cmucam()
-    track = False
+    track = True
+
+    v = cmucam.get_version()
+    if v:
+        conn.send(v)
+    else:
+        conn.send('Erreur : La CMUCam2+ ne répond pas.')
+        sys.exit()
 
     while True:
 
