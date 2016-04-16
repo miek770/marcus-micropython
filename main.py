@@ -66,10 +66,10 @@ class Marcus:
         self.cmucam_sub.start()
         msg('Sous-routine lancée : cmucam_sub', self.args)
 
-#        sleep(3.0) # Attend avant de lire la couleur à tracker
-#        cmucam_parent_conn.send('track_mean')
-#        sleep(0.5)
-#        cmucam_parent_conn.send('track_on')
+        sleep(3.0) # Attend avant de lire la couleur à tracker
+        self.cmucam_parent_conn.send('track_mean')
+        sleep(0.5)
+        self.cmucam_parent_conn.send('track_on')
 
     # Arrêt
     #=======
