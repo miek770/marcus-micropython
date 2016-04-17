@@ -2,8 +2,7 @@
 
 ## Prochaines tâches
 
-- Assembler un circuit de communication avec la CMUCam2+ pour M-A;
-- Migrer le BBB de M-A sur Debian (je crois que c'est déjà fait, à vérifier);
+- Vérifier s'il y a des nouvelles fonctions dans la librairie Adafruit-BBIO version 30 qui pourraient être utiles (par exemple des événements);
 - Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
 - Créer un module "mémoire" avec SQLite3;
 - Créer un module de supervision de batterie. Je pourrais m'en servir dans le journal et peut-être même adapter le comportement du robot.
@@ -17,10 +16,13 @@ J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtai
 ## Installation
 
 - Flasher le BBB avec l'image Debian;
+- Configurer hostname, PermitRootLogin;
+- Installer git, screen;
 - Désinstaller les programmes inutiles (Apache2, Xorg, lightdm, etc.);
 - Configurer :
 
-  - Fuseau horaire;
+  - dpkg-reconfigure tzdata;
+  - dpkg-reconfigure locales;
   - Samba;
 
             apt-get install samba
@@ -30,8 +32,6 @@ J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtai
             systemctl start samba
             systemctl enable samba
 
-  - Locales;
-  - Hostname;
   - hosts;
   - vim;
   - bash;
