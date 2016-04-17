@@ -26,6 +26,7 @@ import serial
 #               la configuration et la recherche de l'autre robot).
 #===============================================================================
 class Cmucam:
+
     # Initialisation
     #================
     def __init__(self):
@@ -57,6 +58,8 @@ class Cmucam:
         self.write('cr 19 32') # Auto gain off
         self.leds_off()
 
+    # Contrôle des LEDs
+    #===================
     def leds_on(self):
         self.write('l0 1')
         self.write('l1 1')
@@ -71,11 +74,13 @@ class Cmucam:
         self.leds_off()
         sleep(0.1)
 
+    # Obtiens la version du firmware, pratique pour tester la connexion
+    #===================================================================
     def get_version(self):
         return self.write('gv')
 
     # Enregistre la couleur trackée dans un fichier texte
-    #===================================================
+    #=====================================================
     def save_tc(self):
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
@@ -98,7 +103,8 @@ class Cmucam:
 
     # Converti de GM à TC
     # Avant mes tests le facteur était à 1.5
-    #=====================
+    # Je devrais plutôt mettre un absolu, par exemple +/- 30 autour de la moyenne
+    #=============================================================================
     def mean_to_track(self, m, facteur=5):
         [Rm, Gm, Bm, Rd, Gd, Bd] = m.split()
         Rmin = int(Rm) - facteur*int(Rd)
@@ -127,6 +133,8 @@ class Cmucam:
         self.ser.readline()
         return True
 
+    # En cours, voir manuel
+    #=======================
     def track_window(self):
         self.write('tw')
         self.tc = self.write('gt')
