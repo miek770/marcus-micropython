@@ -67,7 +67,7 @@ class Cmucam:
     def leds_off(self):
         self.write('l0 0')
         self.write('l1 0')
- 
+
     def blink(self):
         self.leds_on()
         sleep(0.1)
@@ -170,6 +170,13 @@ class Cmucam:
         t_dict['confidence'] = l.pop(0) # The (# of pixels / area)*256 of the bounded rectangle and capped at 255
         return t_dict
 
+    def test(self):
+        while True:
+            sleep(0.1)
+            r = self.track()
+            if r != '0 0 0 0 0 0 0 0':
+                print self.t_packet_to_dict(r)
+
 #===============================================================================
 # Fonction :    cam
 # Description : [...]
@@ -216,3 +223,6 @@ def cam(conn, args, delay=0.01):
 
         sleep(delay)
 
+if __name__ == '__main__':
+    cmucam = Cmucam()
+    cmucam.test()
