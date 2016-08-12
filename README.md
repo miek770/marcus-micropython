@@ -3,6 +3,7 @@
 ## Prochaines tâches
 
 - Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
+- Cr�er de nouveaux tests pour le module de CMUCam2+;
 - Vérifier s'il y a des nouvelles fonctions dans la librairie Adafruit-BBIO version 30 qui pourraient être utiles (par exemple des événements);
 - Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
 - Créer un module "mémoire" avec SQLite3;
