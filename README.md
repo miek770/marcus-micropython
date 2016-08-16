@@ -24,7 +24,7 @@ J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtaine d
 - Configurer :
 
   - dpkg-reconfigure tzdata;
-  - dpkg-reconfigure locales;
+  - dpkg-reconfigure locales (voir la section Standard de https://wiki.debian.org/Locale pour modifier /etc/profile);
   - Samba;
 
             apt-get install samba

@@ -30,6 +30,9 @@ class Cmucam:
     # Initialisation
     #================
     def __init__(self):
+        """ Initialisation de la CMUCam2+. Par défaut la couleur présentée à
+        la caméra après 3 secondes est utilisée comme cible.
+        """
         UART.setup('UART1')
         self.ser = serial.Serial('/dev/ttyO1')
         self.ser.baudrate = 115200
