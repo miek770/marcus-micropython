@@ -29,7 +29,7 @@ class Cmucam:
 
     # Initialisation
     #================
-    def __init__(self):
+    def __init__(self, scan=False):
         """ Initialisation de la CMUCam2+. Par défaut la couleur présentée à
         la caméra après 3 secondes est utilisée comme cible.
         """
@@ -52,14 +52,19 @@ class Cmucam:
         self.write('cr 18 44') # RGB auto white balance on
         self.blink()
         self.write('cr 19 33') # Auto gain on
-        self.leds_on()
 
-        sleep(3.0)
-
-        self.track_window()
-        self.write('cr 18 40') # RGB auto white balance off
-        self.write('cr 19 32') # Auto gain off
-        self.leds_off()
+        if self.scan:
+            self.leds_on()
+            sleep(3.0)
+            self.track_window()
+            self.save_tc()
+            self.write('cr 18 40') # RGB auto white balance off
+            self.write('cr 19 32') # Auto gain off
+            self.leds_off()
+        else:
+            if not self.load_tc():
+                msg("Erreur : Impossible de charger la couleur sauvegardée.")
+                sys.exit()
 
     # Contrôle des LEDs
     #===================
@@ -184,8 +189,8 @@ class Cmucam:
 # Fonction :    cam
 # Description : [...]
 #===============================================================================
-def cam(conn, args, delay=0.01):
-    cmucam = Cmucam()
+def cam(conn, args, delay=0.01, scan=False):
+    cmucam = Cmucam(scan)
     track = True
 
     v = cmucam.get_version()

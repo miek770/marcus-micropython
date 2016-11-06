@@ -173,14 +173,16 @@ class Marcus:
                         pass # À développer
  
                 # Détection
-                if self.cmucam_parent_conn.poll():
+                if self.mode == 0 and self.cmucam_parent_conn.poll():
+
+                    # mx my x1 y1 x2 y2 pixels confidence
                     self.detection = self.cmucam_parent_conn.recv()
-                    msg(self.detection, self.args)
 
-                    # À développer
-                    pass
-
-                pass
+                    # Passage au mode combat
+                    if self.detection["confidence"] > 10:
+                        msg(self.detection, self.args)
+                        msg("Passage au mode combat!", self.args)
+                        self.mode = 1
 
             # S'exécute toutes les 100ms
             if self.count_100ms == 100:
@@ -267,13 +269,22 @@ class Marcus:
                                 self.m.avance()
                                 self.patience -= 1
 
-                pass
+                # Combat
+                elif self.mode == 1:
+                    
+                    # mx my x1 y1 x2 y2 pixels confidence
+                    self.detection = self.cmucam_parent_conn.recv()
+                    #msg("Conf: {}, x1: {}, x2: {}, mx: {}".format(self.detection["confidence"], self.detection["x1"], self.detection["x2"], self.detection["mx"]), self.args)
+
+
+                    # Rangefinders
+                    self.av_mi = gp2d12.get_dist('AIN0') # Avant milieu
+                    self.av_ga = gp2d12.get_dist('AIN1') # Avant gauche
+                    self.av_dr = gp2d12.get_dist('AIN2') # Avant droite
 
             # S'exécute toutes les 1s
             if self.count_1000ms == 1000:
                 self.count_1000ms = 0
-
-                pass
 
             self.count_10ms += 1
             self.count_100ms += 1
