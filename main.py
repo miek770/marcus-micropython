@@ -274,7 +274,8 @@ class Marcus:
                     
                     # mx my x1 y1 x2 y2 pixels confidence
                     self.detection = self.cmucam_parent_conn.recv()
-                    #msg("Conf: {}, x1: {}, x2: {}, mx: {}".format(self.detection["confidence"], self.detection["x1"], self.detection["x2"], self.detection["mx"]), self.args)
+                    if self.detection["confidence"] > 10:
+                        msg("Conf: {}, x1: {}, x2: {}, mx: {}".format(self.detection["confidence"], self.detection["x1"], self.detection["x2"], self.detection["mx"]), self.args)
 
 
                     # Rangefinders
@@ -312,6 +313,9 @@ def main():
                         '--stop',
                         action='store_true',
                         help="Arrête l'exécution lorsqu'un impact est détecté.")
+    parser.add_argument('--scan',
+                        action='store_true',
+                        help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
 
     marcus = Marcus(args=parser.parse_args())
     marcus.loop()

@@ -10,6 +10,7 @@ import re, sys
 #======================
 import Adafruit_BBIO.UART as UART
 import serial
+from pins import msg
 
 # GM # Get Mean
 # GT # Get Tracked
@@ -29,10 +30,12 @@ class Cmucam:
 
     # Initialisation
     #================
-    def __init__(self, scan=False):
+    def __init__(self, args):
         """ Initialisation de la CMUCam2+. Par défaut la couleur présentée à
         la caméra après 3 secondes est utilisée comme cible.
         """
+        self.args = args
+
         UART.setup('UART1')
         self.ser = serial.Serial('/dev/ttyO1')
         self.ser.baudrate = 115200
@@ -53,18 +56,23 @@ class Cmucam:
         self.blink()
         self.write('cr 19 33') # Auto gain on
 
-        if self.scan:
+        if self.args.scan:
+            msg("Mesure de la couleur moyenne devant la caméra.", self.args)
             self.leds_on()
             sleep(3.0)
             self.track_window()
+            msg("Couleur mesurée : {}".format(self.tc), self.args)
             self.save_tc()
+            msg("Couleur sauvegardée.", self.args)
             self.write('cr 18 40') # RGB auto white balance off
             self.write('cr 19 32') # Auto gain off
             self.leds_off()
         else:
             if not self.load_tc():
-                msg("Erreur : Impossible de charger la couleur sauvegardée.")
+                msg("Erreur : Impossible de charger la couleur sauvegardée.", self.args)
                 sys.exit()
+            else:
+                msg("Couleur précédente chargée.", self.args)
 
     # Contrôle des LEDs
     #===================
@@ -189,8 +197,8 @@ class Cmucam:
 # Fonction :    cam
 # Description : [...]
 #===============================================================================
-def cam(conn, args, delay=0.01, scan=False):
-    cmucam = Cmucam(scan)
+def cam(conn, args, delay=0.01):
+    cmucam = Cmucam(args)
     track = True
 
     v = cmucam.get_version()
