@@ -6,3 +6,4 @@ modules/*.pyc
 *~
 *.log
 ressources/#*#
+*.swp

@@ -52,12 +52,10 @@ class Cmucam:
 
         self.write('pm 1') # Poll mode
         self.blink()
-        self.write('cr 18 44') # RGB auto white balance on
-        self.blink()
-        self.write('cr 19 33') # Auto gain on
-
         if self.args.scan:
             msg("Mesure de la couleur moyenne devant la caméra.", self.args)
+            self.write('cr 18 44') # RGB auto white balance on
+            self.write('cr 19 33') # Auto gain on
             self.leds_on()
             sleep(3.0)
             self.track_window()
@@ -100,6 +98,7 @@ class Cmucam:
     def save_tc(self):
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
+        msg("Couleur enregistrée : {}".format(self.tc), self.args)
 
     # Récupère la couleur préalablement enregistrée
     #===============================================
@@ -107,6 +106,7 @@ class Cmucam:
         try:
             with open('tc.txt', 'r') as f:
                 self.tc = f.readline()
+            msg("Couleur chargée : {}".format(self.tc), self.args)
             return True
         except IOError:
             return False
