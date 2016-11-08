@@ -196,9 +196,15 @@ class Marcus:
 
                             if mx > (50 + self.seuil_mx):
                                 msg("Cible à gauche!", self.args)
+                                self.m.tourne_gauche()
 
                             elif mx < (50 - self.seuil_mx):
                                 msg("Cible à droite!", self.args)
+                                self.m.tourne_droite()
+
+                            else:
+                                msg("Cible droit devant, chaaaaarge!", self.args)
+                                self.m.avance()
 
             # S'exécute toutes les 100ms
             if self.count_100ms == 100:
