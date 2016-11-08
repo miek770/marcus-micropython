@@ -101,6 +101,9 @@ class Marcus:
         self.seuil_avant = 45 # en cm
         self.seuil_cote = 20 # en cm
 
+        # Seuil d'alignement sur mx pour la CMUCam2+
+        self.seuil_mx = 5 # en pixels
+
         # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
         # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
         # élevés).
@@ -189,6 +192,14 @@ class Marcus:
                         if int(self.detection["confidence"]) > 10:
                             msg("Conf: {}, x1: {}, x2: {}, mx: {}".format(self.detection["confidence"], self.detection["x1"], self.detection["x2"], self.detection["mx"]), self.args)
 
+                            mx = int(self.detection["mx"])
+
+                            if mx > (50 + self.seuil_mx):
+                                msg("Cible à gauche!", self.args)
+
+                            elif mx < (50 - self.seuil_mx):
+                                msg("Cible à droite!", self.args)
+
             # S'exécute toutes les 100ms
             if self.count_100ms == 100:
                 self.count_100ms = 0
@@ -200,6 +211,7 @@ class Marcus:
 
                 # Exploration
                 if self.mode == 0:
+
                     # Manoeuvre en cours
                     if self.manoeuvre > 0:
                         self.manoeuvre -= 1
