@@ -197,7 +197,7 @@ class Cmucam:
 # Fonction :    cam
 # Description : [...]
 #===============================================================================
-def cam(conn, args, delay=0.01):
+def cam(conn, args, delay=0.05):
     cmucam = Cmucam(args)
     track = True
 
