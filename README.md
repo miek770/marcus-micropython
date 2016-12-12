@@ -33,6 +33,10 @@ Une fois l'autre robot détecté, le robot doit le viser et faire feu. La versio
 1. Centrer le robot sur la cible (viser);
 2. Maintenir une distance désirée.
 
+Idéalement, dans une version future du projet avec une tourelle semi-indépendante, celle-ci pour être asservie avec une boucle PID complète. Ce PID serait important pour un temps de réponse rapide, une erreur nulle en régime permanent, et un ajustement constant pour suivre les déplacements de chaque robot l'un par rapport à l'autre.
+
+Avec une simple boucle proportionnelle il reste une erreur constante, et il faut limiter le gain pour éviter l'oscillation.
+
 ## Installation
 
 - Flasher le BBB avec l'image Debian;
