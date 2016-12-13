@@ -33,9 +33,9 @@ Une fois l'autre robot détecté, le robot doit le viser et faire feu. La versio
 1. Centrer le robot sur la cible (viser);
 2. Maintenir une distance désirée.
 
-Idéalement, dans une version future du projet avec une tourelle semi-indépendante, celle-ci pour être asservie avec une boucle PID complète. Ce PID serait important pour un temps de réponse rapide, une erreur nulle en régime permanent, et un ajustement constant pour suivre les déplacements de chaque robot l'un par rapport à l'autre.
+Idéalement, dans une version future du projet avec une tourelle semi-indépendante, celle-ci pour être asservie avec une boucle PID complète. Ce PID serait important pour un temps de réponse rapide, une erreur nulle en régime permanent, et un ajustement constant pour suivre les déplacements de chaque robot l'un par rapport à l'autre. Avec une simple boucle proportionnelle il reste une erreur constante, et il faut limiter le gain pour éviter l'oscillation. Quoiqu'avec un servomoteur comme actuateur la consigne est en position absolue, le servomoteur est déjà asservi à l'interne. Ce n'est donc pas pertinent.
 
-Avec une simple boucle proportionnelle il reste une erreur constante, et il faut limiter le gain pour éviter l'oscillation.
+Ça le serait pour contrôler l'orientation du robot au complet avec la cible, en agissant sur les moteurs gauche et droit. Dans ce cas je pourrais faire un PID pour améliorer le contrôle.
 
 ## Installation
 
@@ -61,4 +61,3 @@ Avec une simple boucle proportionnelle il reste une erreur constante, et il faut
   - bash;
   - marcus.service;
   - uEnv.txt.
-
