@@ -39,6 +39,12 @@ Idéalement, dans une version future du projet avec une tourelle semi-indépenda
 
 ### Améliorations
 
+#### Évasion infrarouge
+
+Le contrôle actuel des moteurs lors de détection d'obstacles par infrarouge est très polarisé. S'il y a un obstacle à gauche, le moteur droit se met à reculer et le gauche à avancer à la vitesse maximale. Ensuite, les 2 se remettent à avancer. Pour chaque manoeuvre, il y a donc au moins 2 changements de directions sur l'un des moteurs. Ça provoquer un délai, un mouvement saccadé et une inutilement forte consommation électrique. Je devrais plutôt d'abord tenter d'utiliser une commande proportionnelle à la différence entre les 2 capteurs.
+
+Donc plutôt que d'arrêter et de tourner sur place lorsqu'un obstacle est détecté, le robot aurait un déplacement sinueux qui éviterait doucement les obstacles.
+
 #### Statisme
 
 Créer une routine de statisme qui détecte une absence de variation générale des capteurs pendant une certain temps, dans le but de détecter une absence de mouvement. Idéalement il me faudrait une détection de rotor barré (haut courant), mais une détection de statisme permettrait aussi de valider que le robot est bloqué.
