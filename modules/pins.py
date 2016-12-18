@@ -1,26 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-#
-#  pins.py
-#
-#  Copyright 2013 Michel Lavoie <lavoie.michel@gmail.com>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
 
 # Librairies standards
 #======================
@@ -102,40 +80,40 @@ pins['P9_42'] = None
 # P9_35 - AIN6
 #ADC.setup()
 
-#===============================================================================
+#======================================================================
 # Fonction :    set_low(pin, args)
 # Description : Regle la pin digitale a 0V.
-#===============================================================================
+#======================================================================
 def set_low(pin, args):
     # Vérifie si la pin est configurée en sortie
     if pins[pin] == 'out':
         GPIO.output(pin, GPIO.LOW)
 
     elif pins[pin] == 'in':
-        msg('Erreur : ' + pin + ' est configurée en entrée.', args)
+        logging.error("{} est configurée en entrée".format(pin))
 
     else:
-        msg('Erreur : ' + pin + ' n\'est pas configurée correctement.', args)
+        logging.error("{} n'est pas configurée correctement".format(pin))
 
-#===============================================================================
+#======================================================================
 # Fonction :    set_high(pin, args)
 # Description : Regle la pin digitale a 3.3V.
-#===============================================================================
+#======================================================================
 def set_high(pin, args):
     # Vérifie si la pin est configurée en sortie
     if pins[pin] == 'out':
         GPIO.output(pin, GPIO.HIGH)
 
     elif pins[pin] == 'in':
-        msg('Erreur : ' + pin + ' est configurée en entrée.', args)
+        logging.error("{} est configurée en entrée".format(pin))
 
     else:
-        msg('Erreur : ' + pin + ' n\'est pas configurée correctement.', args)
+        logging.error("{} n'est pas configurée correctement".format(pin))
 
-#===============================================================================
+#======================================================================
 # Fonction :    set_output(pin)
 # Description : Configure la pin en mode sortie.
-#===============================================================================
+#======================================================================
 def set_output(pin, args):
     GPIO.setup(pin, GPIO.OUT)
     pins[pin] = 'out'
@@ -143,42 +121,29 @@ def set_output(pin, args):
     # Met la pin à 3.3V (high) par défaut
     set_high(pin, args)
 
-#===============================================================================
+#======================================================================
 # Fonction :    set_input(pin)
 # Description : Configure la pin en mode entrée.
-#===============================================================================
+#======================================================================
 def set_input(pin, args):
     GPIO.setup(pin, GPIO.IN)
     pins[pin] = 'in'
 
-#===============================================================================
+#======================================================================
 # Fonction :    get_input(pin)
 # Description : Retourne la valeur de la pin.
-#===============================================================================
+#======================================================================
 def get_input(pin, args):
     return GPIO.input(pin)
 
-#===============================================================================
+#======================================================================
 # Fonction :    get_adc(pin)
-# Description : Retourne une valeur entre 0 et 1 correspondant à une lecture
+# Description : Retourne une valeur entre 0 et 1 correspondant à une
+#               lecture
 #               entre 0 et 3,3V.
-#===============================================================================
+#======================================================================
 def get_adc(pin):
     ADC.read(pin)
     reading = ADC.read(pin)
     return reading
-
-#===============================================================================
-# Fonction :    msg(msg, args, lvl)
-# Description : Cette fonction permet d'utiliser une seule fonction pour toute
-#               impression (print ou log) dependamment des arguments en ligne
-#               de commande. On ne devrait jamais utiliser directement 'print'
-#               et 'logging.log' dans le reste du programme, toujours 'msg'.
-#===============================================================================
-def msg(msg, args, lvl=logging.INFO):
-    if args.verbose:
-        print str(msg)
-
-    if args.logfile:
-        logging.log(lvl, str(msg))
 

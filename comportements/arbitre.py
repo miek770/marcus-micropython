@@ -25,7 +25,11 @@ class Arbitre:
 
         self.nom = nom
         self.comportements = list()
+        self.precedent = None
         logging.info("Arbitre {} initialisé".format(self.nom))
+
+    def arret(self):
+        pass
 
     def active(self, comportement, priorite):
 
@@ -47,6 +51,7 @@ class Arbitre:
                 # On avise le comportement gagnant pour qu'il puisse en
                 # tenir compte lors de la prochaine itération.
                 self.comportements[i][0].precedent = True
+                self.precedent = i
                 eval(action)
                 break
 
