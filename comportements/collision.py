@@ -2,13 +2,13 @@
 
 # Librairies standard
 #=====================
-import loggin
+import logging
 from random import random, randint, choice
 
 # Librairies spéciales
 #======================
 from arbitre import Comportement
-from pins import get_input
+from modules.pins import get_input
 
 # Vecteur moteur
 #================

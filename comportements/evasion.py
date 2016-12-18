@@ -2,7 +2,7 @@
 
 # Librairies standard
 #=====================
-import loggin
+import logging
 from random import random, randint, choice
 
 # Librairies spéciales

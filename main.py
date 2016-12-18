@@ -9,8 +9,8 @@ from multiprocessing import Process, Pipe
 # Librairies spéciales
 #======================
 from modules.pins import set_input
-from comportements import *
-from modules import *
+from comportements import collision, evasion, exploration
+from modules import moteurs
 
 class Marcus:
 
@@ -32,7 +32,7 @@ class Marcus:
                             datefmt=date_frmt,
                             level=log_lvl)
 
-        logging.info("Logger initié : {}".format(self.args.logfile)
+        logging.info("Logger initié : {}".format(self.args.logfile))
         logging.info("Programme lancé")
 
         # Initialisation des pare-chocs
@@ -56,7 +56,7 @@ class Marcus:
         self.arbitres = dict()
 
         # Arbitre moteurs
-        m = moteurs.Moteur()
+        m = moteurs.Moteurs()
         self.arbitres[m.nom] = m
         self.arbitres[m.nom].active(collision.Collision, 2)
         self.arbitres[m.nom].active(evasion.Evasion, 5)

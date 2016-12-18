@@ -81,10 +81,10 @@ pins['P9_42'] = None
 #ADC.setup()
 
 #======================================================================
-# Fonction :    set_low(pin, args)
+# Fonction :    set_low(pin)
 # Description : Regle la pin digitale a 0V.
 #======================================================================
-def set_low(pin, args):
+def set_low(pin):
     # Vérifie si la pin est configurée en sortie
     if pins[pin] == 'out':
         GPIO.output(pin, GPIO.LOW)
@@ -96,10 +96,10 @@ def set_low(pin, args):
         logging.error("{} n'est pas configurée correctement".format(pin))
 
 #======================================================================
-# Fonction :    set_high(pin, args)
+# Fonction :    set_high(pin)
 # Description : Regle la pin digitale a 3.3V.
 #======================================================================
-def set_high(pin, args):
+def set_high(pin):
     # Vérifie si la pin est configurée en sortie
     if pins[pin] == 'out':
         GPIO.output(pin, GPIO.HIGH)
@@ -114,18 +114,18 @@ def set_high(pin, args):
 # Fonction :    set_output(pin)
 # Description : Configure la pin en mode sortie.
 #======================================================================
-def set_output(pin, args):
+def set_output(pin):
     GPIO.setup(pin, GPIO.OUT)
     pins[pin] = 'out'
 
     # Met la pin à 3.3V (high) par défaut
-    set_high(pin, args)
+    set_high(pin)
 
 #======================================================================
 # Fonction :    set_input(pin)
 # Description : Configure la pin en mode entrée.
 #======================================================================
-def set_input(pin, args):
+def set_input(pin):
     GPIO.setup(pin, GPIO.IN)
     pins[pin] = 'in'
 
@@ -133,7 +133,7 @@ def set_input(pin, args):
 # Fonction :    get_input(pin)
 # Description : Retourne la valeur de la pin.
 #======================================================================
-def get_input(pin, args):
+def get_input(pin):
     return GPIO.input(pin)
 
 #======================================================================

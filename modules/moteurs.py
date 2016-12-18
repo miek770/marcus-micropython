@@ -3,7 +3,7 @@
 
 # Librairies standard
 #=====================
-import time
+import time, logging
 
 # Librairies spéciales
 #======================
@@ -80,20 +80,19 @@ class Moteurs(Arbitre):
 
     # Interprétation de vecteur de commande
     #=======================================
- """Le comportement doit retourner un vecteur (une liste) décrivant les
-actions à prendre par le moteur. La liste est une série de tuples avec
-la vitesse du moteur droit, la vitesse du moteur gauche et la durée de
-l'événement.
-
-Le module de moteurs doit ensuite interpréter cette commande et la
-traduire en consigne de moteurs.
-
-Une nouvelle commande doit interrompre une manoeuvre en cours.
-
-[(vitesse_gauche, vitesse_droite, duree), ...]
-"""
-
     def traite_vecteur(self, vecteur):
+        """Le comportement doit retourner un vecteur (une liste)
+        décrivant les actions à prendre par le moteur. La liste est
+        une série de tuples avec la vitesse du moteur droit, la
+        vitesse du moteur gauche et la durée de l'événement.
+
+        Le module de moteurs doit ensuite interpréter cette commande
+        et la traduire en consigne de moteurs.
+
+        Une nouvelle commande doit interrompre une manoeuvre en cours.
+
+        [(vitesse_gauche, vitesse_droite, duree), ...]
+        """
 
         # Une seule action à prendre
         if len(vecteur) == 1 and vecteur[0][2] == 0:
@@ -152,38 +151,38 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
     # Fonctions par moteur
     #======================
     def gauche_arret(self):
-        set_low('P9_14', self.args) # Disable
+        set_low('P9_14') # Disable
 
     def gauche_freine(self):
-        set_high('P9_12', self.args)
-        set_high('P9_13', self.args)
-        set_high('P9_14', self.args) # Enable
+        set_high('P9_12')
+        set_high('P9_13')
+        set_high('P9_14') # Enable
 
     def gauche_recule(self):
-        set_low('P9_12', self.args)
-        set_high('P9_13', self.args)
-        set_high('P9_14', self.args) # Enable
+        set_low('P9_12')
+        set_high('P9_13')
+        set_high('P9_14') # Enable
 
     def gauche_avance(self):
-        set_high('P9_12', self.args)
-        set_low('P9_13', self.args)
-        set_high('P9_14', self.args) # Enable
+        set_high('P9_12')
+        set_low('P9_13')
+        set_high('P9_14') # Enable
 
     def droit_arret(self):
-        set_low('P9_16', self.args) # Disable
+        set_low('P9_16') # Disable
 
     def droit_freine(self):
-        set_high('P9_15', self.args)
-        set_high('P9_21', self.args)
-        set_high('P9_16', self.args) # Enable
+        set_high('P9_15')
+        set_high('P9_21')
+        set_high('P9_16') # Enable
 
     def droit_recule(self):
-        set_high('P9_15', self.args)
-        set_low('P9_21', self.args)
-        set_high('P9_16', self.args) # Enable
+        set_high('P9_15')
+        set_low('P9_21')
+        set_high('P9_16') # Enable
 
     def droit_avance(self):
-        set_low('P9_15', self.args)
-        set_high('P9_21', self.args)
-        set_high('P9_16', self.args) # Enable
+        set_low('P9_15')
+        set_high('P9_21')
+        set_high('P9_16') # Enable
 
