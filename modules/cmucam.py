@@ -10,6 +10,7 @@ import logging, re, sys
 #======================
 import Adafruit_BBIO.UART as UART
 import serial
+import config
 
 # GM # Get Mean
 # GT # Get Tracked
@@ -52,7 +53,7 @@ class Cmucam:
         self.write('pm 1') # Poll mode
         self.blink()
         if self.args.scan:
-            logging.info("Mesure de la couleur moyenne devant la caméra.")
+            logging.info("Mesure de la couleur moyenne devant la caméra")
             self.write('cr 18 44') # RGB auto white balance on
             self.write('cr 19 33') # Auto gain on
             self.leds_on()
@@ -60,16 +61,16 @@ class Cmucam:
             self.track_window()
             logging.info("Couleur mesurée : {}".format(self.tc))
             self.save_tc()
-            logging.info("Couleur sauvegardée.")
+            logging.info("Couleur sauvegardée")
             self.write('cr 18 40') # RGB auto white balance off
             self.write('cr 19 32') # Auto gain off
             self.leds_off()
         else:
             if not self.load_tc():
-                logging.error("Impossible de charger la couleur sauvegardée.")
+                logging.error("Impossible de charger la couleur sauvegardée")
                 sys.exit()
             else:
-                logging.info("Couleur précédente chargée.")
+                logging.info("Couleur précédente chargée")
 
     # Contrôle des LEDs
     #===================
@@ -168,7 +169,10 @@ class Cmucam:
     # mx my x1 y1 x2 y2 pixels confidence
     #============================================
     def track(self):
-        return self.write('tc')
+        """config.track est une variable globale, accessible par tous
+        les modules ou comportements qui importent modules.config.
+        """
+        config.track = self.t_packet_to_dict(self.write('tc'))
 
     # Converti de "T packet" à un dictionnaire
     #==========================================
@@ -191,52 +195,6 @@ class Cmucam:
             r = self.track()
             if r != '0 0 0 0 0 0 0 0':
                 print self.t_packet_to_dict(r)
-
-#===============================================================================
-# Fonction :    cam
-# Description : [...]
-#===============================================================================
-def cam(conn, args, delay=0.05):
-    cmucam = Cmucam(args)
-    track = True
-
-    v = cmucam.get_version()
-    if v:
-        conn.send(v)
-    else:
-        conn.send('Erreur : La CMUCam2+ ne répond pas.')
-        sys.exit()
-
-    while True:
-
-        if conn.poll():
-            # Si l'application principale a envoyé une commande
-            cmd = conn.recv()
-
-            if cmd == 'track_mean':
-                # Utilise la couleur moyenne comme cible
-                cmucam.set_tracked(cmucam.mean_to_track(cmucam.get_mean()))
-
-            elif cmd == 'track_on':
-                # Active le tracking automatique
-                track = True
-
-            elif cmd == 'track_off':
-                # Active le tracking automatique
-                track = False
-
-            elif cmd == 'save':
-                # Sauvegarde la couleur recherchée
-                cmucam.save_tc()
-
-        if track:
-            # Si le tracking automatique est activé
-            # mx my x1 y1 x2 y2 pixels confidence
-            r = cmucam.track()
-            if r != '0 0 0 0 0 0 0 0':
-                conn.send(cmucam.t_packet_to_dict(r))
-
-        sleep(delay)
 
 if __name__ == '__main__':
     cmucam = Cmucam()

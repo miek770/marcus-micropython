@@ -42,10 +42,10 @@ class Marcus:
         set_input('P8_10') # Arrière gauche
 
         # Initialisation de la CMUCam2+
-        self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
-        self.cmucam_sub.start()
-        message = self.cmucam_parent_conn.recv()
+        self.cmucam = cmucam.Cmucam(self.args)
+        message = self.cmucam.get_version()
+        """à développer, çca retourne une vversion
+        """
 
         if 'Erreur' in message:
             logging.error(message)
