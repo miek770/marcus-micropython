@@ -6,6 +6,7 @@ La principale différence, cependant, est que chaque robot utilise maintenant le
 
 ## Prochaines tâches
 
+- Remplacer ma fonction msg par du simple logging;
 - Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
 - Créer de nouveaux tests pour le module de CMUCam2+;
 - Remplacer certaines boucles par pyinotify pour réduire le temps de réaction ainsi que la charge sur le CPU;
@@ -44,6 +45,8 @@ Idéalement, dans une version future du projet avec une tourelle semi-indépenda
 Le contrôle actuel des moteurs lors de détection d'obstacles par infrarouge est très polarisé. S'il y a un obstacle à gauche, le moteur droit se met à reculer et le gauche à avancer à la vitesse maximale. Ensuite, les 2 se remettent à avancer. Pour chaque manoeuvre, il y a donc au moins 2 changements de directions sur l'un des moteurs. Ça provoquer un délai, un mouvement saccadé et une inutilement forte consommation électrique. Je devrais plutôt d'abord tenter d'utiliser une commande proportionnelle à la différence entre les 2 capteurs.
 
 Donc plutôt que d'arrêter et de tourner sur place lorsqu'un obstacle est détecté, le robot aurait un déplacement sinueux qui éviterait doucement les obstacles.
+
+Pour y parvenir je dois modifier le module de moteurs et y activer les PWM (sur enable). Pour le moment les pins sont à vrai ou faux.
 
 #### Statisme
 
