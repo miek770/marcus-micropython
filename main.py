@@ -8,7 +8,7 @@ from multiprocessing import Process, Pipe
 
 # Librairies spéciales
 #======================
-from modules.pins import set_input
+from modules.pins import set_input, get_input
 from comportements import collision, evasion, exploration
 from modules import moteurs
 
@@ -65,6 +65,7 @@ class Marcus:
     # Arrêt
     #=======
     def quit(self):
+        logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
             self.arbitres[key].arret()
         sys.exit()
@@ -75,6 +76,12 @@ class Marcus:
 
         while True:
             sleep(0.1)
+
+            if self.args.stop:
+                if not get_input("P8_7") or not get_input("P8_8") or not get_input("P8_9") or not get_input("P8_10"):
+                    self.quit()
+
+
             for key in self.arbitres.keys():
                 self.arbitres[key].evalue()
 
