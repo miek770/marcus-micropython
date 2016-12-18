@@ -39,7 +39,7 @@ class Collision(Comportement):
 
         # Impact avant droit
         if impact_av_dr and not impact_av_ga:
-            logging.info("Comportement {} : Impact avant droit, recule et tourne à gauche", self.nom)
+            logging.info("Comportement {} : Impact avant droit, recule et tourne à gauche".format(self.nom))
             duree_rotation = duree_rotation_min + random()
             return [(0, 0, 0.2),
                     (-100, -100, 0.5),
@@ -50,19 +50,19 @@ class Collision(Comportement):
             duree_rotation = duree_rotation_min + 2*random()
             tourne_gauche = choice((True, False))
             if tourne_gauche:
-                logging.info("Comportement {} : Impact avant droit et gauche, recule et tourne à gauche", self.nom)
+                logging.info("Comportement {} : Impact avant droit et gauche, recule et tourne à gauche".format(self.nom))
                 return [(0, 0, 0.2),
                         (-100, -100, 0.5),
                         (-100, 100, duree_rotation)]
             else:
-                logging.info("Comportement {} : Impact avant droit et gauche, recule et tourne à droite", self.nom)
+                logging.info("Comportement {} : Impact avant droit et gauche, recule et tourne à droite".format(self.nom))
                 return [(0, 0, 0.2),
                         (-100, -100, 0.5),
                         (100, -100, duree_rotation)]
 
         # Impact avant gauche
         elif not impact_av_dr and impact_av_ga:
-            logging.info("Comportement {} : Impact avant gauche, recule et tourne à droite", self.nom)
+            logging.info("Comportement {} : Impact avant gauche, recule et tourne à droite".format(self.nom))
             duree_rotation = duree_rotation_min + random()
             return [(0, 0, 0.2),
                     (-100, -100, 0.5),
@@ -70,7 +70,7 @@ class Collision(Comportement):
 
         # Impact arrière
         elif impact_ar_dr or impact_ar_ga:
-            logging.info("Comportement {} : Impact arrière, arrêt", self.nom)
+            logging.info("Comportement {} : Impact arrière, arrêt".format(self.nom))
             return [(0, 0, 0)]
 
         return None

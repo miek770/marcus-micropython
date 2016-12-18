@@ -36,6 +36,7 @@ class Arbitre:
         if any(priorite in c for c in self.comportements):
             logging.error("Priorité {} déjà réservée, comportement {} ignoré".format(priorite, comportement.nom))
         else:
+            logging.info("Activation du comportement {}".format(comportement.nom))
             self.comportements.append((comportement, priorite))
             self.comportements = sorted(self.comportements, key=lambda x: x[1])
 

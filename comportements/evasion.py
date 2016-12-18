@@ -43,12 +43,12 @@ class Evasion(Comportement):
 
             # Obstacle devant aussi (tourne plus longtemps)
             if av_mi <= seuil_avant:
-                logging.info("Comportement {} : Obstacle devant et à gauche, tourne à droite", self.nom)
+                logging.info("Comportement {} : Obstacle devant et à gauche, tourne à droite".format(self.nom))
                 duree_rotation = duree_rotation_min + 2*random()
 
             # Sinon (gauche seulement)
             else:
-                logging.info("Comportement {} : Obstacle à gauche, tourne à droite", self.nom)
+                logging.info("Comportement {} : Obstacle à gauche, tourne à droite".format(self.nom))
                 duree_rotation = duree_rotation_min + random()
 
             return [(100, -100, duree_rotation)]
@@ -58,12 +58,12 @@ class Evasion(Comportement):
 
             # Obstacle devant aussi (tourne plus longtemps)
             if av_mi <= seuil_avant:
-                logging.info("Comportement {} : Obstacle devant et à droite, tourne à gauche", self.nom)
+                logging.info("Comportement {} : Obstacle devant et à droite, tourne à gauche".format(self.nom))
                 duree_rotation = duree_rotation_min + 2*random()
 
             # Sinon (droite seulement)
             else:
-                logging.info("Comportement {} : Obstacle à droite, tourne à gauche", self.nom)
+                logging.info("Comportement {} : Obstacle à droite, tourne à gauche".format(self.nom))
                 duree_rotation = duree_rotation_min + random()
 
             return [(100, -100, duree_rotation)]
@@ -75,10 +75,10 @@ class Evasion(Comportement):
             tourne_gauche = choice((True, False))
 
             if tourne_gauche:
-                logging.info("Comportement {} : Obstacle à gauche et à droite, tourne à gauche", self.nom)
+                logging.info("Comportement {} : Obstacle à gauche et à droite, tourne à gauche".format(self.nom))
                 return [(-100, 100, duree_rotation)]
             else:
-                logging.info("Comportement {} : Obstacle à gauche et à droite, tourne à droite", self.nom)
+                logging.info("Comportement {} : Obstacle à gauche et à droite, tourne à droite".format(self.nom))
                 return [(100, -100, duree_rotation)]
 
         # Obstacle devant seulement
@@ -87,10 +87,10 @@ class Evasion(Comportement):
             tourne_gauche = choice((True, False))
 
             if tourne_gauche:
-                logging.info("Comportement {} : Obstacle devant, tourne à gauche", self.nom)
+                logging.info("Comportement {} : Obstacle devant, tourne à gauche".format(self.nom))
                 return [(-100, 100, duree_rotation)]
             else:
-                logging.info("Comportement {} : Obstacle devant, tourne à droite", self.nom)
+                logging.info("Comportement {} : Obstacle devant, tourne à droite".format(self.nom))
                 return [(100, -100, duree_rotation)]
 
         return None

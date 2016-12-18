@@ -116,7 +116,7 @@ class Moteurs(Arbitre):
             return
 
         # Étape complétée
-        if self.maintenant() >= self.vecteur[self.index]*1000 + self.debut:
+        if self.maintenant() >= self.vecteur[self.index][2]*1000 + self.debut:
             self.index += 1
 
             # Manoeuvre complétée
@@ -130,7 +130,7 @@ class Moteurs(Arbitre):
 
     # Retourne l'instant actuel en millisecondes
     def maintenant(self):
-        return lambda: int(round(time.time() * 1000))
+        return int(round(time.time() * 1000))
 
     def execute(self, action):
 

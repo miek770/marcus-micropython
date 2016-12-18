@@ -58,9 +58,9 @@ class Marcus:
         # Arbitre moteurs
         m = moteurs.Moteurs()
         self.arbitres[m.nom] = m
-        self.arbitres[m.nom].active(collision.Collision, 2)
-        self.arbitres[m.nom].active(evasion.Evasion, 5)
-        self.arbitres[m.nom].active(exploration.Exploration, 9)
+        self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
+        self.arbitres[m.nom].active(evasion.Evasion(nom="evasion"), 5)
+        self.arbitres[m.nom].active(exploration.Exploration(nom="exploration"), 9)
 
     # Arrêt
     #=======
