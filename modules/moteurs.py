@@ -70,7 +70,7 @@ class Moteurs(Arbitre):
                 # On avise le comportement gagnant pour qu'il puisse en
                 # tenir compte lors de la prochaine itération
                 self.comportements[i][0].precedent = True
-                self.precedent = i
+                self.precedent = self.comportements[i][1]
                 self.traite_vecteur(action)
                 break
 
