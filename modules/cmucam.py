@@ -4,13 +4,12 @@
 # Librairies standard
 #=====================
 from time import sleep
-import re, sys
+import logging, re, sys
 
 # Librairies spéciales
 #======================
 import Adafruit_BBIO.UART as UART
 import serial
-from pins import msg
 
 # GM # Get Mean
 # GT # Get Tracked
@@ -53,24 +52,24 @@ class Cmucam:
         self.write('pm 1') # Poll mode
         self.blink()
         if self.args.scan:
-            msg("Mesure de la couleur moyenne devant la caméra.", self.args)
+            logging.info("Mesure de la couleur moyenne devant la caméra.")
             self.write('cr 18 44') # RGB auto white balance on
             self.write('cr 19 33') # Auto gain on
             self.leds_on()
             sleep(3.0)
             self.track_window()
-            msg("Couleur mesurée : {}".format(self.tc), self.args)
+            logging.info("Couleur mesurée : {}".format(self.tc))
             self.save_tc()
-            msg("Couleur sauvegardée.", self.args)
+            logging.info("Couleur sauvegardée.")
             self.write('cr 18 40') # RGB auto white balance off
             self.write('cr 19 32') # Auto gain off
             self.leds_off()
         else:
             if not self.load_tc():
-                msg("Erreur : Impossible de charger la couleur sauvegardée.", self.args)
+                logging.error("Impossible de charger la couleur sauvegardée.")
                 sys.exit()
             else:
-                msg("Couleur précédente chargée.", self.args)
+                logging.info("Couleur précédente chargée.")
 
     # Contrôle des LEDs
     #===================
@@ -98,7 +97,7 @@ class Cmucam:
     def save_tc(self):
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
-        msg("Couleur enregistrée : {}".format(self.tc), self.args)
+        logging.info("Couleur enregistrée : {}".format(self.tc))
 
     # Récupère la couleur préalablement enregistrée
     #===============================================
@@ -106,7 +105,7 @@ class Cmucam:
         try:
             with open('tc.txt', 'r') as f:
                 self.tc = f.readline()
-            msg("Couleur chargée : {}".format(self.tc), self.args)
+            logging.info("Couleur chargée : {}".format(self.tc))
             return True
         except IOError:
             return False
@@ -242,3 +241,4 @@ def cam(conn, args, delay=0.05):
 if __name__ == '__main__':
     cmucam = Cmucam()
     cmucam.test()
+

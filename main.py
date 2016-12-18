@@ -10,7 +10,7 @@ from multiprocessing import Process, Pipe
 #======================
 from modules.pins import set_input, get_input
 from comportements import collision, evasion, exploration
-from modules import moteurs
+from modules import cmucam, moteurs
 
 class Marcus:
 
@@ -42,15 +42,15 @@ class Marcus:
         set_input('P8_10') # Arrière gauche
 
         # Initialisation de la CMUCam2+
-#        self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-#        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn))
-#        self.cmucam_sub.start()
-#        message = self.cmucam_parent_conn.recv()
+        self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
+        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn))
+        self.cmucam_sub.start()
+        message = self.cmucam_parent_conn.recv()
 
-#        if 'Erreur' in message:
-#            logging.error(message)
-#        else:
-#            logging.info("Sous-routine lancée : cmucam_sub")
+        if 'Erreur' in message:
+            logging.error(message)
+        else:
+            logging.info("Sous-routine lancée : cmucam_sub")
 
         # Initialisation des arbitres
         self.arbitres = dict()
