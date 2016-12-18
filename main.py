@@ -43,7 +43,7 @@ class Marcus:
 
         # Initialisation de la CMUCam2+
         self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn))
+        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
         self.cmucam_sub.start()
         message = self.cmucam_parent_conn.recv()
 
