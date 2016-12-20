@@ -4,10 +4,11 @@ import logging
 
 class Comportement:
 
-    def __init__(self, nom):
+    def __init__(self, nom, priorite=None):
 
         self.nom = nom
         self.precedent = False
+        self.priorite = priorite
         logging.info("Comportement {} initialisé".format(self.nom))
 
     def evalue(self):

@@ -1,8 +1,14 @@
 #-*- coding:utf-8 -*-
 
+# Librairies standard
+#=====================
+import logging
+from random import random, choice
+
 # Librairies spéciales
 #======================
 from base import Comportement
+import config
 
 # Vecteur moteur
 #================
@@ -19,12 +25,36 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 [(vitesse_gauche, vitesse_droite, duree), ...]
 """
 
-# Constantes
-#============
+# Variables
+#===========
 duree_rotation_min = 0.5 # en secondes
+compteur = 100 # en dixièmes de seconde
 
 class Exploration(Comportement):
 
     def decision(self):
+
+        # Pour éviter d'atteindre -infini
+        if compteur > 0:
+            compteur -= 1
+
+        # Si le compteur est écoulé...
+        if compteur == 0:
+
+            # Et qu'il n'y a eu que de l'exploration pendant ce temps...
+            if all(x in self.priorite for x in config.passe_moteurs):
+
+                logging.info("Comportement {} : Trop tranquille".format(self.nom))
+                compteur = 100 # Réinitialise le compteur (en dixièmes de secondes)
+
+                duree_rotation = duree_rotation_min + random()
+                tourne_gauche = choice((True, False))
+
+                if tourne_gauche:
+                    return [(-100, 100, duree_rotation)]
+                else:
+                    return [(100, -100, duree_rotation)]
+
+        # Sinon...
         return [(100, 100, 0)]
 

@@ -9,6 +9,7 @@ import time, logging
 #======================
 from pins import set_output, set_low, set_high
 from base import Arbitre
+import config
 
 # P9_12 - Direction moteur droit
 # P9_13 - Direction moteur droit
@@ -71,6 +72,11 @@ class Moteurs(Arbitre):
                 # tenir compte lors de la prochaine itération
                 self.comportements[i][0].precedent = True
                 self.precedent = self.comportements[i][1]
+
+                # On met aussi l'historique à jour pour les
+                # comportements que ça intéresserait (ex.: explore)
+                config.passe_moteurs.append(self.precedent)
+
                 self.traite_vecteur(action)
                 break
 

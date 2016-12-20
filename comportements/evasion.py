@@ -3,7 +3,7 @@
 # Librairies standard
 #=====================
 import logging
-from random import random, randint, choice
+from random import random, choice
 
 # Librairies spéciales
 #======================
