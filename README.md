@@ -34,10 +34,6 @@ Donc plutôt que d'arrêter et de tourner sur place lorsqu'un obstacle est déte
 
 Pour y parvenir je dois modifier le module de moteurs et y activer les PWM (sur enable). Pour le moment les pins sont à vrai ou faux.
 
-#### Statisme
-
-Créer un comportement de statisme qui détecte une absence de variation générale des capteurs pendant une certain temps, dans le but de détecter une absence de mouvement. Idéalement il me faudrait une détection de rotor barré (haut courant), mais une détection de statisme permettrait aussi de valider que le robot est bloqué.
-
 #### Qualification des capteurs
 
 Un comportement de qualification des capteurs pourrait être implantée pour chacun afin de détecter s'il opère normalement. Par exemple, un bumper qui reste activé alors que le robot se déplace (actions aux moteurs combinés avec une absence de statisme) indique probablement que le bumper est "collé".
@@ -70,3 +66,4 @@ Pour la caméra, le plus simple est probablement juste de s'assurer que le lien 
   - bash;
   - marcus.service;
   - uEnv.txt.
+
