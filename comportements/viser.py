@@ -46,6 +46,10 @@ class Viser(Comportement):
             return None
 
         else:
+            # Effacer ces lignes après quelques tests, je ne veux pas
+            # que ce comportement remplisse le journal de messsages
+            # inutiles lorsqu'elle n'a même pas d'action à prendre (si
+            # on est déjà bien aligné).
             logging.debug("Comportement {} : Détection de la couleur recherchée".format(self.nom))
             logging.debug("".format(config.track))
 
@@ -57,7 +61,5 @@ class Viser(Comportement):
                 logging.debug("Cibre à droite, tourne à droite")
                 return [(100, -100, 0)]
 
-            else:
-                # Cible en joue
-                return None
+            return None
 
