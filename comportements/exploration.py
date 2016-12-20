@@ -28,7 +28,8 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 # Variables
 #===========
 duree_rotation_min = 0.5 # en secondes
-compteur = 100 # en dixièmes de seconde
+compteur_max = 50 # en cycles
+compteur = compteur_max
 
 class Exploration(Comportement):
 
@@ -45,7 +46,7 @@ class Exploration(Comportement):
             if all(x in self.priorite for x in config.passe_moteurs):
 
                 logging.info("Comportement {} : Trop tranquille".format(self.nom))
-                compteur = 100 # Réinitialise le compteur (en dixièmes de secondes)
+                compteur = compteur_max
 
                 duree_rotation = duree_rotation_min + random()
                 tourne_gauche = choice((True, False))
