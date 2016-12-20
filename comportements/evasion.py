@@ -8,7 +8,7 @@ from random import random, choice
 # Librairies spéciales
 #======================
 from base import Comportement
-from peripheriques import gp2d12
+from peripheriques.gp2d12 import get_dist
 
 # Vecteur moteur
 #================
@@ -34,9 +34,9 @@ duree_rotation_min = 1 # en s
 class Evasion(Comportement):
 
     def decision(self):
-        av_mi = gp2d12.get_dist('AIN0') # Avant milieu
-        av_ga = gp2d12.get_dist('AIN1') # Avant gauche
-        av_dr = gp2d12.get_dist('AIN2') # Avant droit
+        av_mi = get_dist('AIN0') # Avant milieu
+        av_ga = get_dist('AIN1') # Avant gauche
+        av_dr = get_dist('AIN2') # Avant droit
 
         # Obstacle à gauche (pas à droite)
         if av_ga <= seuil_cote and av_dr > seuil_cote:
