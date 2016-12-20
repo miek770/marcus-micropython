@@ -8,7 +8,7 @@ import time, logging
 # Librairies spéciales
 #======================
 from pins import set_output, set_low, set_high
-from comportements.arbitre import Arbitre
+from base import Arbitre
 
 # P9_12 - Direction moteur droit
 # P9_13 - Direction moteur droit

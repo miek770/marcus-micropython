@@ -8,9 +8,10 @@ from multiprocessing import Process, Pipe
 
 # Librairies spéciales
 #======================
-from modules.pins import set_input, get_input
+from peripheriques.pins import set_input, get_input
 from comportements import collision, evasion, exploration
-from modules import cmucam, moteurs
+from peripheriques import cmucam
+from arbitres import moteurs
 
 class Marcus:
 

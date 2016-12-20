@@ -7,8 +7,8 @@ from random import random, randint, choice
 
 # Librairies spéciales
 #======================
-from arbitre import Comportement
-from modules import gp2d12
+from base import Comportement
+from peripheriques import gp2d12
 
 # Vecteur moteur
 #================

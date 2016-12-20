@@ -2,7 +2,7 @@
 
 # Librairies spéciales
 #======================
-from arbitre import Comportement
+from base import Comportement
 
 # Vecteur moteur
 #================

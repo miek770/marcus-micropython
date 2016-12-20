@@ -7,8 +7,8 @@ from random import random, randint, choice
 
 # Librairies spéciales
 #======================
-from arbitre import Comportement
-from modules.pins import get_input
+from base import Comportement
+from peripheriques.pins import get_input
 
 # Vecteur moteur
 #================
