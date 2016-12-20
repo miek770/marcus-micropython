@@ -11,21 +11,18 @@ from pins import set_output, set_low, set_high
 from base import Arbitre
 import config
 
-# P9_12 - Direction moteur droit
-# P9_13 - Direction moteur droit
-# P9_14 - Enable moteur droit (PWM)
-# P9_15 - Direction moteur gauche
-# P9_16 - Enable moteur gauche (PWM)
-# P9_21 - Direction moteur gauche
-
-#======================================================================
-# Classe :      Moteurs
-# Description : Wrapper pour gérer le contrôle des moteurs du robot
-#======================================================================
 class Moteurs(Arbitre):
+    """À la fois l'arbitre du contrôle des moteurs et le pilote
+    d'opération des moteurs.
 
-    # Initialisation
-    #================
+    P9_12 - Direction moteur droit
+    P9_13 - Direction moteur droit
+    P9_14 - Enable moteur droit (PWM)
+    P9_15 - Direction moteur gauche
+    P9_16 - Enable moteur gauche (PWM)
+    P9_21 - Direction moteur gauche
+    """
+
     def __init__(self, nom="moteurs"):
 
         self.nom = nom
@@ -42,14 +39,21 @@ class Moteurs(Arbitre):
 
         self.manoeuvre = False
         self.vecteur = None
-        self.droit_arret()
-        self.gauche_arret()
+        self.arret()
 
     def arret(self):
+        """Cette méthode est appelée à l'initialisation de cet arbitre
+        spécifique ainsi que pour tous les arbitres à l'arrêt du
+        programme générale dans main.py.
+        """
         self.droit_arret()
         self.gauche_arret()
 
     def evalue(self):
+        """Méthode appelée par la boucle principale dans main.py pour
+        demander à l'arbitre d'interroger chacun de ses comportements
+        et de rendre une décision.
+        """
 
         for i in range(len(self.comportements)):
 
@@ -84,10 +88,10 @@ class Moteurs(Arbitre):
             else:
                 logging.debug("Comportement {} : Aucune action".format(self.comportements[i][0].nom))
 
-    # Interprétation de vecteur de commande
-    #=======================================
     def traite_vecteur(self, vecteur):
-        """Le comportement doit retourner un vecteur (une liste)
+        """Interprétation de vecteur de commande de moteurs.
+        
+        Le comportement doit retourner un vecteur (une liste)
         décrivant les actions à prendre par le moteur. La liste est
         une série de tuples avec la vitesse du moteur droit, la
         vitesse du moteur gauche et la durée de l'événement.
@@ -115,6 +119,10 @@ class Moteurs(Arbitre):
         self.execute(vecteur[0])
 
     def poursuit_manoeuvre(self):
+        """Si une manoeuvre est en cours et qu'on lui permet de se
+        poursuivre (voir la méthode evalue()), alors cette méthode est
+        appelée.
+        """
 
         # Aucune manoeuvre en cours
         if not self.manoeuvre:
@@ -134,11 +142,15 @@ class Moteurs(Arbitre):
                 self.execute(self.vecteur[self.index])
                 self.debut = self.maintenant()
 
-    # Retourne l'instant actuel en millisecondes
     def maintenant(self):
+        """Retourne l'instant actuel en millisecondes.
+        """
         return int(round(time.time() * 1000))
 
     def execute(self, action):
+        """Exécute l'action demandée (une étape de vecteur, sans
+        considérer la durée) sur les 2 moteurs.
+        """
 
             if action[0] == 0:
                 self.gauche_freine()
