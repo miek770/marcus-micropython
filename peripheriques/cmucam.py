@@ -206,9 +206,12 @@ def cam(conn, args, delay=0.05):
     track = True
 
     v = cmucam.get_version()
+
     if not v:
+
         logging.error("La CMUCam2+ ne répond pas")
         sys.exit()
+
     conn.send(v)
 
     while True:

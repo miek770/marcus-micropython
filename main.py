@@ -64,7 +64,7 @@ class Marcus:
         self.arbitres[m.nom].active(evasion.Evasion(nom="evasion"), 5)
         #self.arbitres[m.nom].active(viser.Viser(nom="viser"), 4)
         #self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
-        self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
+        #self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
         self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
         #self.arbitres[m.nom].active(.(nom=""), )
 

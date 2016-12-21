@@ -7,7 +7,7 @@ import time, logging
 
 # Librairies spéciales
 #======================
-from pins import set_output, set_low, set_high
+from peripheriques.pins import set_output, set_low, set_high
 from base import Arbitre
 import config
 
@@ -152,19 +152,19 @@ class Moteurs(Arbitre):
         considérer la durée) sur les 2 moteurs.
         """
 
-            if action[0] == 0:
-                self.gauche_freine()
-            elif action[0] > 0:
-                self.gauche_avance()
-            elif action[0] < 0:
-                self.gauche_recule()
+        if action[0] == 0:
+            self.gauche_freine()
+        elif action[0] > 0:
+            self.gauche_avance()
+        elif action[0] < 0:
+            self.gauche_recule()
 
-            if action[1] == 0:
-                self.droit_freine()
-            elif action[1] > 0:
-                self.droit_avance()
-            elif action[1] < 0:
-                self.droit_recule()
+        if action[1] == 0:
+            self.droit_freine()
+        elif action[1] > 0:
+            self.droit_avance()
+        elif action[1] < 0:
+            self.droit_recule()
 
     # Fonctions par moteur
     #======================
