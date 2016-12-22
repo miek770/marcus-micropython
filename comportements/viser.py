@@ -65,5 +65,5 @@ class Viser(Comportement):
                 return None
 
         except KeyError:
-            logging.error("Comportement {} : config.track est vide".format(self.nom))
+            logging.error("Comportement {0} : config.track est vide {1}".format(self.nom, config.track))
             return None

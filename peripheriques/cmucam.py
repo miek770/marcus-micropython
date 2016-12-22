@@ -172,6 +172,7 @@ class Cmucam:
         les modules ou comportements qui importent config.
         """
         config.track = self.t_packet_to_dict(self.write('tc'))
+        logging.debug("Peripherique Cmucam : config.track = {}".format(config.track))
 
     # Converti de "T packet" à un dictionnaire
     #==========================================
