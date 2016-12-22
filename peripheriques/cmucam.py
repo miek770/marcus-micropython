@@ -10,7 +10,6 @@ import logging, re, sys
 #======================
 import Adafruit_BBIO.UART as UART
 import serial
-import config
 
 # GM # Get Mean
 # GT # Get Tracked
@@ -97,7 +96,6 @@ class Cmucam:
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
         logging.info("Couleur enregistrée : {}".format(self.tc))
-
     
     def load_tc(self):
         """Récupère la couleur préalablement enregistrée.
@@ -167,12 +165,8 @@ class Cmucam:
     def track(self):
         """Repère la couleur préalablement configurée.
         mx my x1 y1 x2 y2 pixels confidence
-        
-        config.track est une variable globale, accessible par tous
-        les modules ou comportements qui importent config.
         """
-        config.track = self.t_packet_to_dict(self.write('tc'))
-        logging.debug("Peripherique Cmucam : config.track = {}".format(config.track))
+        return self.write('tc')
 
     # Converti de "T packet" à un dictionnaire
     #==========================================
@@ -196,7 +190,7 @@ class Cmucam:
             if r != '0 0 0 0 0 0 0 0':
                 print self.t_packet_to_dict(r)
 
-def cam(conn, args, delay=0.05):
+def cam(conn, args):
     """Wrapper pour faire fonctionner la CMUCam2+ en parallèle avec le
     programme principal. Nécessaire à cause de la communication série
     qui bloque, alors que les comportements qui utilisent le tracking
@@ -239,9 +233,11 @@ def cam(conn, args, delay=0.05):
 
         if track:
             # Cherche la couleur
-            cmucam.track()
+            r = cmucam.track()
+            if r != '0 0 0 0 0 0 0 0':
+                conn.send(cmucam.t_packet_to_dict(r))
 
-        sleep(delay)
+        sleep(args.periode)
 
 if __name__ == '__main__':
     cmucam = Cmucam()
