@@ -4,14 +4,12 @@
 #=====================
 import logging
 from random import random, choice
-from collections import deque
+from itertools import islice
 
 # Librairies spéciales
 #======================
 import config
 from base import Comportement
-from peripheriques.pins import get_input
-from peripheriques.gp2d12 import get_dist
 
 # Vecteur moteur
 #================
@@ -39,31 +37,14 @@ class Statisme(Comportement):
 
         self.duree_min_recul = 1 # en seconde
         self.duree_min_rotation = 0.5 # en seconde
-
-        self.passe = dict()
         self.memoire = 30 # en cycles
-        self.passe["pare_chocs"] = (None, deque(maxlen=memoire))
-        self.passe["camera"] = (None, deque(maxlen=memoire))
-        self.passe["gp2d12"] = (None, deque(maxlen=memoire))
-        #self.passe["boucliers"] = deque(maxlen=memoire)
 
     def decision(self):
 
-        actuel = (not get_input("P8_7"), not get_input("P8_8"), not get_input("P8_9"), not get_input("P8_10"))
-        self.passe["pare_chocs"][0] = actuel
-        self.passe["pare_chocs"][1].append(actuel)
-
-        actuel = config.track
-        self.passe["camera"][0] = actuel
-        self.passe["camera"][1].append(actuel)
-
-        actuel = (get_dist("AIN0"), get_dist("AIN1"), get_dist("AIN2"))
-        self.passe["gp2d12"][0] = actuel
-        self.passe["gp2d12"][1].append(actuel)
-
         statisme = True
-        for key in self.passe.keys():
-            if not all(x == self.passe[key][0] for x in self.passe[key][1]):
+        for key in config.passe_capteurs.keys():
+            passe_max = list(islice(config.passe_capteurs[key], config.passe_passe_capteurs[key].__len__()-self.memoire, config.passe_capteurs[key].__len__()))
+            if not all(x == passe_max[0] for x in passe_max):
                 statisme = False
                 break
 
