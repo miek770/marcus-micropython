@@ -33,7 +33,7 @@ class Evasion(Comportement):
 
         self.seuil_avant = 45 # Seuil de détection, en cm
         self.seuil_cote = 20 # Seuil de détection, en cm
-        self.duree_rotation_min = 1 # en s
+        self.duree_rotation_min = 0.5 # en s
 
     def decision(self):
         av_mi = get_dist('AIN0') # Avant milieu
