@@ -138,7 +138,11 @@ def main():
                         help="Spécifie la période de chaque cycle pour la boucle principale et celle de la caméra.")
 
     marcus = Marcus(args=parser.parse_args())
-    marcus.loop()
+
+    try:
+        marcus.loop()
+    except KeyboardInterrupt:
+        marcus.quit()
 
 if __name__ == '__main__':
     main()
