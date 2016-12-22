@@ -48,13 +48,14 @@ class Exploration(Comportement):
         # Si le compteur est écoulé...
         if self.compteur == 0:
 
-            # Et qu'il n'y a eu que de l'exploration pendant ce temps...
-            try:
-                passe_max = list(islice(config.passe_moteurs, config.passe_moteurs.__len__()-self.compteur_max, config.passe_moteurs.__len__()))
-            except ValueError:
-                logging.error("Comportement {} : config.passe_moteurs = {}".format(self.nom, config.passe_moteurs))
-                return None
+            # S'il n'y a pas encore assez de cycles pour s'ennuyer...
+            if len(config.passe_moteurs) < self.compteur_max:
+                logging.debug("Comportement {} : len(config.passe_moteurs) = {}".format(self.nom, len(config.passe_moteurs)))
+                return [(100, 100, 0)]
 
+            # Et qu'il n'y a eu que de l'exploration pendant ce temps...
+            passe_max = list(islice(config.passe_moteurs, len(config.passe_moteurs)-self.compteur_max, len(config.passe_moteurs)))
+            
             if all(x in (self.priorite, ) for x in passe_max):
 
                 logging.info("Comportement {} : Trop tranquille".format(self.nom))

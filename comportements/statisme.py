@@ -43,7 +43,13 @@ class Statisme(Comportement):
 
         statisme = True
         for key in config.passe_capteurs.keys():
-            passe_max = list(islice(config.passe_capteurs[key], config.passe_passe_capteurs[key].__len__()-self.memoire, config.passe_capteurs[key].__len__()))
+
+            # Pas encore assez de cycles pour détecter du statisme
+            if len(config.passe_capteurs[key]) < self.memoire:
+                statisme = False
+                break
+
+            passe_max = list(islice(config.passe_capteurs[key], len(config.passe_capteurs[key])-self.memoire, len(config.passe_capteurs[key])))
             if not all(x == passe_max[0] for x in passe_max):
                 statisme = False
                 break
