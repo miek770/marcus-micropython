@@ -87,10 +87,10 @@ class Marcus:
         while True:
             sleep(self.args.periode)
 
-            if not self.args.nocam and self.cmucam_sub.poll():
+            if not self.args.nocam and self.cmucam_parent_conn.poll():
 
                 try:
-                    config.track = self.cmucam_sub.recv()
+                    config.track = self.cmucam_parent_conn.recv()
 
                 except EOFError:
                     logging.error("La sous-routine cmucam ne répond plus")

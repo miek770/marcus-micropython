@@ -234,8 +234,13 @@ def cam(conn, args):
         if track:
             # Cherche la couleur
             r = cmucam.track()
+            logging.debug("cmucam.track() = {}".format(r))
             if r != '0 0 0 0 0 0 0 0':
-                conn.send(cmucam.t_packet_to_dict(r))
+                try:
+                    d = cmucam.t_packet_to_dict(r)
+                    conn.send(d)
+                except IndexError:
+                    logging.error("cmucam.track() n'a rien retourné")
 
         sleep(args.periode)
 
