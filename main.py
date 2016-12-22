@@ -76,6 +76,7 @@ class Marcus:
         logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
             self.arbitres[key].arret()
+        self.cmucam_sub.terminate()
         sys.exit()
 
     # Boucle principale
@@ -122,19 +123,7 @@ def main():
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
 
     marcus = Marcus(args=parser.parse_args())
-
-    try:
-        marcus.loop()
-
-    except KeyboardInterrupt:
-        marcus.quit()
-        sys.exit(2)
-
-    except:
-        sub.check_call(("ifup", "wlan0"))
-        print "Erreur imprévue : ", sys.exc_info()[0]
-        logging.error(sys.exc_info())
-        raise
+    marcus.loop()
 
 if __name__ == '__main__':
     main()

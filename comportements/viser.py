@@ -42,24 +42,28 @@ class Viser(Comportement):
 
     def decision(self):
 
-        if int(config.track["confidence"]) < self.seuil_conf:
+        try:
+            if int(config.track["confidence"]) < self.seuil_conf:
+                return None
+
+            else:
+                # Effacer ces lignes après quelques tests, je ne veux pas
+                # que ce comportement remplisse le journal de messsages
+                # inutiles lorsqu'elle n'a même pas d'action à prendre (si
+                # on est déjà bien aligné).
+                logging.debug("Comportement {} : Détection de la couleur recherchée".format(self.nom))
+                logging.debug("".format(config.track))
+
+                if config.track["mx"] < (self.centre_x - self.seuil_mx):
+                    logging.debug("Cible à gauche, tourne à gauche")
+                    return [(-100, 100, 0)]
+
+                elif config.track["mx"] > (self.centre_x + self.seuil_mx):
+                    logging.debug("Cibre à droite, tourne à droite")
+                    return [(100, -100, 0)]
+
+                return None
+
+        except KeyError:
+            logging.error("Comportement {} : config.track est vide".format(self.nom))
             return None
-
-        else:
-            # Effacer ces lignes après quelques tests, je ne veux pas
-            # que ce comportement remplisse le journal de messsages
-            # inutiles lorsqu'elle n'a même pas d'action à prendre (si
-            # on est déjà bien aligné).
-            logging.debug("Comportement {} : Détection de la couleur recherchée".format(self.nom))
-            logging.debug("".format(config.track))
-
-            if config.track["mx"] < (self.centre_x - self.seuil_mx):
-                logging.debug("Cible à gauche, tourne à gauche")
-                return [(-100, 100, 0)]
-
-            elif config.track["mx"] > (self.centre_x + self.seuil_mx):
-                logging.debug("Cibre à droite, tourne à droite")
-                return [(100, -100, 0)]
-
-            return None
-

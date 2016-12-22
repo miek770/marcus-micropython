@@ -1,4 +1,4 @@
 from collections import deque
 
-track = None
+track = dict()
 passe_moteurs = deque(maxlen=100)

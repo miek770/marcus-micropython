@@ -46,16 +46,20 @@ class Approche(Comportement):
 
     def decision(self):
 
-        if int(config.track["confidence"]) < self.seuil_conf:
+        try:
+            if int(config.track["confidence"]) < self.seuil_conf:
+                return None
+
+            elif config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):
+                logging.debug("Cible trop loin, on s'approche")
+                return [(100, 100, 0)]
+
+            elif config.track["pixels"] > (self.cible_pixels + self.ecart_pixels):
+                logging.debug("Cible trop proche, on s'éloigne")
+                return [(-100, -100, 0)]
+
             return None
 
-        elif config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):
-            logging.debug("Cible trop loin, on s'approche")
-            return [(100, 100, 0)]
-
-        elif config.track["pixels"] > (self.cible_pixels + self.ecart_pixels):
-            logging.debug("Cible trop proche, on s'éloigne")
-            return [(-100, -100, 0)]
-
-        return None
-
+        except KeyError:
+            logging.error("Comportement {} : config.track est vide".format(self.nom))
+            return None
