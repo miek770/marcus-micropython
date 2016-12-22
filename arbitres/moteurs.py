@@ -7,20 +7,12 @@ import time, logging
 
 # Librairies spéciales
 #======================
-from peripheriques.pins import set_pwm, reset_pwm, set_duty_cycle, set_output, set_low, set_high
+from peripheriques.moteurs import Moteurs as Pilote # Pour éviter la confusion
 from base import Arbitre
 import config
 
 class Moteurs(Arbitre):
-    """À la fois l'arbitre du contrôle des moteurs et le pilote
-    d'opération des moteurs.
-
-    P9_12 - Direction moteur droit
-    P9_13 - Direction moteur droit
-    P9_14 - Enable moteur droit (PWM)
-    P9_15 - Direction moteur gauche
-    P9_16 - Enable moteur gauche (PWM)
-    P9_21 - Direction moteur gauche
+    """Arbitre du contrôle des moteurs.
     """
 
     def __init__(self, nom="moteurs"):
@@ -30,26 +22,15 @@ class Moteurs(Arbitre):
         self.precedent = None
         logging.info("Arbitre {} initialisé".format(self.nom))
 
-        set_output('P9_12')
-        set_output('P9_13')
-        set_pwm('P9_14')
-        set_output('P9_15')
-        set_pwm('P9_16')
-        set_output('P9_21')
-
+        self.pilote = Pilote()
         self.manoeuvre = False
         self.vecteur = None
-        self.droit_arret()
-        self.gauche_arret()
 
     def arret(self):
         """Cette méthode est appelée pour tous les arbitres à l'arrêt du
         programme générale dans main.py.
         """
-        self.droit_arret()
-        self.gauche_arret()
-        reset_pwm("P9_14")
-        reset_pwm("P9_16")
+        self.pilote.arret()
 
     def evalue(self):
         """Méthode appelée par la boucle principale dans main.py pour
@@ -119,7 +100,7 @@ class Moteurs(Arbitre):
             self.debut = self.maintenant()
 
         # Exécute la première étape
-        self.execute(vecteur[0])
+        self.pilote.execute(vecteur[0])
 
     def poursuit_manoeuvre(self):
         """Si une manoeuvre est en cours et qu'on lui permet de se
@@ -142,68 +123,10 @@ class Moteurs(Arbitre):
 
             # Sinon, on exécute la prochaine étape
             else:
-                self.execute(self.vecteur[self.index])
+                self.pilote.execute(self.vecteur[self.index])
                 self.debut = self.maintenant()
 
     def maintenant(self):
         """Retourne l'instant actuel en millisecondes.
         """
         return int(round(time.time() * 1000))
-
-    def execute(self, action):
-        """Exécute l'action demandée (une étape de vecteur, sans
-        considérer la durée) sur les 2 moteurs.
-        """
-
-        if action[0] == 0:
-            self.gauche_freine()
-        elif action[0] > 0:
-            self.gauche_avance()
-        elif action[0] < 0:
-            self.gauche_recule()
-
-        if action[1] == 0:
-            self.droit_freine()
-        elif action[1] > 0:
-            self.droit_avance()
-        elif action[1] < 0:
-            self.droit_recule()
-
-    # Fonctions par moteur
-    #======================
-    def gauche_arret(self):
-        set_duty_cycle('P9_14', 0) # Disable
-
-    def gauche_freine(self):
-        set_high('P9_12')
-        set_high('P9_13')
-        set_duty_cycle("P9_14", 100) # Enable
-
-    def gauche_recule(self):
-        set_low('P9_12')
-        set_high('P9_13')
-        set_duty_cycle("P9_14", 100) # Enable
-
-    def gauche_avance(self):
-        set_high('P9_12')
-        set_low('P9_13')
-        set_duty_cycle("P9_14", 100) # Enable
-
-    def droit_arret(self):
-        set_duty_cycle("P9_16", 0) # Disable
-
-    def droit_freine(self):
-        set_high('P9_15')
-        set_high('P9_21')
-        set_duty_cycle("P9_16", 100) # Enable
-
-    def droit_recule(self):
-        set_high('P9_15')
-        set_low('P9_21')
-        set_duty_cycle("P9_16", 100) # Enable
-
-    def droit_avance(self):
-        set_low('P9_15')
-        set_high('P9_21')
-        set_duty_cycle("P9_16", 100) # Enable
-

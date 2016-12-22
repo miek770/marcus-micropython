@@ -43,7 +43,7 @@ class Exploration(Comportement):
         # Pour éviter d'atteindre -infini
         if self.compteur > 0:
             self.compteur -= 1
-            logging.debug("Comportement {} : Compteur à {}".format(self.nom, self.compteur))
+            #logging.debug("Comportement {} : Compteur à {}".format(self.nom, self.compteur))
 
         # Si le compteur est écoulé...
         if self.compteur == 0:
