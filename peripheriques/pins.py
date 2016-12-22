@@ -80,70 +80,119 @@ pins['P9_42'] = None
 # P9_35 - AIN6
 #ADC.setup()
 
-#======================================================================
-# Fonction :    set_low(pin)
-# Description : Regle la pin digitale a 0V.
-#======================================================================
-def set_low(pin):
-    # Vérifie si la pin est configurée en sortie
-    if pins[pin] == 'out':
-        GPIO.output(pin, GPIO.LOW)
+# Configurations
+#================
 
-    elif pins[pin] == 'in':
-        logging.error("{} est configurée en entrée".format(pin))
+def set_pwm(pin):
+    """Configure la pin en sortie PWM.
+    """
 
-    else:
-        logging.error("{} n'est pas configurée correctement".format(pin))
-
-#======================================================================
-# Fonction :    set_high(pin)
-# Description : Regle la pin digitale a 3.3V.
-#======================================================================
-def set_high(pin):
-    # Vérifie si la pin est configurée en sortie
-    if pins[pin] == 'out':
-        GPIO.output(pin, GPIO.HIGH)
-
-    elif pins[pin] == 'in':
-        logging.error("{} est configurée en entrée".format(pin))
+    # Vérifie si la pin est déjà configurée
+    if pins[pin] is not None and pins[pin] != "pwm":
+        logging.error("{} est déjà configurée en '{}'".format(pin, pins[pin]))
 
     else:
-        logging.error("{} n'est pas configurée correctement".format(pin))
+        pins[pin] = "pwm"
+        # Démarre le PWM avec un "duty cycle" de 0%
+        PWM.start(pin, 0)
 
-#======================================================================
-# Fonction :    set_output(pin)
-# Description : Configure la pin en mode sortie.
-#======================================================================
+def reset_pwm(pin):
+    """Désactive la pin de sortie PWM.
+    """
+
+    # Vérifie si la pin est bien configurée en PWM
+    if pins[pin] != "pwm":
+        logging.error("{} n'est pas configurée en PWM : '{}'".format(pin, pins[pin]))
+
+    else:
+        pins[pin] = None
+        PWM.stop(pin)
+        PWM.cleanup()
+
 def set_output(pin):
-    GPIO.setup(pin, GPIO.OUT)
-    pins[pin] = 'out'
+    """Configure la pin en sortie numérique.
+    """
 
-    # Met la pin à 3.3V (high) par défaut
-    set_high(pin)
+    # Vérifie si la pin est déjà configurée
+    if pins[pin] is not None and pins[pin] != "out":
+        logging.error("{} est déjà configurée en '{}'".format(pin, pins[pin]))
 
-#======================================================================
-# Fonction :    set_input(pin)
-# Description : Configure la pin en mode entrée.
-#======================================================================
+    else:
+        GPIO.setup(pin, GPIO.OUT)
+        pins[pin] = 'out'
+
+        # Met la pin à 3.3V (high) par défaut
+        set_high(pin)
+
 def set_input(pin):
-    GPIO.setup(pin, GPIO.IN)
-    pins[pin] = 'in'
+    """Configure la pin en entrée numérique.
+    """
 
-#======================================================================
-# Fonction :    get_input(pin)
-# Description : Retourne la valeur de la pin.
-#======================================================================
+    # Vérifie si la pin est déjà configurée
+    if pins[pin] is not None and pins[pin] != "in":
+        logging.error("{} est déjà configurée en '{}'".format(pin, pins[pin]))
+
+    else:
+        GPIO.setup(pin, GPIO.IN)
+        pins[pin] = 'in'
+
+# Lectures
+#==========
+
 def get_input(pin):
+    """Retourne la valeur de la pin.
+    """
+
     return GPIO.input(pin)
 
-#======================================================================
-# Fonction :    get_adc(pin)
-# Description : Retourne une valeur entre 0 et 1 correspondant à une
-#               lecture
-#               entre 0 et 3,3V.
-#======================================================================
 def get_adc(pin):
+    """Retourne une valeur entre 0,0 et 1,0 correspondant à une
+    lecture entre 0,0V et 3,3V.
+
+    Selon https://learn.adafruit.com/setting-up-io-python-library-on-beaglebone-black/adc,
+    en date du 2016-12-22 :
+
+    There is currently a bug in the ADC driver. You'll need to read
+    the values twice in order to get the latest value.
+    """
+
     ADC.read(pin)
     reading = ADC.read(pin)
     return reading
 
+# Écritures
+#===========
+
+def set_duty_cycle(pin, duty_cycle):
+    """Règle le "duty cycle" de la pin en mode PWM.
+    """
+
+    # Vérifie si la pin est configurée en PWM
+    if pins[pin] == "pwm":
+        PWM.set_duty_cycle(pin, duty_cycle)
+
+    else:
+        logging.error("{} est configurée en '{}'".format(pin, pins[pin]))
+
+def set_low(pin):
+    """Règle la sortie numérique à 0V.
+    """
+
+    # Vérifie si la pin est configurée en sortie
+    if pins[pin] == 'out':
+        GPIO.output(pin, GPIO.LOW)
+
+    else:
+        logging.error("{} est configurée en '{}'".format(pin, pins[pin]))
+
+
+def set_high(pin):
+    """Règle la sortie numérique à 3,3V.
+    """
+
+    # Vérifie si la pin est configurée en sortie
+    if pins[pin] == 'out':
+        GPIO.output(pin, GPIO.HIGH)
+
+    else:
+        logging.error("{} est configurée en '{}'".format(pin, pins[pin]))

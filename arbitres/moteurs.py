@@ -7,7 +7,7 @@ import time, logging
 
 # Librairies spéciales
 #======================
-from peripheriques.pins import set_output, set_low, set_high
+from peripheriques.pins import set_pwm, reset_pwm, set_duty_cycle, set_output, set_low, set_high
 from base import Arbitre
 import config
 
@@ -32,22 +32,24 @@ class Moteurs(Arbitre):
 
         set_output('P9_12')
         set_output('P9_13')
-        set_output('P9_14')
+        set_pwm('P9_14')
         set_output('P9_15')
-        set_output('P9_16')
+        set_pwm('P9_16')
         set_output('P9_21')
 
         self.manoeuvre = False
         self.vecteur = None
-        self.arret()
+        self.droit_arret()
+        self.gauche_arret()
 
     def arret(self):
-        """Cette méthode est appelée à l'initialisation de cet arbitre
-        spécifique ainsi que pour tous les arbitres à l'arrêt du
+        """Cette méthode est appelée pour tous les arbitres à l'arrêt du
         programme générale dans main.py.
         """
         self.droit_arret()
         self.gauche_arret()
+        reset_pwm("P9_14")
+        reset_pwm("P9_16")
 
     def evalue(self):
         """Méthode appelée par la boucle principale dans main.py pour
@@ -170,38 +172,38 @@ class Moteurs(Arbitre):
     # Fonctions par moteur
     #======================
     def gauche_arret(self):
-        set_low('P9_14') # Disable
+        set_duty_cycle('P9_14', 0) # Disable
 
     def gauche_freine(self):
         set_high('P9_12')
         set_high('P9_13')
-        set_high('P9_14') # Enable
+        set_duty_cycle("P9_14", 100) # Enable
 
     def gauche_recule(self):
         set_low('P9_12')
         set_high('P9_13')
-        set_high('P9_14') # Enable
+        set_duty_cycle("P9_14", 100) # Enable
 
     def gauche_avance(self):
         set_high('P9_12')
         set_low('P9_13')
-        set_high('P9_14') # Enable
+        set_duty_cycle("P9_14", 100) # Enable
 
     def droit_arret(self):
-        set_low('P9_16') # Disable
+        set_duty_cycle("P9_16", 0) # Disable
 
     def droit_freine(self):
         set_high('P9_15')
         set_high('P9_21')
-        set_high('P9_16') # Enable
+        set_duty_cycle("P9_16", 100) # Enable
 
     def droit_recule(self):
         set_high('P9_15')
         set_low('P9_21')
-        set_high('P9_16') # Enable
+        set_duty_cycle("P9_16", 100) # Enable
 
     def droit_avance(self):
         set_low('P9_15')
         set_high('P9_21')
-        set_high('P9_16') # Enable
+        set_duty_cycle("P9_16", 100) # Enable
 
