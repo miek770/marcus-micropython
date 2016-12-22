@@ -76,7 +76,8 @@ class Marcus:
         logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
             self.arbitres[key].arret()
-        self.cmucam_sub.terminate()
+        if not self.args.nocam:
+            self.cmucam_sub.terminate()
         sys.exit()
 
     # Boucle principale
@@ -84,12 +85,20 @@ class Marcus:
     def loop(self):
 
         while True:
-            sleep(0.1)
+            sleep(self.args.periode)
+
+            if not self.args.nocam and self.cmucam_sub.poll():
+
+                try:
+                    config.track = self.cmucam_sub.recv()
+
+                except EOFError:
+                    logging.error("La sous-routine cmucam ne répond plus")
+                    self.quit()
 
             if self.args.stop:
                 if not get_input("P8_7") or not get_input("P8_8") or not get_input("P8_9") or not get_input("P8_10"):
                     self.quit()
-
 
             for key in self.arbitres.keys():
                 self.arbitres[key].evalue()
@@ -121,6 +130,12 @@ def main():
     parser.add_argument('--scan',
                         action='store_true',
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
+    parser.add_argument('-p',
+                        '--periode',
+                        action='store',
+                        default=0.1,
+                        type=float,
+                        help="Spécifie la période de chaque cycle pour la boucle principale et celle de la caméra.")
 
     marcus = Marcus(args=parser.parse_args())
     marcus.loop()
