@@ -6,6 +6,7 @@ import logging
 
 # Librairies spéciales
 #======================
+import Adafruit_BBIO.UART as UART
 import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM
 import Adafruit_BBIO.ADC as ADC
@@ -82,6 +83,36 @@ pins['P9_42'] = None
 
 # Configurations
 #================
+
+def set_uart(uart_id):
+    """Active le port de communication série.
+    """
+
+    if uart_id not in (1, 2, 3, 4, 5):
+        logging.error("Port série invalide : UART{}".format(uart_id))
+        return
+
+    elif uart_id == 1:
+        pins_uart = ("P9_26", "P9_24", "P9_20", "P9_19")
+    elif uart_id == 2:
+        pins_uart = ("P9_22", "P9_21")
+    elif uart_id == 3:
+        pins_uart = ("P9_42", "P8_36", "P8_34")
+    elif uart_id == 4:
+        pins_uart = ("P9_11", "P9_13", "P8_35", "P8_33")
+    elif uart_id == 5:
+        pins_uart = ("P8_38", "P8_37", "P8_31", "P8_32")
+
+    for pin in pins_uart:
+        try:
+            if pins[pin] is not None:
+                logging.error("{} est déjà configurée en '{}'".format(pin, pins[pin]))
+                return
+            else:
+                pins[pin] = "uart{}".format(uart_id)
+        except KeyError:
+            continue
+    UART.setup("UART{}".format(uart_id))
 
 def set_pwm(pin):
     """Configure la pin en sortie PWM.

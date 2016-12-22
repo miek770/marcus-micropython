@@ -8,7 +8,7 @@ import logging, re, sys
 
 # Librairies spéciales
 #======================
-import Adafruit_BBIO.UART as UART
+from pins import set_uart
 import serial
 
 # GM # Get Mean
@@ -32,7 +32,7 @@ class Cmucam:
         """
         self.args = args
 
-        UART.setup('UART1')
+        set_uart(1)
         self.ser = serial.Serial('/dev/ttyO1')
         self.ser.baudrate = 115200
         self.ser.bytesize = 8
@@ -61,10 +61,12 @@ class Cmucam:
             self.write('cr 18 40') # RGB auto white balance off
             self.write('cr 19 32') # Auto gain off
             self.leds_off()
+
         else:
             if not self.load_tc():
                 logging.error("Impossible de charger la couleur sauvegardée")
                 sys.exit()
+
             else:
                 logging.debug("Couleur précédente chargée")
 
