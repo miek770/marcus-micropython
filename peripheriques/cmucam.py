@@ -49,15 +49,15 @@ class Cmucam:
         self.write('pm 1') # Poll mode
         self.blink()
         if self.args.scan:
-            logging.info("Mesure de la couleur moyenne devant la caméra")
+            logging.debug("Mesure de la couleur moyenne devant la caméra")
             self.write('cr 18 44') # RGB auto white balance on
             self.write('cr 19 33') # Auto gain on
             self.leds_on()
             sleep(3.0)
             self.track_window()
-            logging.info("Couleur mesurée : {}".format(self.tc))
+            logging.debug("Couleur mesurée : {}".format(self.tc))
             self.save_tc()
-            logging.info("Couleur sauvegardée")
+            logging.debug("Couleur sauvegardée")
             self.write('cr 18 40') # RGB auto white balance off
             self.write('cr 19 32') # Auto gain off
             self.leds_off()
@@ -66,7 +66,7 @@ class Cmucam:
                 logging.error("Impossible de charger la couleur sauvegardée")
                 sys.exit()
             else:
-                logging.info("Couleur précédente chargée")
+                logging.debug("Couleur précédente chargée")
 
     # Contrôle des LEDs
     #===================
@@ -95,7 +95,7 @@ class Cmucam:
         """
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
-        logging.info("Couleur enregistrée : {}".format(self.tc))
+        logging.debug("Couleur enregistrée : {}".format(self.tc))
     
     def load_tc(self):
         """Récupère la couleur préalablement enregistrée.
@@ -103,7 +103,7 @@ class Cmucam:
         try:
             with open('tc.txt', 'r') as f:
                 self.tc = f.readline()
-            logging.info("Couleur chargée : {}".format(self.tc))
+            logging.debug("Couleur chargée : {}".format(self.tc))
             return True
         except IOError:
             return False
