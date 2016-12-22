@@ -3,6 +3,7 @@
 # Librairies standard
 #=====================
 import logging
+from itertools import islice
 from random import random, choice
 
 # Librairies spéciales
@@ -42,12 +43,19 @@ class Exploration(Comportement):
         # Pour éviter d'atteindre -infini
         if self.compteur > 0:
             self.compteur -= 1
+            logging.debug("Comportement {} : Compteur à {}".format(self.nom, self.compteur))
 
         # Si le compteur est écoulé...
         if self.compteur == 0:
 
             # Et qu'il n'y a eu que de l'exploration pendant ce temps...
-            if all(x in (self.priorite, ) for x in config.passe_moteurs):
+            try:
+                passe_max = list(islice(config.passe_moteurs, config.passe_moteurs.__len__()-self.compteur_max, config.passe_moteurs.__len__()))
+            except ValueError:
+                logging.error("Comportement {} : config.passe_moteurs = {}".format(self.nom, config.passe_moteurs))
+                return None
+
+            if all(x in (self.priorite, ) for x in passe_max):
 
                 logging.info("Comportement {} : Trop tranquille".format(self.nom))
                 self.compteur = self.compteur_max
