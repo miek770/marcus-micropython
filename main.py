@@ -86,7 +86,7 @@ class Marcus:
     def loop(self):
 
         while True:
-            sleep(self.args.periode)
+            sleep(config.periode)
 
             if not self.args.nocam and self.cmucam_parent_conn.poll():
 
@@ -131,12 +131,6 @@ def main():
     parser.add_argument('--scan',
                         action='store_true',
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
-    parser.add_argument('-p',
-                        '--periode',
-                        action='store',
-                        default=0.1,
-                        type=float,
-                        help="Spécifie la période de chaque cycle pour la boucle principale et celle de la caméra.")
 
     marcus = Marcus(args=parser.parse_args())
 
