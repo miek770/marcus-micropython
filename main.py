@@ -11,7 +11,7 @@ from multiprocessing import Process, Pipe
 from peripheriques.pins import set_input, get_input
 from comportements import memoire, collision, evasion, viser, approche, statisme, exploration
 from peripheriques import cmucam
-from arbitres import moteurs
+from arbitres import moteurs, modes
 import config
 
 class Marcus:
@@ -71,6 +71,11 @@ class Marcus:
         self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
         #self.arbitres[m.nom].active(.(nom=""), )
 
+        # Arbitre modes
+        m = modes.Modes()
+        self.arbitres[m.nom] = m
+        #self.arbitres[m.nom].active(.(nom=""), )
+
     # Arrêt
     #=======
     def quit(self):
@@ -88,21 +93,27 @@ class Marcus:
         while True:
             sleep(config.periode)
 
+            # Mise à jour de config.track
             if not self.args.nocam and self.cmucam_parent_conn.poll():
-
                 try:
                     config.track = self.cmucam_parent_conn.recv()
-
                 except EOFError:
                     logging.error("La sous-routine cmucam ne répond plus")
                     self.quit()
 
+            # Arrêt du programme principal
             if self.args.stop:
                 if not get_input("P8_7") or not get_input("P8_8") or not get_input("P8_9") or not get_input("P8_10"):
                     self.quit()
 
+            # Interrogation des arbitres
             for key in self.arbitres.keys():
                 self.arbitres[key].evalue()
+
+            # Mise à jour de la période
+            if not self.args.nocam and config.periode_change:
+                config.periode_change = False
+                self.cmucam_parent_conn.send("periode={}".format(config.periode))
 
 #======================================================================
 # Fonction :    main
