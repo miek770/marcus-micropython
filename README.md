@@ -24,9 +24,10 @@ Dernière j'ai fait d'autres tests et le rangefinder central a tendance à faire
 
 ### 2.2. Schémas
 
-Les schémas électriques ont été réalisés avec gEDA sur Linux. Il faudrait que je trouve un programme équivalent sur Windows, ou que j'utilise le format DWG à la place (plus commun). Ou SVG.
+J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci sont commandés chez OSH Park. La tendance est aussi de faire les circuits dans des sous-projets à part, tels que :
 
-2016-12-12 : J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci sont commandés chez OSH Park. La tendance est aussi de faire les circuits dans des sous-projets à part, tels que [marcus-boucliers](https://github.com/miek770/marcus-boucliers) et [marcus-bbbcape](https://github.com/miek770/marcus-bbbcape).
+- [marcus-boucliers](https://github.com/miek770/marcus-boucliers);
+- [marcus-bbbcape](https://github.com/miek770/marcus-bbbcape).
 
 ## 3. Installation
 
