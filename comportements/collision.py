@@ -44,14 +44,14 @@ class Collision(Comportement):
         # Impact avant droit
         if impact_av_dr and not impact_av_ga:
             logging.info("Comportement {} : Impact avant droit, recule et tourne à gauche".format(self.nom))
-            duree_rotation = self.duree_rotation_min + random()
+            duree_rotation = self.duree_rotation_min + random()/2
             return [(0, 0, 0.2),
                     (-100, -100, 0.5),
                     (-100, 100, duree_rotation)]
 
         # Impact avant droit et gauche
         elif impact_av_dr and impact_av_ga:
-            duree_rotation = self.duree_rotation_min + 2*random()
+            duree_rotation = self.duree_rotation_min + random()
             tourne_gauche = choice((True, False))
             if tourne_gauche:
                 logging.info("Comportement {} : Impact avant droit et gauche, recule et tourne à gauche".format(self.nom))
@@ -67,7 +67,7 @@ class Collision(Comportement):
         # Impact avant gauche
         elif not impact_av_dr and impact_av_ga:
             logging.info("Comportement {} : Impact avant gauche, recule et tourne à droite".format(self.nom))
-            duree_rotation = self.duree_rotation_min + random()
+            duree_rotation = self.duree_rotation_min + random()/2
             return [(0, 0, 0.2),
                     (-100, -100, 0.5),
                     (100, -100, duree_rotation)]
