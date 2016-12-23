@@ -18,19 +18,15 @@ Avec la batterie actuelle rechargée le robot se promène sans problème pendant
 
 J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtaine de minutes au moins que la batterie alimente le BBB avec une connexion active sur eth0. L'autonomie semble donc suffisante pour les premiers combats.
 
+#### 2.1.1 Mise à jour 2016-12-23
+
+Dernière j'ai fait d'autres tests et le rangefinder central a tendance à faire de fausses détections à répétition. Il est peut-être trop enfoncé en dessous du robot et détecte le châssis supérieur. Je devrais peut-être le désactiver pour le moment, de toute façon je ne suis pas sûr qu'il aide réellement le robot à se déplacer.
+
 ### 2.2. Schémas
 
 Les schémas électriques ont été réalisés avec gEDA sur Linux. Il faudrait que je trouve un programme équivalent sur Windows, ou que j'utilise le format DWG à la place (plus commun). Ou SVG.
 
 2016-12-12 : J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci sont commandés chez OSH Park. La tendance est aussi de faire les circuits dans des sous-projets à part, tels que [marcus-boucliers](https://github.com/miek770/marcus-boucliers) et [marcus-bbbcape](https://github.com/miek770/marcus-bbbcape).
-
-### 2.3. Amélioration de l'évasion infrarouge
-
-Le contrôle actuel des moteurs lors de détection d'obstacles par infrarouge est très polarisé. S'il y a un obstacle à gauche, le moteur droit se met à reculer et le gauche à avancer à la vitesse maximale. Ensuite, les 2 se remettent à avancer. Pour chaque manoeuvre, il y a donc au moins 2 changements de directions sur l'un des moteurs. Ça provoquer un délai, un mouvement saccadé et une inutilement forte consommation électrique. Je devrais plutôt d'abord tenter d'utiliser une commande proportionnelle à la différence entre les 2 capteurs.
-
-Donc plutôt que d'arrêter et de tourner sur place lorsqu'un obstacle est détecté, le robot aurait un déplacement sinueux qui éviterait doucement les obstacles.
-
-Pour y parvenir je dois modifier le module de moteurs et y activer les PWM (sur enable). Pour le moment les pins sont à vrai ou faux.
 
 ## 3. Installation
 
