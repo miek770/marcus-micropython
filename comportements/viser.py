@@ -56,11 +56,11 @@ class Viser(Comportement):
 
                 if config.track["mx"] < (self.centre_x - self.seuil_mx):
                     logging.debug("Cible à gauche, tourne à gauche")
-                    return [(-100, 100, 0)]
+                    return [(-30, 30, 0)]
 
                 elif config.track["mx"] > (self.centre_x + self.seuil_mx):
                     logging.debug("Cibre à droite, tourne à droite")
-                    return [(100, -100, 0)]
+                    return [(30, -30, 0)]
 
                 return None
 
