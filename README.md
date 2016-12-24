@@ -20,7 +20,7 @@ J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtai
 
 #### 2.1.1 Mise à jour 2016-12-23
 
-Dernière j'ai fait d'autres tests et le rangefinder central a tendance à faire de fausses détections à répétition. Il est peut-être trop enfoncé en dessous du robot et détecte le châssis supérieur. Je devrais peut-être le désactiver pour le moment, de toute façon je ne suis pas sûr qu'il aide réellement le robot à se déplacer.
+Dernièrement j'ai fait d'autres tests et le rangefinder central a tendance à faire de fausses détections à répétition. Il est peut-être trop enfoncé en dessous du robot et détecte le châssis supérieur. Je devrais peut-être le désactiver pour le moment, de toute façon je ne suis pas sûr qu'il aide réellement le robot à se déplacer.
 
 ### 2.2. Schémas
 
