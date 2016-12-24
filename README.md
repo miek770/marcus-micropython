@@ -53,3 +53,8 @@ J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci so
   - bash;
   - marcus.service;
   - uEnv.txt.
+
+## 4. Idées
+
+- Limiter la vitesse des moteurs lorsque la batterie descend sous un certain seuil;
+- Faire une petite progression rapide des moteurs lors des démarrages et changements de direction pour éviter les forts appels de courant.
