@@ -9,7 +9,7 @@ import logging, re, sys
 # Librairies spéciales
 #======================
 from pins import set_uart
-import serial
+import serial, config
 
 # GM # Get Mean
 # GT # Get Tracked
@@ -218,9 +218,15 @@ def cam(conn, args):
             # Si une commande est reçue...
             cmd = conn.recv()
 
-            if cmd == "track_mean":
+            if "periode" in cmd:
+                # Met la période à jour
+                p = re.findall("\d+\.\d+", cmd)
+                config.periode = float(p[0])
+
+            elif cmd == "track_mean":
                 # Utilise la couleur moyenne comme cible
                 cmucam.set_tracked(cmucam.mean_to_track(cmucam.get_mean()))
+
             elif cmd == "track_on":
                 # Active la recherche automatique
                 track = True
@@ -234,6 +240,7 @@ def cam(conn, args):
                 cmucam.save_tc()
 
         if track:
+
             # Cherche la couleur
             r = cmucam.track()
             logging.debug("cmucam.track() = {}".format(r))
@@ -244,9 +251,8 @@ def cam(conn, args):
                 except IndexError:
                     logging.error("cmucam.track() n'a rien retourné")
 
-        sleep(args.periode)
+        sleep(config.periode)
 
 if __name__ == '__main__':
     cmucam = Cmucam()
     cmucam.test()
-

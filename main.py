@@ -9,9 +9,9 @@ from multiprocessing import Process, Pipe
 # Librairies spéciales
 #======================
 from peripheriques.pins import set_input, get_input
-from comportements import memoire, collision, evasion-brusque, evasion-douce, viser, approche, statisme, exploration
+from comportements import memoire, collision, evasion-brusque, evasion-douce, viser, approche, statisme, exploration, agressif, paisible
 from peripheriques import cmucam
-from arbitres import moteurs
+from arbitres import moteurs, modes
 import config
 
 class Marcus:
@@ -71,6 +71,12 @@ class Marcus:
         self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
         self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
 
+        # Arbitre modes
+        m = modes.Modes()
+        self.arbitres[m.nom] = m
+        self.arbitres[m.nom].active(agressif.Agressif(nom="agressif"), 1)
+        self.arbitres[m.nom].active(paisible.Paisible(nom="paisible"), 9)
+
     def quit(self):
         """Arrêt du programme complet.
         """
@@ -87,23 +93,29 @@ class Marcus:
         """
 
         while True:
-            sleep(self.args.periode)
+            sleep(config.periode)
 
+            # Mise à jour de config.track
             if not self.args.nocam and self.cmucam_parent_conn.poll():
-
                 try:
                     config.track = self.cmucam_parent_conn.recv()
-
                 except EOFError:
                     logging.error("La sous-routine cmucam ne répond plus")
                     self.quit()
 
+            # Arrêt du programme principal
             if self.args.stop:
                 if not get_input("P8_7") or not get_input("P8_8") or not get_input("P8_9") or not get_input("P8_10"):
                     self.quit()
 
+            # Interrogation des arbitres
             for key in self.arbitres.keys():
                 self.arbitres[key].evalue()
+
+            # Mise à jour de la période
+            if not self.args.nocam and config.periode_change:
+                config.periode_change = False
+                self.cmucam_parent_conn.send("periode={}".format(config.periode))
 
 def main():
     """Routine principale. Traitement des arguments et création de
@@ -132,12 +144,6 @@ def main():
     parser.add_argument('--scan',
                         action='store_true',
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
-    parser.add_argument('-p',
-                        '--periode',
-                        action='store',
-                        default=0.1,
-                        type=float,
-                        help="Spécifie la période de chaque cycle pour la boucle principale et celle de la caméra.")
 
     marcus = Marcus(args=parser.parse_args())
 
