@@ -31,6 +31,9 @@ class Statisme(Comportement):
     les capteurs qui pourrait indiquer que le robot est coincé quelque
     part sans s'en rendre compte. Dans ce cas, l'action à prendre est
     probablement de reculer pour se déloger, puis de tourner.
+
+    Le comportement dépend du comportement mémoire, qui enregistre
+    l'état des capteurs dans le module config.
     """
 
     def variables(self):
