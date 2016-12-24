@@ -25,9 +25,7 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 [(vitesse_gauche, vitesse_droite, duree), ...]
 """
 
-# Constantes
-#============
-class Evasion(Comportement):
+class EvasionBrusque(Comportement):
 
     def variables(self):
 

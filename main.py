@@ -9,15 +9,14 @@ from multiprocessing import Process, Pipe
 # Librairies spéciales
 #======================
 from peripheriques.pins import set_input, get_input
-from comportements import memoire, collision, evasion, viser, approche, statisme, exploration
+from comportements import memoire, collision, evasion-brusque, evasion-douce, viser, approche, statisme, exploration
 from peripheriques import cmucam
 from arbitres import moteurs
 import config
 
 class Marcus:
     """Classe d'application générale. Comprend l'activation des sous-
-    routines et des arbitres, ainsi que la boucle principale du
-    robot.
+    routines et des arbitres, ainsi que la boucle principale du robot.
     """
 
     def __init__(self, args):
@@ -63,17 +62,19 @@ class Marcus:
         self.arbitres[m.nom] = m
         self.arbitres[m.nom].active(memoire.Memoire(nom="memoire"), 0)
         self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
-        self.arbitres[m.nom].active(evasion.Evasion(nom="evasion"), 5)
-        self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
         if not self.args.nocam:
-            self.arbitres[m.nom].active(viser.Viser(nom="viser"), 4)
+            self.arbitres[m.nom].active(viser.Viser(nom="viser"), 3)
+        self.arbitres[m.nom].active(evasion-douce.EvasionDouce(nom="evasion douce"), 4)
+        self.arbitres[m.nom].active(evasion-brusque.EvasionBrusque(nom="evasion brusque"), 5)
+        if not self.args.nocam:
             self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
+        self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
         self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
-        #self.arbitres[m.nom].active(.(nom=""), )
 
-    # Arrêt
-    #=======
     def quit(self):
+        """Arrêt du programme complet.
+        """
+
         logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
             self.arbitres[key].arret()
@@ -81,9 +82,9 @@ class Marcus:
             self.cmucam_sub.terminate()
         sys.exit()
 
-    # Boucle principale
-    #===================
     def loop(self):
+        """Boucle principale.
+        """
 
         while True:
             sleep(self.args.periode)
@@ -104,11 +105,11 @@ class Marcus:
             for key in self.arbitres.keys():
                 self.arbitres[key].evalue()
 
-#======================================================================
-# Fonction :    main
-# Description : Routine principale
-#======================================================================
 def main():
+    """Routine principale. Traitement des arguments et création de
+    l'objet d'application général Marcus.
+    """
+
     parser = argparse.ArgumentParser(description='Robot Marcus (BBB) - Michel')
 
     parser.add_argument('-v',
@@ -142,9 +143,10 @@ def main():
 
     try:
         marcus.loop()
+
+    # Lorsque CTRL-C est reçu...
     except KeyboardInterrupt:
         marcus.quit()
 
 if __name__ == '__main__':
     main()
-

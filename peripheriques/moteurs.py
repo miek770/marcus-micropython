@@ -43,22 +43,31 @@ class Moteurs:
 
     def execute(self, action):
         """Exécute l'action demandée (une étape de vecteur, sans
-        considérer la durée) sur les 2 moteurs.
+        considérer la durée) sur les 2 moteurs. Considère maintenant
+        les PMW.
         """
 
-        if action[0] == 0:
-            self.gauche_freine()
-        elif action[0] > 0:
-            self.gauche_avance()
-        elif action[0] < 0:
-            self.gauche_recule()
+        # Moteur gauche
+        if action[0] < 0:
+            set_low('P9_12')
+            set_high('P9_13')
+            set_duty_cycle('P9_14', abs(action[0]))
+        else:
+            # Si le duty cycle est égal à 0 le moteur arrête
+            set_high('P9_12')
+            set_low('P9_13')
+            set_duty_cycle('P9_14', action[0])
 
-        if action[1] == 0:
-            self.droit_freine()
-        elif action[1] > 0:
-            self.droit_avance()
-        elif action[1] < 0:
-            self.droit_recule()
+        # Moteur droit
+        if action[1] < 0:
+            set_low('P9_21')
+            set_high('P9_15')
+            set_duty_cycle("P9_16", abs(action[1]))
+        else:
+            # Si le duty cycle est égal à 0 le moteur arrête
+            set_high('P9_21')
+            set_low('P9_15')
+            set_duty_cycle("P9_16", action[1])
 
     # Fonctions par moteur
     #======================
