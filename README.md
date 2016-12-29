@@ -18,6 +18,7 @@ Pour consulter l'aide :
 
 ## 1. Prochaines tâches
 
+- Ajouter comportement de "wall following" aléatoire pour aider à passer les cadres de porte. Voir exemple dans mon livre de référence;
 - Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
 - Créer de nouveaux tests pour le module de CMUCam2+;
 - Créer un module de supervision de batterie. Je pourrais m'en servir dans le journal et peut-être même adapter le comportement du robot.
