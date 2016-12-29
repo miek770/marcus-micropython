@@ -61,7 +61,7 @@ class Statisme(Comportement):
             logging.info("Comportement {} : Aucune variation de capteurs en {} cycles".format(self.nom, self.memoire))
             duree_recul = self.duree_min_recul + random()
             duree_rotation = self.duree_min_rotation + random()
-            tourne_gauche = choice(True, False)
+            tourne_gauche = choice((True, False))
             
             if tourne_gauche:
                 return [(-100, -100, duree_recul),
