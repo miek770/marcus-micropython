@@ -9,7 +9,7 @@ from multiprocessing import Process, Pipe
 # Librairies spéciales
 #======================
 from peripheriques.pins import set_input, get_input
-from comportements import memoire, collision, evasion-brusque, evasion-douce, viser, approche, statisme, exploration
+from comportements import memoire, collision, evasionbrusque, evasiondouce, viser, approche, statisme, exploration
 from comportements import agressif, paisible
 from peripheriques import cmucam
 from arbitres import moteurs, modes
@@ -65,8 +65,8 @@ class Marcus:
         self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
         if not self.args.no-cam:
             self.arbitres[m.nom].active(viser.Viser(nom="viser"), 3)
-        self.arbitres[m.nom].active(evasion-douce.EvasionDouce(nom="evasion douce"), 4)
-        self.arbitres[m.nom].active(evasion-brusque.EvasionBrusque(nom="evasion brusque"), 5)
+        self.arbitres[m.nom].active(evasiondouce.EvasionDouce(nom="evasion douce"), 4)
+        self.arbitres[m.nom].active(evasionbrusque.EvasionBrusque(nom="evasion brusque"), 5)
         if not self.args.no-cam:
             self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
         self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
