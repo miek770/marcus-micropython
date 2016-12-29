@@ -4,6 +4,18 @@ Je désigne cette version comme étant la 3e à cause des changements de contrô
 
 La principale différence, cependant, est que chaque robot utilise maintenant le même contrôleur et une base commune. Ça facilite beaucoup l'intégration de modules essentiels, comme la CMUCam2+, pour tous les participants.
 
+Tant que le code est en développement, il est recommandé de lancer l'application manuellement dans une session "screen" ou "tmux" et de désactiver les fonctions non-désirées. La session screen permet de fermet la connexion SSH (PuTTY ou autre) pendant que le programme roule, sans le faire planter. Par exemple, pour lancer le programme sans la caméra et les modes (agressif et paisible, en développement), avec arrêt automatique dès qu'un pare-choc est actionné :
+
+    python main.py --verbose --logfile=marcus.log --nocam --nomode --stop
+
+Pour lancer le programme dans screen et le détacher immédiatement (donc pas besoin de faire CTRL-A D) :
+
+    screen -d -m python main.py --verbose --logfile=marcus.log --nocam --nomode --stop
+  
+Pour consulter l'aide :
+
+    python main.py --help
+
 ## 1. Prochaines tâches
 
 - Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
