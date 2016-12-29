@@ -70,4 +70,6 @@ J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci so
 ## 4. Idées
 
 - Limiter la vitesse des moteurs lorsque la batterie descend sous un certain seuil;
-- Faire une petite progression rapide des moteurs lors des démarrages et changements de direction pour éviter les forts appels de courant.
+- Faire une petite progression rapide des moteurs lors des démarrages et changements de direction pour éviter les forts appels de courant;
+- Permettre à un comportement (ex.: batterie faible) d'en désactiver un autre? Probablement pas, c'est contre la philosophie d'isolation des comportements, mais à réfléchir;
+- Empêcher l'exploration en ligne droite lorsque la batterie descend sous un certain seuil.
