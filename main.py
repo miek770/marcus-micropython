@@ -46,7 +46,7 @@ class Marcus:
         set_input('P8_10') # Arrière gauche
 
         # Initialisation de la CMUCam2+
-        if not self.args.no-cam:
+        if not self.args.nocam:
             self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
             self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
             self.cmucam_sub.start()
@@ -63,17 +63,17 @@ class Marcus:
         self.arbitres[m.nom] = m
         self.arbitres[m.nom].active(memoire.Memoire(nom="memoire"), 0)
         self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
-        if not self.args.no-cam:
+        if not self.args.nocam:
             self.arbitres[m.nom].active(viser.Viser(nom="viser"), 3)
         self.arbitres[m.nom].active(evasiondouce.EvasionDouce(nom="evasion douce"), 4)
         self.arbitres[m.nom].active(evasionbrusque.EvasionBrusque(nom="evasion brusque"), 5)
-        if not self.args.no-cam:
+        if not self.args.nocam:
             self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
         self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
         self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
 
         # Arbitre modes
-        if not self.args.no-mode:
+        if not self.args.nomode:
             m = modes.Modes()
             self.arbitres[m.nom] = m
             self.arbitres[m.nom].active(agressif.Agressif(nom="agressif"), 1)
@@ -86,7 +86,7 @@ class Marcus:
         logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
             self.arbitres[key].arret()
-        if not self.args.no-cam:
+        if not self.args.nocam:
             self.cmucam_sub.terminate()
         sys.exit()
 
@@ -98,7 +98,7 @@ class Marcus:
             sleep(config.periode)
 
             # Mise à jour de config.track
-            if not self.args.no-cam and self.cmucam_parent_conn.poll():
+            if not self.args.nocam and self.cmucam_parent_conn.poll():
                 try:
                     config.track = self.cmucam_parent_conn.recv()
                 except EOFError:
@@ -115,8 +115,8 @@ class Marcus:
                 self.arbitres[key].evalue()
 
             # Mise à jour de la période
-            if not self.args.no-mode:
-                if not self.args.no-cam and config.periode_change:
+            if not self.args.nomode:
+                if not self.args.nocam and config.periode_change:
                     config.periode_change = False
                     self.cmucam_parent_conn.send("periode={}".format(config.periode))
 
@@ -141,10 +141,10 @@ def main():
                         action='store_true',
                         help="Arrête l'exécution lorsqu'un impact est détecté.")
 
-    parser.add_argument('--no-cam',
+    parser.add_argument('--nocam',
                         action='store_true',
                         help="Lance le programme sans la caméra et les comportements qui en dépendent.")
-    parser.add_argument('--no-mode',
+    parser.add_argument('--nomode',
                         action='store_true',
                         help="Lance le programme sans l'arbitre de modes et ses comportements.")
     parser.add_argument('--scan',
