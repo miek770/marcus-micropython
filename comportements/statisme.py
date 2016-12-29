@@ -53,6 +53,7 @@ class Statisme(Comportement):
                 break
 
             passe_max = list(islice(config.passe_capteurs[key], len(config.passe_capteurs[key])-self.memoire, len(config.passe_capteurs[key])))
+            logging.debug("Comportement {} : passe_max[{}] = {}".format(self.nom, key, passe_max))
             if not all(x == passe_max[0] for x in passe_max):
                 statisme = False
                 break

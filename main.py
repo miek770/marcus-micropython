@@ -61,7 +61,7 @@ class Marcus:
         # Arbitre moteurs
         m = moteurs.Moteurs()
         self.arbitres[m.nom] = m
-        self.arbitres[m.nom].active(memoire.Memoire(nom="memoire"), 0)
+        self.arbitres[m.nom].active(memoire.Memoire(nom="memoire"), 1)
         self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
         if not self.args.nocam:
             self.arbitres[m.nom].active(viser.Viser(nom="viser"), 3)
