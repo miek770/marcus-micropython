@@ -1,335 +1,164 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-#
-#  main.py
-#
-#  Copyright 2013 Michel Lavoie <lavoie.michel@gmail.com>
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
-#  MA 02110-1301, USA.
-#
-#
 
 # Librairies standards
 #======================
 import argparse, logging, sys
 from time import sleep
 from multiprocessing import Process, Pipe
-from random import randint
 
 # Librairies spéciales
 #======================
-from modules import bumpers
-from modules import cmucam
-from modules import gp2d12
-from modules.moteurs import Moteurs
-from modules.pins import *
+from peripheriques.pins import set_input, get_input
+from comportements import memoire, collision, evasionbrusque, evasiondouce, viser, approche, statisme, exploration
+from comportements import agressif, paisible
+from peripheriques import cmucam
+from arbitres import moteurs, modes
+import config
 
 class Marcus:
+    """Classe d'application générale. Comprend l'activation des sous-
+    routines et des arbitres, ainsi que la boucle principale du robot.
+    """
 
-    # Initialisation et sous-routines
-    #=================================
     def __init__(self, args):
         self.args = args
 
-        if self.args.logfile:
-            logging.basicConfig(filename=self.args.logfile,
-                                format='%(asctime)s[%(levelname)s] %(message)s',
-                                datefmt='%Y/%m/%d %H:%M:%S ',
-                                level=logging.DEBUG)
-
-            msg('Logger initié : ' + self.args.logfile, self.args)
-
-        msg('Programme lancé.', self.args)
-
-        # Bumpers
-        self.bumpers_parent_conn, self.bumpers_child_conn = Pipe()
-        self.bumpers_sub = Process(target=bumpers.scan, args=(self.bumpers_child_conn, self.args))
-        self.bumpers_sub.start()
-        msg('Sous-routine lancée : bumpers_sub', self.args)
-
-        # CMUCam2+
-        self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-        self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
-        self.cmucam_sub.start()
-        message = self.cmucam_parent_conn.recv()
-
-        if 'Erreur' in message:
-            msg(message, self.args)
+        # Initialisation du journal d'événements
+        log_frmt = "%(asctime)s[%(levelname)s] %(message)s"
+        date_frmt = "%Y-%m-%d %H:%M:%S "
+        if self.args.verbose:
+            log_lvl = logging.DEBUG
         else:
-            msg('Sous-routine lancée : cmucam_sub', self.args)
+            log_lvl = logging.INFO
 
-    # Arrêt
-    #=======
+        logging.basicConfig(filename=self.args.logfile,
+                            format=log_frmt,
+                            datefmt=date_frmt,
+                            level=log_lvl)
+
+        logging.info("Logger initié : {}".format(self.args.logfile))
+        logging.info("Programme lancé")
+
+        # Initialisation des pare-chocs
+        set_input('P8_7') # Avant droit
+        set_input('P8_8') # Avant gauche
+        set_input('P8_9') # Arrière droit
+        set_input('P8_10') # Arrière gauche
+
+        # Initialisation de la CMUCam2+
+        if not self.args.nocam:
+            self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
+            self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
+            self.cmucam_sub.start()
+            message = self.cmucam_parent_conn.recv()
+
+            if message:
+                logging.info("Sous-routine lancée : cmucam_sub")
+
+        # Initialisation des arbitres
+        self.arbitres = dict()
+
+        # Arbitre moteurs
+        m = moteurs.Moteurs()
+        self.arbitres[m.nom] = m
+        self.arbitres[m.nom].active(memoire.Memoire(nom="memoire"), 1)
+        self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
+        if not self.args.nocam:
+            self.arbitres[m.nom].active(viser.Viser(nom="viser"), 3)
+        self.arbitres[m.nom].active(evasiondouce.EvasionDouce(nom="evasion douce"), 4)
+        self.arbitres[m.nom].active(evasionbrusque.EvasionBrusque(nom="evasion brusque"), 5)
+        if not self.args.nocam:
+            self.arbitres[m.nom].active(approche.Approche(nom="approche"), 6)
+        self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
+        self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
+
+        # Arbitre modes
+        if not self.args.nomode:
+            m = modes.Modes()
+            self.arbitres[m.nom] = m
+            self.arbitres[m.nom].active(agressif.Agressif(nom="agressif"), 1)
+            self.arbitres[m.nom].active(paisible.Paisible(nom="paisible"), 9)
+
     def quit(self):
-        self.m.arret()
-        self.bumpers_sub.terminate()
-        self.cmucam_sub.terminate()
+        """Arrêt du programme complet.
+        """
+
+        logging.info("Arrêt du programme.")
+        for key in self.arbitres.keys():
+            self.arbitres[key].arret()
+        if not self.args.nocam:
+            self.cmucam_sub.terminate()
         sys.exit()
 
-    # Boucle principale
-    #===================
     def loop(self):
-        # 0 = Exploration
-        # 1 = Combat
-        # 2 = ???
-        # 3 = Profit
-        self.mode = 0
-
-        # Initialisation des moteurs. La variable manoeuvre sert à s'assurer qu'une
-        # manoeuvre est maintenue pendant suffisamment de temps pour être efficace
-        # (par exemple tourner). C'est un peu comme une hystérésie aléatoire. Il
-        # s'agit d'incréments de 100ms (dépend de l'endroit où elle est utilisée
-        # dans la boucle principale.
-        self.m = Moteurs(self.args)
-        self.manoeuvre = 0
-        self.patience = 0
-
-        # Seuil de détection pour les GP2D12
-        self.seuil_avant = 45 # en cm
-        self.seuil_cote = 20 # en cm
-
-        # Seuil d'alignement sur mx pour la CMUCam2+
-        self.seuil_mx = 5 # en pixels
-
-        # J'ai créé des compteurs indépendants pour pouvoir les redémarrer à zéro
-        # sans affecter les autres (pour ne pas atteindre des chiffres inutilement
-        # élevés).
-        self.count_10ms = 0
-        self.count_100ms = 0
-        self.count_1000ms = 0
+        """Boucle principale.
+        """
 
         while True:
+            sleep(config.periode)
 
-            # S'exécute toutes les 10ms
-            if self.count_10ms == 10:
-                self.count_10ms = 0
+            # Mise à jour de config.track
+            if not self.args.nocam and self.cmucam_parent_conn.poll():
+                try:
+                    config.track = self.cmucam_parent_conn.recv()
+                except EOFError:
+                    logging.error("La sous-routine cmucam ne répond plus")
+                    self.quit()
 
-                # Collision
-                if self.bumpers_parent_conn.poll():
+            # Arrêt du programme principal
+            if self.args.stop:
+                if not get_input("P8_7") or not get_input("P8_8") or not get_input("P8_9") or not get_input("P8_10"):
+                    self.quit()
 
-                    # Arrête l'exécution sur tout impact (argument stop)
-                    if self.args.stop:
-                        msg("Impact détecté, arrêt du programme (argument stop).", self.args)
-                        self.quit()
+            # Interrogation des arbitres
+            for key in self.arbitres.keys():
+                self.arbitres[key].evalue()
 
-                    self.impact = self.bumpers_parent_conn.recv()
+            # Mise à jour de la période
+            if not self.args.nomode:
+                if not self.args.nocam and config.periode_change:
+                    config.periode_change = False
+                    self.cmucam_parent_conn.send("periode={}".format(config.periode))
 
-                    # Impact avant droit
-                    if self.impact[0] and not self.impact[1]:
-                        msg('Impact avant droit, recule et tourne à gauche', self.args)
-                        self.m.freine()
-                        sleep(0.2)
-                        self.m.recule()
-                        sleep(0.5)
-                        self.m.tourne_gauche()
-                        self.manoeuvre = 1 + randint(0, 1)
-
-                    # Impact avant droit et gauche
-                    elif self.impact[0] and self.impact[1]:
-                        msg('Impact avant droit, recule...', self.args)
-                        self.m.freine()
-                        sleep(0.2)
-                        self.m.recule()
-                        sleep(0.5)
-                        i = randint(0, 1)
-                        if i == 0:
-                            msg('et tourne à gauche', self.args)
-                            self.m.tourne_gauche()
-                        else:
-                            msg('et tourne à droite', self.args)
-                            self.m.tourne_droite()
-                        self.manoeuvre = 1 + randint(0, 3)
-
-                    # Impact avant gauche
-                    elif not self.impact[0] and self.impact[1]:
-                        msg('Impact avant gauche, recule et tourne à droite', self.args)
-                        self.m.freine()
-                        sleep(0.2)
-                        self.m.recule()
-                        sleep(0.5)
-                        self.m.tourne_droite()
-                        self.manoeuvre = 1 + randint(0, 1)
- 
-                    # Impact arrière droit
-                    elif self.impact[2] and not self.impact[3]:
-                        self.quit() # Temporaire
-
-                    # Impact arrière droit et gauche
-                    elif self.impact[2] and self.impact[3]:
-                        self.quit() # Temporaire
-
-                    # Impact arrière gauche
-                    elif not self.impact[2] and self.impact[3]:
-                        pass # À développer
- 
-                # Détection
-                if self.cmucam_parent_conn.poll():
-
-                    # mx my x1 y1 x2 y2 pixels confidence
-                    self.detection = self.cmucam_parent_conn.recv()
-
-                    # Passage au mode combat
-                    if self.mode == 0 and int(self.detection["confidence"]) > 10:
-                        msg(self.detection, self.args)
-                        msg("Passage au mode combat!", self.args)
-                        self.mode = 1
-
-                    # Combat
-                    if self.mode == 1:
-                        if int(self.detection["confidence"]) > 10:
-                            msg("Conf: {}, x1: {}, x2: {}, mx: {}".format(self.detection["confidence"], self.detection["x1"], self.detection["x2"], self.detection["mx"]), self.args)
-
-                            mx = int(self.detection["mx"])
-
-                            if mx > (50 + self.seuil_mx):
-                                msg("Cible à gauche!", self.args)
-                                self.m.tourne_gauche()
-
-                            elif mx < (50 - self.seuil_mx):
-                                msg("Cible à droite!", self.args)
-                                self.m.tourne_droite()
-
-                            else:
-                                msg("Cible droit devant, chaaaaarge!", self.args)
-                                self.m.avance()
-
-            # S'exécute toutes les 100ms
-            if self.count_100ms == 100:
-                self.count_100ms = 0
-
-                # Rangefinders
-                self.av_mi = gp2d12.get_dist('AIN0') # Avant milieu
-                self.av_ga = gp2d12.get_dist('AIN1') # Avant gauche
-                self.av_dr = gp2d12.get_dist('AIN2') # Avant droite
-
-                # Exploration
-                if self.mode == 0:
-
-                    # Manoeuvre en cours
-                    if self.manoeuvre > 0:
-                        self.manoeuvre -= 1
-
-                    else:
-                        # Obstacle à gauche
-                        if self.av_mi > self.seuil_avant and self.av_ga < self.seuil_cote and self.av_dr > self.seuil_cote:
-                            msg('Obstacle à gauche, tourne a droite', self.args)
-                            self.m.tourne_droite()
-                            self.manoeuvre = 1 + randint(0, 1)
-
-                        # Obstacle devant et à gauche
-                        if self.av_mi < self.seuil_avant and self.av_ga < self.seuil_cote and self.av_dr > self.seuil_cote:
-                            msg('Obstacle devant et à gauche, tourne a droite', self.args)
-                            self.m.tourne_droite()
-                            self.manoeuvre = 1 + randint(0, 2)
-
-                        # Obstacle à droite
-                        elif self.av_mi > self.seuil_avant and self.av_dr < self.seuil_cote and self.av_ga > self.seuil_cote:
-                            msg('Obstacle à droite, tourne a gauche', self.args)
-                            self.m.tourne_gauche()
-                            self.manoeuvre = 1 + randint(0, 1)
-
-                        # Obstacle devant et à droite
-                        elif self.av_mi < self.seuil_avant and self.av_dr < self.seuil_cote and self.av_ga > self.seuil_cote:
-                            msg('Obstacle devant et à droite, tourne a gauche', self.args)
-                            self.m.tourne_gauche()
-                            self.manoeuvre = 1 + randint(0, 2)
-
-                        # Obstacle devant, à droite et à gauche
-                        elif self.av_mi < self.seuil_avant and self.av_dr < self.seuil_cote and self.av_ga < self.seuil_cote:
-                            msg('Obstacle devant, à droite et à gauche', self.args)
-                            i = randint(0, 1)
-                            if i == 0:
-                                msg('Tourne a gauche', self.args)
-                                self.m.tourne_gauche()
-                            else:
-                                msg('Tourne a droite', self.args)
-                                self.m.tourne_droite()
-                            self.manoeuvre = 1 + randint(0, 3)
-
-                        # Obstacle devant uniquement
-                        elif self.av_mi < self.seuil_avant and self.av_dr > self.seuil_cote and self.av_ga > self.seuil_cote:
-                            msg('Obstacle devant uniquement', self.args)
-                            i = randint(0, 1)
-                            if i == 0:
-                                msg('Tourne a gauche', self.args)
-                                self.m.tourne_gauche()
-                            else:
-                                msg('Tourne a droite', self.args)
-                                self.m.tourne_droite()
-                            self.manoeuvre = 1 + randint(0, 2)
-
-                        # Aucun obstacle en avant
-                        else:
-
-                            # C'est trop tranquille
-                            if self.patience < 0:
-                                msg('Trop tranquille', self.args)
-                                i = randint(0, 1)
-                                if i == 0:
-                                    msg('Tourne a gauche', self.args)
-                                    self.m.tourne_gauche()
-                                else:
-                                    msg('Tourne a droite', self.args)
-                                    self.m.tourne_droite()
-                                self.manoeuvre = 3 + randint(0, 5)
-                                self.patience = 200 + randint(0, 200)
-
-                            # Rien à l'horizon
-                            else:
-                                #msg('.', self.args)
-                                self.m.avance()
-                                self.patience -= 1
-
-            # S'exécute toutes les 1s
-            if self.count_1000ms == 1000:
-                self.count_1000ms = 0
-
-            self.count_10ms += 1
-            self.count_100ms += 1
-            self.count_1000ms += 1
-            sleep(0.001)
-
-#===============================================================================
-# Fonction :    main
-# Description : Routine principale
-#===============================================================================
 def main():
+    """Routine principale. Traitement des arguments et création de
+    l'objet d'application général Marcus.
+    """
+
     parser = argparse.ArgumentParser(description='Robot Marcus (BBB) - Michel')
 
     parser.add_argument('-v',
                         '--verbose',
                         action='store_true',
-                        help='Imprime l\'aide sur l\'exécution du script.')
-
+                        help="Augmente la verbosité du programme.")
     parser.add_argument('-l',
                         '--logfile',
                         action='store',
-                        help='Spécifie le chemin du journal d\'événement.')
-
+                        default=None,
+                        help="Spécifie le chemin du journal d'événement.")
     parser.add_argument('-s',
                         '--stop',
                         action='store_true',
                         help="Arrête l'exécution lorsqu'un impact est détecté.")
+
+    parser.add_argument('--nocam',
+                        action='store_true',
+                        help="Lance le programme sans la caméra et les comportements qui en dépendent.")
+    parser.add_argument('--nomode',
+                        action='store_true',
+                        help="Lance le programme sans l'arbitre de modes et ses comportements.")
     parser.add_argument('--scan',
                         action='store_true',
                         help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
 
     marcus = Marcus(args=parser.parse_args())
-    marcus.loop()
+
+    try:
+        marcus.loop()
+
+    # Lorsque CTRL-C est reçu...
+    except KeyboardInterrupt:
+        marcus.quit()
 
 if __name__ == '__main__':
     main()
-

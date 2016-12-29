@@ -4,13 +4,12 @@
 # Librairies standard
 #=====================
 from time import sleep
-import re, sys
+import logging, re, sys
 
 # Librairies spéciales
 #======================
-import Adafruit_BBIO.UART as UART
-import serial
-from pins import msg
+from pins import set_uart
+import serial, config
 
 # GM # Get Mean
 # GT # Get Tracked
@@ -21,22 +20,19 @@ from pins import msg
 # ST Rmin Rmax Gmin Gmax Bmin Bmax # Set Tracking
 # TC # Track Color
 
-#===============================================================================
-# Classe :      Cmucam
-# Description : Wrapper pour gérer la communication avec la CMUCam2+ (incluant
-#               la configuration et la recherche de l'autre robot).
-#===============================================================================
 class Cmucam:
+    """Wrapper pour gérer la communication avec la CMUCam2+ (incluant
+    la configuration et la recherche de l'autre robot).
+    """
 
-    # Initialisation
-    #================
     def __init__(self, args):
-        """ Initialisation de la CMUCam2+. Par défaut la couleur présentée à
-        la caméra après 3 secondes est utilisée comme cible.
+        """ Initialisation de la CMUCam2+. Par défaut la couleur
+        présentée à la caméra après 3 secondes est utilisée comme
+        cible.
         """
         self.args = args
 
-        UART.setup('UART1')
+        set_uart(1)
         self.ser = serial.Serial('/dev/ttyO1')
         self.ser.baudrate = 115200
         self.ser.bytesize = 8
@@ -53,24 +49,26 @@ class Cmucam:
         self.write('pm 1') # Poll mode
         self.blink()
         if self.args.scan:
-            msg("Mesure de la couleur moyenne devant la caméra.", self.args)
+            logging.debug("Mesure de la couleur moyenne devant la caméra")
             self.write('cr 18 44') # RGB auto white balance on
             self.write('cr 19 33') # Auto gain on
             self.leds_on()
             sleep(3.0)
             self.track_window()
-            msg("Couleur mesurée : {}".format(self.tc), self.args)
+            logging.debug("Couleur mesurée : {}".format(self.tc))
             self.save_tc()
-            msg("Couleur sauvegardée.", self.args)
+            logging.debug("Couleur sauvegardée")
             self.write('cr 18 40') # RGB auto white balance off
             self.write('cr 19 32') # Auto gain off
             self.leds_off()
+
         else:
             if not self.load_tc():
-                msg("Erreur : Impossible de charger la couleur sauvegardée.", self.args)
+                logging.error("Impossible de charger la couleur sauvegardée")
                 sys.exit()
+
             else:
-                msg("Couleur précédente chargée.", self.args)
+                logging.debug("Couleur précédente chargée")
 
     # Contrôle des LEDs
     #===================
@@ -88,40 +86,41 @@ class Cmucam:
         self.leds_off()
         sleep(0.1)
 
-    # Obtiens la version du firmware, pratique pour tester la connexion
-    #===================================================================
     def get_version(self):
+        """Obtiens la version du firmware, pratique pour tester la
+        connexion.
+        """
         return self.write('gv')
 
-    # Enregistre la couleur trackée dans un fichier texte
-    #=====================================================
     def save_tc(self):
+        """Enregistre la couleur trackée dans un fichier texte.
+        """
         with open('tc.txt', 'w') as f:
             f.write(self.tc)
-        msg("Couleur enregistrée : {}".format(self.tc), self.args)
-
-    # Récupère la couleur préalablement enregistrée
-    #===============================================
+        logging.debug("Couleur enregistrée : {}".format(self.tc))
+    
     def load_tc(self):
+        """Récupère la couleur préalablement enregistrée.
+        """
         try:
             with open('tc.txt', 'r') as f:
                 self.tc = f.readline()
-            msg("Couleur chargée : {}".format(self.tc), self.args)
+            logging.debug("Couleur chargée : {}".format(self.tc))
             return True
         except IOError:
             return False
 
-    # Lit la couleur moyenne vue par la caméra
-    # Rmean Gmean Bmean Rdev Gdev Bdev
-    #==========================================
     def get_mean(self):
+        """Lit la couleur moyenne vue par la caméra
+        Rmean Gmean Bmean Rdev Gdev Bdev
+        """
         return self.write('gm')
 
-    # Converti de GM à TC
-    # Avant mes tests le facteur était à 1.5
-    # Je devrais plutôt mettre un absolu, par exemple +/- 30 autour de la moyenne
-    #=============================================================================
     def mean_to_track(self, m, facteur=5):
+        """Converti de GM à TC
+        Avant mes tests le facteur était à 1.5. Je devrais plutôt
+        mettre un absolu, par exemple +/- 30 autour de la moyenne.
+        """
         [Rm, Gm, Bm, Rd, Gd, Bd] = m.split()
         Rmin = int(Rm) - facteur*int(Rd)
         Rmax = int(Rm) + facteur*int(Rd)
@@ -165,10 +164,10 @@ class Cmucam:
         else:
             return r
 
-    # Repère la couleur préalablement configurée
-    # mx my x1 y1 x2 y2 pixels confidence
-    #============================================
     def track(self):
+        """Repère la couleur préalablement configurée.
+        mx my x1 y1 x2 y2 pixels confidence
+        """
         return self.write('tc')
 
     # Converti de "T packet" à un dictionnaire
@@ -193,51 +192,66 @@ class Cmucam:
             if r != '0 0 0 0 0 0 0 0':
                 print self.t_packet_to_dict(r)
 
-#===============================================================================
-# Fonction :    cam
-# Description : [...]
-#===============================================================================
-def cam(conn, args, delay=0.05):
+def cam(conn, args):
+    """Wrapper pour faire fonctionner la CMUCam2+ en parallèle avec le
+    programme principal. Nécessaire à cause de la communication série
+    qui bloque, alors que les comportements qui utilisent le tracking
+    doivent prendre leur décision aussi rapidement que possible.
+    """
+
     cmucam = Cmucam(args)
     track = True
 
     v = cmucam.get_version()
-    if v:
-        conn.send(v)
-    else:
-        conn.send('Erreur : La CMUCam2+ ne répond pas.')
+
+    if not v:
+
+        logging.error("La CMUCam2+ ne répond pas")
         sys.exit()
+
+    conn.send(v)
 
     while True:
 
         if conn.poll():
-            # Si l'application principale a envoyé une commande
+
+            # Si une commande est reçue...
             cmd = conn.recv()
 
-            if cmd == 'track_mean':
+            if "periode" in cmd:
+                # Met la période à jour
+                p = re.findall("\d+\.\d+", cmd)
+                config.periode = float(p[0])
+
+            elif cmd == "track_mean":
                 # Utilise la couleur moyenne comme cible
                 cmucam.set_tracked(cmucam.mean_to_track(cmucam.get_mean()))
 
-            elif cmd == 'track_on':
-                # Active le tracking automatique
+            elif cmd == "track_on":
+                # Active la recherche automatique
                 track = True
 
-            elif cmd == 'track_off':
-                # Active le tracking automatique
+            elif cmd == "track_off":
+                # Désactive la recherche automatique
                 track = False
 
-            elif cmd == 'save':
+            elif cmd == "save":
                 # Sauvegarde la couleur recherchée
                 cmucam.save_tc()
 
         if track:
-            # Si le tracking automatique est activé
-            # mx my x1 y1 x2 y2 pixels confidence
-            r = cmucam.track()
-            if r != '0 0 0 0 0 0 0 0':
-                conn.send(cmucam.t_packet_to_dict(r))
 
-        sleep(delay)
+            # Cherche la couleur
+            r = cmucam.track()
+            logging.debug("cmucam.track() = {}".format(r))
+            if r != '0 0 0 0 0 0 0 0':
+                try:
+                    d = cmucam.t_packet_to_dict(r)
+                    conn.send(d)
+                except IndexError:
+                    logging.error("cmucam.track() n'a rien retourné")
+
+        sleep(config.periode)
 
 if __name__ == '__main__':
     cmucam = Cmucam()
