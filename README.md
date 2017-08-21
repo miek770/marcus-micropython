@@ -18,6 +18,12 @@ Pour consulter l'aide :
 
 ## 1. Prochaines tâches
 
+### 1.1. Bogues
+
+- Marc-André a relevé que la caméra ne met pas à jour la variable globale de détection lorsqu'il n'y a pas de détection. Par contre le robot ne sait pas si la variable a été mise à jour ou non. Donc si la dernière détection avait une "confidence" suffisante le robot pensera qu'il y a toujours un ennemi au même endroit.
+
+### 1.2. Améliorations
+
 - Ajouter comportement de "wall following" aléatoire pour aider à passer les cadres de porte. Voir exemple dans mon livre de référence;
 - Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
 - Créer de nouveaux tests pour le module de CMUCam2+;
@@ -31,11 +37,11 @@ Avec la batterie actuelle rechargée le robot se promène sans problème pendant
 
 J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtaine de minutes au moins que la batterie alimente le BBB avec une connexion active sur eth0. L'autonomie semble donc suffisante pour les premiers combats.
 
-#### 2.1.1 Mise à jour 2016-12-23
+### 2.2. Rangefinder central
 
 Dernièrement j'ai fait d'autres tests et le rangefinder central a tendance à faire de fausses détections à répétition. Il est peut-être trop enfoncé en dessous du robot et détecte le châssis supérieur. Je devrais peut-être le désactiver pour le moment, de toute façon je ne suis pas sûr qu'il aide réellement le robot à se déplacer.
 
-### 2.2. Schémas
+### 2.3. Schémas
 
 J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci sont commandés chez OSH Park. La tendance est aussi de faire les circuits dans des sous-projets à part, tels que :
 
