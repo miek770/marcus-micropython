@@ -183,6 +183,7 @@ class Cmucam:
         t_dict['y2'] = l.pop(0) # The right most corner's y value
         t_dict['pixels'] = l.pop(0) # Number of Pixels in the tracked region, scaled and capped at 255: (pixels+4)/8
         t_dict['confidence'] = l.pop(0) # The (# of pixels / area)*256 of the bounded rectangle and capped at 255
+        t_dict['new'] = True # Cette lecture est nouvelle
         return t_dict
 
     def test(self):

@@ -20,7 +20,7 @@ Pour consulter l'aide :
 
 ### 1.1. Bogues
 
-- Marc-André a relevé que la caméra ne met pas à jour la variable globale de détection lorsqu'il n'y a pas de détection. Par contre le robot ne sait pas si la variable a été mise à jour ou non. Donc si la dernière détection avait une "confidence" suffisante le robot pensera qu'il y a toujours un ennemi au même endroit.
+N/A
 
 ### 1.2. Améliorations
 

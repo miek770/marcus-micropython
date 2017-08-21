@@ -47,7 +47,7 @@ class Approche(Comportement):
     def decision(self):
 
         try:
-            if int(config.track["confidence"]) < self.seuil_conf:
+            if not config.track["new"] or int(config.track["confidence"]) < self.seuil_conf:
                 return None
 
             elif config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):

@@ -31,7 +31,7 @@ class Viser(Comportement):
     général.
     
     Le dictionnaire config.track contient les éléments suivants :
-    mx my x1 y1 x2 y2 pixels confidence
+    mx my x1 y1 x2 y2 pixels confidence new
     """
 
     def variables(self):
@@ -46,7 +46,13 @@ class Viser(Comportement):
             if int(config.track["confidence"]) < self.seuil_conf:
                 return None
 
-            else:
+            elif config.track["new"]:
+
+                # C'est seulement ici que la clé config.track["new"] doit
+                # être remise à zéro (ne pas le faire dans d'autres
+                # comportements).
+                config.track["new"] = False
+
                 # Effacer ces lignes après quelques tests, je ne veux pas
                 # que ce comportement remplisse le journal de messsages
                 # inutiles lorsqu'elle n'a même pas d'action à prendre (si
