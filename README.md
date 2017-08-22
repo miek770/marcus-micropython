@@ -22,10 +22,12 @@ Pour consulter l'aide :
 
 ### 1.1. Bogues
 
-N/A
+- Tester le code davantage, surtout les portions utilisant la caméra. Je ne l'ai presque pas testé et MA a relevé des comportements bizarres pendant ses tests, par exemple la détection qui se fait toujours du même côté. Je crois que c'était causé par l'autre bogue qui a déjà été réglé, mais je dois le vérifier davantage.
 
 ### 1.2. Améliorations
 
+- Faire un premier "combat" où les robots tentent de se trouver (jeu de tag);
+- Tester et intégrer les boucliers, le canon et la plateforme d'armement au robot et au code;
 - Ajouter comportement de "wall following" aléatoire pour aider à passer les cadres de porte. Voir exemple dans mon livre de référence;
 - Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
 - Créer de nouveaux tests pour le module de CMUCam2+;
@@ -33,7 +35,7 @@ N/A
 
 ## 2. Notes
 
-### 2.1 Alimentation
+### 2.1. Alimentation
 
 Avec la batterie actuelle rechargée le robot se promène sans problème pendant plus de 10 minutes. J'ai fait un test et après 14 minutes il s'est mis à hésiter énormément à cause des GP2D12 qui détectaient constamment des obstacles là où il n'y en avait pas. C'est probablement dû à une baisse de tension.
 
