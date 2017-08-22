@@ -11,6 +11,8 @@ Tant que le code est en développement, il est recommandé de lancer l'applicati
 Pour lancer le programme dans screen et le détacher immédiatement (donc pas besoin de faire CTRL-A D) :
 
     screen -d -m python main.py --verbose --logfile=marcus.log --nocam --nomode --stop
+
+Encore plus simple, utiliser mosh plutôt que SSH et laisser faire screen. À tester mais ça marche bien avec un autre BBB.
   
 Pour consulter l'aide :
 

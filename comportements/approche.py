@@ -34,7 +34,7 @@ class Approche(Comportement):
     trouve qu'il est trop prêt de sa cible. À tester et revalider.
     
     Le dictionnaire config.track contient les éléments suivants :
-    mx my x1 y1 x2 y2 pixels confidence
+    mx my x1 y1 x2 y2 pixels confidence timestamp
     """
 
     def variables(self):
@@ -42,21 +42,26 @@ class Approche(Comportement):
         self.seuil_conf = 10 # Seuil de détection (10 est peut-être trop sensible)
         self.cible_pixels = 50 # Nombre de pixels désirés (à ajuster, pas testé)
         self.ecart_pixels = 10 # Écart acceptable, à ajuster
-
+        self.derniere_lecture = None
 
     def decision(self):
 
         try:
-            if not config.track["new"] or int(config.track["confidence"]) < self.seuil_conf:
+            if int(config.track["confidence"]) < self.seuil_conf:
                 return None
 
-            elif config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):
-                logging.debug("Cible trop loin, on s'approche")
-                return [(50, 50, 0)]
+            elif self.derniere_lecture is not None or self.derniere_lecture != config.track["timestamp"]:
 
-            elif config.track["pixels"] > (self.cible_pixels + self.ecart_pixels):
-                logging.debug("Cible trop proche, on s'éloigne")
-                return [(-50, -50, 0)]
+                # Mise à jour du dernier timestamp reçu
+                self.derniere_lecture = config.track["timestamp"]
+
+                if config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):
+                    logging.debug("Cible trop loin, on s'approche")
+                    return [(50, 50, 0)]
+
+                elif config.track["pixels"] > (self.cible_pixels + self.ecart_pixels):
+                    logging.debug("Cible trop proche, on s'éloigne")
+                    return [(-50, -50, 0)]
 
             return None
 
