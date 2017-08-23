@@ -1,11 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Librairies standards
-#======================
 import logging
 
-# Librairies spéciales
-#======================
 import Adafruit_BBIO.UART as UART
 import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM

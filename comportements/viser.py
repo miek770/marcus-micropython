@@ -1,11 +1,5 @@
-#-*- coding:utf-8 -*-
-
-# Librairies standard
-#=====================
 import logging
 
-# Librairies spéciales
-#======================
 from base import Comportement
 import config
 
@@ -47,7 +41,8 @@ class Viser(Comportement):
             if int(config.track["confidence"]) < self.seuil_conf:
                 return None
 
-            elif self.derniere_lecture is not None or self.derniere_lecture != config.track["timestamp"]:
+            elif (self.derniere_lecture is not None
+                    or self.derniere_lecture != config.track["timestamp"]):
 
                 # Mise à jour du dernier timestamp reçu
                 self.derniere_lecture = config.track["timestamp"]
@@ -65,5 +60,6 @@ class Viser(Comportement):
             return None
 
         except KeyError:
-            logging.error("Comportement {0} : config.track est vide {1}".format(self.nom, config.track))
+            logging.error("""Comportement {0} : config.track est vide
+                          {1}""".format(self.nom, config.track))
             return None
