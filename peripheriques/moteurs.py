@@ -29,15 +29,14 @@ class Moteurs:
         set_pwm('P9_16')
         set_output('P9_21')
 
-        self.droit_arret()
-        self.gauche_arret()
+        self.arret()
 
     def arret(self):
         """Cette méthode est appelée pour tous les arbitres à l'arrêt du
         programme générale dans main.py.
         """
-        self.droit_arret()
-        self.gauche_arret()
+        set_duty_cycle("P9_16", 0) # Arrêt moteur gauche
+        set_duty_cycle('P9_14', 0) # Arrêt moteur droit
         reset_pwm("P9_14")
         reset_pwm("P9_16")
 
@@ -52,6 +51,7 @@ class Moteurs:
             set_low('P9_12')
             set_high('P9_13')
             set_duty_cycle('P9_14', abs(action[0]))
+
         else:
             # Si le duty cycle est égal à 0 le moteur arrête
             set_high('P9_12')
@@ -63,48 +63,9 @@ class Moteurs:
             set_low('P9_21')
             set_high('P9_15')
             set_duty_cycle("P9_16", abs(action[1]))
+
         else:
             # Si le duty cycle est égal à 0 le moteur arrête
             set_high('P9_21')
             set_low('P9_15')
             set_duty_cycle("P9_16", action[1])
-
-    # Fonctions par moteur
-    #======================
-
-    def gauche_arret(self):
-        set_duty_cycle('P9_14', 0) # Disable
-
-    def gauche_freine(self):
-        set_high('P9_12')
-        set_high('P9_13')
-        set_duty_cycle("P9_14", 100) # Enable
-
-    def gauche_recule(self):
-        set_low('P9_12')
-        set_high('P9_13')
-        set_duty_cycle("P9_14", 100) # Enable
-
-    def gauche_avance(self):
-        set_high('P9_12')
-        set_low('P9_13')
-        set_duty_cycle("P9_14", 100) # Enable
-
-    def droit_arret(self):
-        set_duty_cycle("P9_16", 0) # Disable
-
-    def droit_freine(self):
-        set_high('P9_15')
-        set_high('P9_21')
-        set_duty_cycle("P9_16", 100) # Enable
-
-    def droit_recule(self):
-        set_high('P9_15')
-        set_low('P9_21')
-        set_duty_cycle("P9_16", 100) # Enable
-
-    def droit_avance(self):
-        set_low('P9_15')
-        set_high('P9_21')
-        set_duty_cycle("P9_16", 100) # Enable
-
