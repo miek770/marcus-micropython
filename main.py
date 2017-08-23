@@ -1,26 +1,26 @@
-# -*- coding: utf-8 -*-
-
-# Librairies standards
-#======================
-import argparse, logging, sys
+import argparse
+import logging
+import sys
 from time import sleep
 from multiprocessing import Process, Pipe
 
-# Librairies spéciales
-#======================
 from peripheriques.pins import set_input, get_input
-from comportements import memoire, collision, evasionbrusque, evasiondouce, viser, approche, statisme, exploration
-from comportements import agressif, paisible
+from comportements import memoire, collision, evasionbrusque, evasiondouce
+from comportements import viser, approche, statisme, exploration, agressif
+from comportements import paisible
 from peripheriques import cmucam
 from arbitres import moteurs, modes
 import config
+
 
 class Marcus:
     """Classe d'application générale. Comprend l'activation des sous-
     routines et des arbitres, ainsi que la boucle principale du robot.
     """
 
+
     def __init__(self, args):
+
         self.args = args
 
         # Initialisation du journal d'événements
@@ -48,7 +48,8 @@ class Marcus:
         # Initialisation de la CMUCam2+
         if not self.args.nocam:
             self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-            self.cmucam_sub = Process(target=cmucam.cam, args=(self.cmucam_child_conn, self.args))
+            self.cmucam_sub = Process(target=cmucam.cam,
+                                      args=(self.cmucam_child_conn, self.args))
             self.cmucam_sub.start()
             message = self.cmucam_parent_conn.recv()
 
@@ -61,22 +62,29 @@ class Marcus:
         # Arbitre moteurs
         m = moteurs.Moteurs()
         self.arbitres[m.nom] = m
-        self.arbitres[m.nom].active(memoire.Memoire(nom="memoire"), 1)
-        self.arbitres[m.nom].active(collision.Collision(nom="collision"), 2)
+
+        self.arbitres[m.nom].active([
+            (memoire.Memoire(nom="memoire"), 1),
+            (collision.Collision(nom="collision"), 2),
+            (evasiondouce.EvasionDouce(nom="evasion douce"), 5),
+            (evasionbrusque.EvasionBrusque(nom="evasion brusque"), 6),
+            (statisme.Statisme(nom="statisme"), 8),
+            (exploration.Exploration(nom="exploration", priorite=9), 9)
+            ])
         if not self.args.nocam:
-            self.arbitres[m.nom].active(viser.Viser(nom="viser"), 3)
-            self.arbitres[m.nom].active(approche.Approche(nom="approche"), 4)
-        self.arbitres[m.nom].active(evasiondouce.EvasionDouce(nom="evasion douce"), 5)
-        self.arbitres[m.nom].active(evasionbrusque.EvasionBrusque(nom="evasion brusque"), 6)
-        self.arbitres[m.nom].active(statisme.Statisme(nom="statisme"), 8)
-        self.arbitres[m.nom].active(exploration.Exploration(nom="exploration", priorite=9), 9)
+            self.arbitres[m.nom].active([
+                (viser.Viser(nom="viser"), 3),
+                (approche.Approche(nom="approche"), 4)
+                ])
 
         # Arbitre modes
         if not self.args.nomode:
             m = modes.Modes()
             self.arbitres[m.nom] = m
-            self.arbitres[m.nom].active(agressif.Agressif(nom="agressif"), 1)
-            self.arbitres[m.nom].active(paisible.Paisible(nom="paisible"), 9)
+            self.arbitres[m.nom].active([
+                (agressif.Agressif(nom="agressif"), 1),
+                (paisible.Paisible(nom="paisible"), 9)
+                ])
 
     def quit(self):
         """Arrêt du programme complet.

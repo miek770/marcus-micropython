@@ -16,14 +16,25 @@ class Arbitre:
     def arret(self):
         pass
 
-    def active(self, comportement, priorite):
+    def active(self, comportements):
 
-        if any(priorite in c for c in self.comportements):
-            logging.error("Priorité {} déjà réservée, comportement {} ignoré".format(priorite, comportement.nom))
-        else:
-            logging.info("Activation du comportement {}".format(comportement.nom))
-            self.comportements.append((comportement, priorite))
-            self.comportements = sorted(self.comportements, key=lambda x: x[1])
+        for comportement, priorite in comportements:
+
+            if not isinstance(comportement, Comportement):
+                raise TypeError
+
+            if not isinstance(priorite, int):
+                raise TypeError
+
+            if any(priorite in c for c in self.comportements):
+                logging.error("""Priorité {} déjà réservée, comportement {}
+                              ignoré""".format(priorite, comportement.nom))
+            else:
+                logging.info("""Activation du
+                             comportement {}""".format(comportement.nom))
+                self.comportements.append((comportement, priorite))
+                self.comportements = sorted(self.comportements,
+                                            key=lambda x: x[1])
 
     def evalue(self):
 
