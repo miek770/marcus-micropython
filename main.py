@@ -87,8 +87,7 @@ class Marcus:
                 ])
 
     def quit(self):
-        """Arrêt du programme complet.
-        """
+        """Arrêt du programme complet."""
 
         logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
@@ -98,8 +97,7 @@ class Marcus:
         sys.exit()
 
     def loop(self):
-        """Boucle principale.
-        """
+        """Boucle principale."""
 
         while True:
             sleep(config.periode)
@@ -114,7 +112,10 @@ class Marcus:
 
             # Arrêt du programme principal
             if self.args.stop:
-                if not get_input("P8_7") or not get_input("P8_8") or not get_input("P8_9") or not get_input("P8_10"):
+                if (not get_input("P8_7")
+                        or not get_input("P8_8")
+                        or not get_input("P8_9")
+                        or not get_input("P8_10")):
                     self.quit()
 
             # Interrogation des arbitres
@@ -125,7 +126,8 @@ class Marcus:
             if not self.args.nomode:
                 if not self.args.nocam and config.periode_change:
                     config.periode_change = False
-                    self.cmucam_parent_conn.send("periode={}".format(config.periode))
+                    msg = "periode={}".format(config.periode)
+                    self.cmucam_parent_conn.send(msg)
 
 def main():
     """Routine principale. Traitement des arguments et création de
@@ -146,17 +148,21 @@ def main():
     parser.add_argument('-s',
                         '--stop',
                         action='store_true',
-                        help="Arrête l'exécution lorsqu'un impact est détecté.")
-
+                        help="""Arrête l'exécution lorsqu'un impact est
+                            détecté.""")
     parser.add_argument('--nocam',
                         action='store_true',
-                        help="Lance le programme sans la caméra et les comportements qui en dépendent.")
+                        help="""Lance le programme sans la caméra et les
+                            comportements qui en dépendent.""")
     parser.add_argument('--nomode',
                         action='store_true',
-                        help="Lance le programme sans l'arbitre de modes et ses comportements.")
+                        help="""Lance le programme sans l'arbitre de modes et
+                            ses comportements.""")
     parser.add_argument('--scan',
                         action='store_true',
-                        help="Scanne la couleur devant la caméra au démarrage. Sinon la dernière couleur sauvegardée est chargée.")
+                        help="""Scanne la couleur devant la caméra au
+                            démarrage. Sinon la dernière couleur sauvegardée
+                            est chargée.""")
 
     marcus = Marcus(args=parser.parse_args())
 
