@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from time import sleep
 
 import Adafruit_BBIO.ADC as ADC

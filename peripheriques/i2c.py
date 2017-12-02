@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # De : https://github.com/HappyFox/Python-i2c
 
 # Contenu du README.md
