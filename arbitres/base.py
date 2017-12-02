@@ -30,8 +30,7 @@ class Arbitre:
                 logging.error("""Priorité {} déjà réservée, comportement {}
                               ignoré""".format(priorite, comportement.nom))
             else:
-                logging.info("""Activation du
-                             comportement {}""".format(comportement.nom))
+                logging.info("""Activation du comportement {}""".format(comportement.nom))
                 self.comportements.append((comportement, priorite))
                 self.comportements = sorted(self.comportements,
                                             key=lambda x: x[1])

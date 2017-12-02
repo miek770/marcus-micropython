@@ -116,12 +116,13 @@ def set_pwm(pin):
 
     # Vérifie si la pin est déjà configurée
     if pins[pin] is not None and pins[pin] != "pwm":
-        logging.error("{} est déjà configurée en '{}'".format(pin, pins[pin]))
+        logging.error("pins > set_pwm: {} est déjà configurée en '{}'".format(pin, pins[pin]))
 
     else:
         pins[pin] = "pwm"
         # Démarre le PWM avec un "duty cycle" de 0%
         PWM.start(pin, 0)
+        logging.info("pins > set_pwm: {} est configurée en '{}'".format(pin, pins[pin]))
 
 def reset_pwm(pin):
     """Désactive la pin de sortie PWM.
@@ -129,12 +130,13 @@ def reset_pwm(pin):
 
     # Vérifie si la pin est bien configurée en PWM
     if pins[pin] != "pwm":
-        logging.error("{} n'est pas configurée en PWM : '{}'".format(pin, pins[pin]))
+        logging.error("pins > reset_pwm: {} n'est pas configurée en PWM : '{}'".format(pin, pins[pin]))
 
     else:
         pins[pin] = None
         PWM.stop(pin)
         PWM.cleanup()
+        logging.info("pins > reset_pwm: {} est libérée en '{}'".format(pin, pins[pin]))
 
 def set_output(pin):
     """Configure la pin en sortie numérique.
@@ -150,6 +152,7 @@ def set_output(pin):
 
         # Met la pin à 3.3V (high) par défaut
         set_high(pin)
+        logging.info("{} est configurée en '{}'".format(pin, pins[pin]))
 
 def set_input(pin):
     """Configure la pin en entrée numérique.
@@ -162,6 +165,7 @@ def set_input(pin):
     else:
         GPIO.setup(pin, GPIO.IN)
         pins[pin] = 'in'
+        logging.info("{} est configurée en '{}'".format(pin, pins[pin]))
 
 # Lectures
 #==========
@@ -197,6 +201,17 @@ def set_duty_cycle(pin, duty_cycle):
     # Vérifie si la pin est configurée en PWM
     if pins[pin] == "pwm":
         PWM.set_duty_cycle(pin, duty_cycle)
+
+    else:
+        logging.error("pins > set_duty_cycle: {} est configurée en '{}'".format(pin, pins[pin]))
+
+def stop_pwm(pin):
+    """Arrête le PWM.
+    """
+
+    # Vérifie si la pin est configurée en PWM
+    if pins[pin] == "pwm":
+        PWM.stop(pin)
 
     else:
         logging.error("{} est configurée en '{}'".format(pin, pins[pin]))

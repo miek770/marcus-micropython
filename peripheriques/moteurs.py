@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #-*- coding: utf-8 -*-
 
 # Librairies standard
@@ -7,7 +6,8 @@ import time, logging
 
 # Librairies spéciales
 #======================
-from pins import set_pwm, reset_pwm, set_duty_cycle, set_output, set_low, set_high
+#from pins import set_pwm, reset_pwm, stop_pwm, set_duty_cycle, set_output, set_low, set_high
+from pins import *
 
 class Moteurs:
     """Pilote d'opération des moteurs.
@@ -29,14 +29,14 @@ class Moteurs:
         set_pwm('P9_16')
         set_output('P9_21')
 
-        self.arret()
+#        self.arret()
 
     def arret(self):
         """Cette méthode est appelée pour tous les arbitres à l'arrêt du
         programme générale dans main.py.
         """
-        set_duty_cycle("P9_16", 0) # Arrêt moteur gauche
-        set_duty_cycle('P9_14', 0) # Arrêt moteur droit
+        stop_pwm("P9_16") # Arrêt moteur gauche
+        stop_pwm("P9_14") # Arrêt moteur droit
         reset_pwm("P9_14")
         reset_pwm("P9_16")
 
@@ -69,3 +69,4 @@ class Moteurs:
             set_high('P9_21')
             set_low('P9_15')
             set_duty_cycle("P9_16", action[1])
+
