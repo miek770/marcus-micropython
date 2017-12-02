@@ -29,8 +29,6 @@ class Moteurs:
         set_pwm('P9_16')
         set_output('P9_21')
 
-#        self.arret()
-
     def arret(self):
         """Cette méthode est appelée pour tous les arbitres à l'arrêt du
         programme générale dans main.py.
