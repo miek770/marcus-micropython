@@ -50,11 +50,11 @@ class Viser(Comportement):
                 self.derniere_lecture = config.track["timestamp"]
 
                 if config.track["mx"] < (self.centre_x - self.seuil_mx):
-                    logging.debug("Cible à gauche, tourne à gauche")
+                    logging.info("Cible à gauche, tourne à gauche")
                     return [(-30, 30, 0)]
 
                 elif config.track["mx"] > (self.centre_x + self.seuil_mx):
-                    logging.debug("Cibre à droite, tourne à droite")
+                    logging.info("Cible à droite, tourne à droite")
                     return [(30, -30, 0)]
 
                 return None
@@ -62,6 +62,6 @@ class Viser(Comportement):
             return None
 
         except KeyError:
-            logging.error("""Comportement {0} : config.track est vide
-                          {1}""".format(self.nom, config.track))
+            logging.debug("Comportement {} : config.track est vide".format(self.nom))
             return None
+

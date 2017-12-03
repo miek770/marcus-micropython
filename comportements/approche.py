@@ -53,15 +53,15 @@ class Approche(Comportement):
                 self.derniere_lecture = config.track["timestamp"]
 
                 if config.track["pixels"] < (self.cible_pixels - self.ecart_pixels):
-                    logging.debug("Cible trop loin, on s'approche")
+                    logging.info("Cible trop loin, on s'approche")
                     return [(50, 50, 0)]
 
                 elif config.track["pixels"] > (self.cible_pixels + self.ecart_pixels):
-                    logging.debug("Cible trop proche, on s'éloigne")
+                    logging.info("Cible trop proche, on s'éloigne")
                     return [(-50, -50, 0)]
 
             return None
 
         except KeyError:
-            logging.error("Comportement {} : config.track est vide".format(self.nom))
+            logging.debug("Comportement {} : config.track est vide".format(self.nom))
             return None
