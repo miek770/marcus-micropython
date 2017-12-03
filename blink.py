@@ -4,6 +4,7 @@
 from peripheriques import cmucam
 from mock import patch
 import argparse, logging, sys
+from time import sleep
 
 def main():
     testargs = ["verbose"]
@@ -42,7 +43,10 @@ def main():
     logging.info("Logger initié : {}".format(args.logfile))
 
     c = cmucam.Cmucam(args)
-    c.test("mx")
+    while True:
+        c.blink()
+        sleep(0.5)
+        logging.debug("Blink")
 
 if __name__ == '__main__':
     main()

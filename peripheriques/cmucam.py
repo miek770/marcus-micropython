@@ -211,8 +211,8 @@ def cam(conn, args):
 
     if not v:
 
-        logging.error("La CMUCam2+ ne répond pas")
-        sys.exit()
+        logging.error("cmucam > cam > La CMUCam2+ ne répond pas")
+#        sys.exit()
 
     conn.send(v)
 
@@ -254,7 +254,8 @@ def cam(conn, args):
                     d = cmucam.t_packet_to_dict(r)
                     conn.send(d)
                 except IndexError:
-                    logging.error("cmucam.track() n'a rien retourné")
+                    logging.error("cmucam > cam > cmucam.track() n'a rien retourné")
+                    conn.send(None)
 
         sleep(config.periode)
 

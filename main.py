@@ -107,9 +107,12 @@ class Marcus:
             # Mise à jour de config.track
             if not self.args.nocam and self.cmucam_parent_conn.poll():
                 try:
-                    config.track = self.cmucam_parent_conn.recv()
+                    t = self.cmucam_parent_conn.recv()
+                    if t is None:
+                        self.quit()
+                    config.track = t
                 except EOFError:
-                    logging.error("La sous-routine cmucam ne répond plus")
+                    logging.error("main > La sous-routine cmucam ne répond plus")
                     self.quit()
 
             # Arrêt du programme principal
