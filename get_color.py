@@ -1,11 +1,12 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from peripheriques import cmucam
-#from mock import patch
-import argparse, logging
+from mock import patch
+import argparse, logging, sys
 
 def main():
-    testargs = ["scan", "verbose"]
+    testargs = ["", "--scan", "--verbose"]
     with patch.object(sys, 'argv', testargs):
 
         parser = argparse.ArgumentParser()
@@ -24,6 +25,8 @@ def main():
                             default=None,
                             help="Spécifie le chemin du journal d'événement.")
         args = parser.parse_args()
+
+    print args
 
     # Initialisation du journal d'événements
     log_frmt = "%(asctime)s[%(levelname)s] %(message)s"

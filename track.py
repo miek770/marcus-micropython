@@ -6,7 +6,7 @@ from mock import patch
 import argparse, logging, sys
 
 def main():
-    testargs = ["verbose"]
+    testargs = ["", "--verbose"]
     with patch.object(sys, 'argv', testargs):
 
         parser = argparse.ArgumentParser()

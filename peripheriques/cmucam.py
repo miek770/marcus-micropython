@@ -190,12 +190,11 @@ class Cmucam:
         while True:
             sleep(0.1)
             r = self.track()
-            if r != '0 0 0 0 0 0 0 0':
-                d = self.t_packet_to_dict(r)
-                if key is None:
-                    print d
-                elif key in d.keys():
-                    print "{} = {}".format(key, d[key])
+            d = self.t_packet_to_dict(r)
+            if key is None:
+                print d
+            elif key in d.keys():
+                print "{} = {}".format(key, d[key])
 
 def cam(conn, args):
     """Wrapper pour faire fonctionner la CMUCam2+ en parallèle avec le
