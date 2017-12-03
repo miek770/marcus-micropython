@@ -48,12 +48,12 @@ class Viser(Comportement):
                 # Mise à jour du dernier timestamp reçu
                 self.derniere_lecture = config.track["timestamp"]
 
-                if config.track["mx"] < (self.centre_x - self.seuil_mx):
-                    logging.info("Cible à gauche, tourne à gauche")
+                if int(config.track["mx"]) > (self.centre_x + self.seuil_mx):
+                    logging.info("Cible à gauche, tourne à gauche (mx = {})".format(config.track["mx"]))
                     return [(-30, 30, 0)]
 
-                elif config.track["mx"] > (self.centre_x + self.seuil_mx):
-                    logging.info("Cible à droite, tourne à droite")
+                elif int(config.track["mx"]) < (self.centre_x - self.seuil_mx):
+                    logging.info("Cible à droite, tourne à droite (mx = {})".format(config.track["mx"]))
                     return [(30, -30, 0)]
 
                 return None

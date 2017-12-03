@@ -186,12 +186,16 @@ class Cmucam:
         t_dict['timestamp'] = time() # timestamp
         return t_dict
 
-    def test(self):
+    def test(self, key=None):
         while True:
             sleep(0.1)
             r = self.track()
             if r != '0 0 0 0 0 0 0 0':
-                print self.t_packet_to_dict(r)
+                d = self.t_packet_to_dict(r)
+                if key is None:
+                    print d
+                elif key in d.keys():
+                    print "{} = {}".format(key, d[key])
 
 def cam(conn, args):
     """Wrapper pour faire fonctionner la CMUCam2+ en parallèle avec le
