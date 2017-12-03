@@ -43,8 +43,7 @@ class Viser(Comportement):
             if int(config.track["confidence"]) < self.seuil_conf:
                 return None
 
-            elif (self.derniere_lecture is not None
-                    or self.derniere_lecture != config.track["timestamp"]):
+            elif (self.derniere_lecture is None or self.derniere_lecture != config.track["timestamp"]):
 
                 # Mise à jour du dernier timestamp reçu
                 self.derniere_lecture = config.track["timestamp"]
