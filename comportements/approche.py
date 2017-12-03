@@ -59,6 +59,11 @@ class Approche(Comportement):
                     logging.info("Cible trop proche, on s'éloigne")
                     return [(-50, -50, 0)]
 
+                else:
+                    logging.info("Cible trouvée!")
+                    return [(0, 0, 0)]
+
+
             return None
 
         except KeyError:
