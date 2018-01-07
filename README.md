@@ -23,6 +23,7 @@ Pour consulter l'aide :
 ### 1.1. Bogues
 
 - Ajouter alimentation indépendante pour caméra et BBB. Il arrive souvent que les moteurs fassent planter le BBB.
+- Ajouter un trou d'accès sur la base rotative pour permettre de visser le roulement à billes aux espaceurs sur le chassis du robot.
 
 ### 1.2. Améliorations
 
