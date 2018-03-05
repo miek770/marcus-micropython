@@ -20,16 +20,21 @@ Pour consulter l'aide :
 
 ## 1. Prochaines tâches
 
-### 1.1. Bogues
+### 1.1. Conversion à MicroPython
 
-- Ajouter alimentation indépendante pour caméra et BBB. Il arrive souvent que les moteurs fassent planter le BBB.
+- Limiter la taille du journal en suivant ces instructions : [https://stackoverflow.com/questions/24505145/how-to-limit-log-file-size-in-python](https://stackoverflow.com/questions/24505145/how-to-limit-log-file-size-in-python);
+- Changer les arguments en ligne de commande par des options dans config.py;
+- Adapter les E/S en fonction du nouveau contrôleur et de son circuit;
+- Adapter le README en fonction de la substitution.
+
+### 1.2. Bogues
+
 - Ajouter un trou d'accès sur la base rotative pour permettre de visser le roulement à billes aux espaceurs sur le chassis du robot.
 
-### 1.2. Améliorations
+### 1.3. Améliorations
 
 - Faire un premier "combat" où les robots tentent de se trouver (jeu de tag);
 - Tester et intégrer les boucliers, le canon et la plateforme d'armement au robot et au code;
-- Utiliser les bornes 7 et 8 plutôt que 5 et 6 sur le P9 pour mon 5V. Le SYS_5V est coupé lorsque le BBB est fermé, ce qui va éviter de présenter une tension aux bornes. 250mA max, à tester;
 - Créer de nouveaux tests pour le module de CMUCam2+;
 - Créer un module de supervision de batterie. Je pourrais m'en servir dans le journal et peut-être même adapter le comportement du robot.
 
@@ -37,9 +42,7 @@ Pour consulter l'aide :
 
 ### 2.1. Alimentation
 
-Avec la batterie actuelle rechargée le robot se promène sans problème pendant plus de 10 minutes. J'ai fait un test et après 14 minutes il s'est mis à hésiter énormément à cause des GP2D12 qui détectaient constamment des obstacles là où il n'y en avait pas. C'est probablement dû à une baisse de tension.
-
-J'ai arrêté le test après environ 17 minutes. Ça fait maintenant une vingtaine de minutes au moins que la batterie alimente le BBB avec une connexion active sur eth0. L'autonomie semble donc suffisante pour les premiers combats.
+À revoir après remplacement du contrôleur (BBB remplacé par ESP-WROOM-32) et ajout d'une seconde batterie.
 
 ### 2.2. Rangefinder central
 
@@ -52,7 +55,11 @@ J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci so
 - [marcus-boucliers](https://github.com/miek770/marcus-boucliers);
 - [marcus-bbbcape](https://github.com/miek770/marcus-bbbcape).
 
+Les circuits seront à revoir avec le remplacement du contrôleur.
+
 ## 3. Installation
+
+**Tout revoir.**
 
 - Flasher le BBB avec l'image Debian;
 - Configurer hostname, PermitRootLogin;
