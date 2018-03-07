@@ -1,22 +1,8 @@
-# Projet Marcus 3
+# Projet Marcus 4
 
-Je désigne cette version comme étant la 3e à cause des changements de contrôleur. Le projet a débuté avec un Brainstem d'Acroname, qui a été remplacé brièvement par un MAKE Controller, puis finalement par un Beaglebone Black.
+Je désigne cette version comme étant la 4e à cause des changements de contrôleur. Le projet a débuté avec un Brainstem d'Acroname, qui a été remplacé brièvement par un MAKE Controller, puis par un Beaglebone Black, et finalement par un ESP-WROOM-32 sur MicroPython.
 
-La principale différence, cependant, est que chaque robot utilise maintenant le même contrôleur et une base commune. Ça facilite beaucoup l'intégration de modules essentiels, comme la CMUCam2+, pour tous les participants.
-
-Tant que le code est en développement, il est recommandé de lancer l'application manuellement dans une session "screen" ou "tmux" et de désactiver les fonctions non-désirées. La session screen permet de fermet la connexion SSH (PuTTY ou autre) pendant que le programme roule, sans le faire planter. Par exemple, pour lancer le programme sans la caméra et les modes (agressif et paisible, en développement), avec arrêt automatique dès qu'un pare-choc est actionné :
-
-    python main.py --verbose --logfile=marcus.log --nocam --nomode --stop
-
-Pour lancer le programme dans screen et le détacher immédiatement (donc pas besoin de faire CTRL-A D) :
-
-    screen -d -m python main.py --verbose --logfile=marcus.log --nocam --nomode --stop
-
-Encore plus simple, utiliser mosh plutôt que SSH et laisser faire screen. À tester mais ça marche bien avec un autre BBB.
-  
-Pour consulter l'aide :
-
-    python main.py --help
+La principale différence dès la version 3, cependant, est que chaque robot utilisait le même contrôleur et une base commune. Ça facilite beaucoup l'intégration de modules essentiels, comme la CMUCam2+, pour tous les participants. Maintenant que mon robot doit changer de base, le code doit diverger pour s'adapter à MicroPython et aux nouvelles configurations d'entrées/sorties. Heureusement, les premiers tests démontrent que le code est en grande majorité compatible et les comportements, par exemple, le resteront.
 
 ## 1. Prochaines tâches
 
@@ -55,38 +41,17 @@ J'utilise maintenant Eagle pour mes circuits électriques et les PCB. Ceux-ci so
 - [marcus-boucliers](https://github.com/miek770/marcus-boucliers);
 - [marcus-bbbcape](https://github.com/miek770/marcus-bbbcape).
 
-Les circuits seront à revoir avec le remplacement du contrôleur.
+Les circuits seront à revoir avec le remplacement du contrôleur. Les boucliers resteront identiques, mais leur intégration changera. Le bbbcape est complètement à revoir.
 
 ## 3. Installation
 
-**Tout revoir.**
-
-- Flasher le BBB avec l'image Debian;
-- Configurer hostname, PermitRootLogin;
-- Installer git, screen;
-- Désinstaller les programmes inutiles (Apache2, Xorg, lightdm, etc.);
-- Configurer :
-
-  - dpkg-reconfigure tzdata;
-  - dpkg-reconfigure locales (voir la section Standard de https://wiki.debian.org/Locale pour modifier /etc/profile);
-  - Samba;
-
-            apt-get install samba
-            mv /etc/samba/smb.conf /etc/samba/smb.conf.old
-            cp /root/marcus/ressources/smb.conf /etc/samba/smb.conf
-            testparm /etc/samba/smb.conf
-            systemctl start samba
-            systemctl enable samba
-
-  - hosts;
-  - vim;
-  - bash;
-  - marcus.service;
-  - uEnv.txt.
+Suivre ce tutoriel, mais en l'adaptant considérant que le ESP32 est maintenant supporté officiellement par MicroPython : [https://www.cnx-software.com/2017/10/16/esp32-micropython-tutorials/](https://www.cnx-software.com/2017/10/16/esp32-micropython-tutorials/)
 
 ## 4. Idées
 
+- Installer un serveur web léger pour la supervision en temps réel par wifi;
 - Limiter la vitesse des moteurs lorsque la batterie descend sous un certain seuil;
 - Faire une petite progression rapide des moteurs lors des démarrages et changements de direction pour éviter les forts appels de courant;
 - Permettre à un comportement (ex.: batterie faible) d'en désactiver un autre? Probablement pas, c'est contre la philosophie d'isolation des comportements, mais à réfléchir;
 - Empêcher l'exploration en ligne droite lorsque la batterie descend sous un certain seuil.
+
