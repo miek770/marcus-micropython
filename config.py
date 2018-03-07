@@ -1,5 +1,11 @@
 from collections import deque
 
+VERBOSE = True
+LOGFILE = None
+STOP = True
+NO_CAM = True
+SCAN = False
+
 global track
 track = dict()
 
