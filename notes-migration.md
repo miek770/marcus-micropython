@@ -1,4 +1,6 @@
-# Pour activer les ADC :
+# ADC
+
+## Pour activer les ADC :
 
     import machine
     rf0 = machine.ADC(machine.Pin(32))
@@ -10,8 +12,17 @@
     rf2.atten(rf2.atten(adc.ATTN_6DB))
     rf3.atten(rf3.atten(adc.ATTN_6DB))
 
-# Pour lire les valeurs :
+## Pour lire les valeurs :
 
     rf0.read()
   
 La valeur est lue de 0 à 2V et montrée de 0 à 4095.
+
+# Digi IN
+
+## Pour l'activer avec le pull-down interne :
+
+    bmpr0 = machine.Pin(25, mode=machine.Pin.IN, pull=machine.Pin.PULL_DOWN)
+    bmpr1 = machine.Pin(26, mode=machine.Pin.IN, pull=machine.Pin.PULL_DOWN)
+    bmpr2 = machine.Pin(27, mode=machine.Pin.IN, pull=machine.Pin.PULL_DOWN)
+    bmpr3 = machine.Pin(14, mode=machine.Pin.IN, pull=machine.Pin.PULL_DOWN)
