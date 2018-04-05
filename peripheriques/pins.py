@@ -5,7 +5,6 @@ import logging
 import Adafruit_BBIO.UART as UART
 import Adafruit_BBIO.GPIO as GPIO
 import Adafruit_BBIO.PWM as PWM
-import Adafruit_BBIO.ADC as ADC
 
 # Dictionnaire de pins digitales
 #================================
@@ -65,17 +64,6 @@ pins['P9_29'] = None
 pins['P9_30'] = None
 pins['P9_31'] = None
 pins['P9_42'] = None
-
-# Pins analogiques
-#==================
-# P9_39 - AIN0 # GP2D12 avant milieu
-# P9_40 - AIN1 # GP2D12 avant gauche
-# P9_37 - AIN2 # GP2D12 avant droite
-# P9_38 - AIN3
-# P9_33 - AIN4
-# P9_36 - AIN5
-# P9_35 - AIN6
-#ADC.setup()
 
 # Configurations
 #================
@@ -175,21 +163,6 @@ def get_input(pin):
     """
 
     return GPIO.input(pin)
-
-def get_adc(pin):
-    """Retourne une valeur entre 0,0 et 1,0 correspondant à une
-    lecture entre 0,0V et 3,3V.
-
-    Selon https://learn.adafruit.com/setting-up-io-python-library-on-beaglebone-black/adc,
-    en date du 2016-12-22 :
-
-    There is currently a bug in the ADC driver. You'll need to read
-    the values twice in order to get the latest value.
-    """
-
-    ADC.read(pin)
-    reading = ADC.read(pin)
-    return reading
 
 # Écritures
 #===========

@@ -1,29 +1,25 @@
 # -*- coding: utf-8 -*-
 
 from time import sleep
+from machine import ADC, Pin
 
-import Adafruit_BBIO.ADC as ADC
+class GP2D12:
+    def __init__(self, pin):
+        self.pin = Pin(pin)
+        self.adc = ADC(self.pin)
+        self.adc.atten(self.adc.ATTN_6DB)
 
-from pins import get_adc
+    def get_dist(self):
+        """Retourne la distance en centimètres. La formule a été
+        calculée a partir de mesures manuelles et d'interpolation
+        polynomiale avec numpy.
+        """
 
-ADC.setup()
+        x = self.adc.read()
+        d = -1.525*10**-8*x**3+8.809*10**-5*x**2-0.1596*x+112.6
+        if d > 90:
+            return 100
+        elif d < 25:
+            return 0
+        return d
 
-def get_dist(pin):
-    """Retourne la distance en centimetres. La formule a ete calculee
-       a partir de la fiche technique du manufacturier et de calculs
-       manuels pour trouver une courbe qui se rapproche des donnees.
-
-       L'ecart moyen est de -0,3% dans mes calculs, soit certainement
-       inferieur a la precision du GP2D12.
-
-       L'equation calculee est : y = 8,2/x + 0,04
-       Ou x = distance en centimetres
-          y = lecture analogique (de 0,00 a 1,00)
-       """
-
-    d = abs(8.20/(get_adc(pin) - 0.04))
-    if d > 80:
-        return 100
-    elif d < 10:
-        return 0
-    return d
