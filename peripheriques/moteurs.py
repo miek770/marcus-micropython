@@ -49,21 +49,21 @@ class Moteurs:
         if action[0] < 0:
             self.av_gauche.value(0)
             self.re_gauche.value(1)
-            self.en_gauche.duty(abs(action[1]*1023/100))
+            self.en_gauche.duty(round(abs(action[1]*1023/100)))
 
         else:
             self.av_gauche.value(1)
             self.re_gauche.value(0)
-            self.en_gauche.duty(action[1]*1023/100)
+            self.en_gauche.duty(round(action[1]*1023/100))
 
         # Moteur droit
         if action[1] < 0:
             self.av_droite.value(0)
             self.re_droite.value(1)
-            self.en_droite.duty(abs(action[1]*1023/100))
+            self.en_droite.duty(round(abs(action[1]*1023/100)))
 
         else:
             self.av_droite.value(1)
             self.re_droite.value(0)
-            self.en_droite.duty(action[1]*1023/100)
+            self.en_droite.duty(round(action[1]*1023/100))
 
