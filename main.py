@@ -6,20 +6,18 @@ import sys
 from time import sleep
 from multiprocessing import Process, Pipe
 
-from peripheriques.pins import set_input, get_input
-from comportements import memoire, collision, evasionbrusque, evasiondouce
-from comportements import viser, approche, statisme, exploration, agressif
-from comportements import paisible
+from machine import Pin
+from comportements import memoire, collision, evasionbrusque
+from comportements import evasiondouce, viser, approche, statisme
+from comportements import exploration, agressif, paisible
 from peripheriques import cmucam
 from arbitres import moteurs, modes
 import config
-
 
 class Marcus:
     """Classe d'application générale. Comprend l'activation des sous-
     routines et des arbitres, ainsi que la boucle principale du robot.
     """
-
 
     def __init__(self, args):
 
@@ -42,16 +40,30 @@ class Marcus:
         logging.info("Programme lancé")
 
         # Initialisation des pare-chocs
-        set_input('P8_7') # Avant droit
-        set_input('P8_8') # Avant gauche
-        set_input('P8_9') # Arrière droit
-        set_input('P8_10') # Arrière gauche
+        self.bmpr_avant_droite = Pin(
+                25,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+        self.bmpr_avant_gauche = Pin(
+                26,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+        self.bmpr_arrie_droite = Pin(
+                27,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+        self.bmpr_arrie_gauche = Pin(
+                14,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
 
         # Initialisation de la CMUCam2+
         if not self.args.nocam:
             self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
-            self.cmucam_sub = Process(target=cmucam.cam,
-                                      args=(self.cmucam_child_conn, self.args))
+            self.cmucam_sub = Process(
+                    target=cmucam.cam,
+                    args=(self.cmucam_child_conn, self.args)
+                    )
             self.cmucam_sub.start()
             message = self.cmucam_parent_conn.recv()
 
@@ -117,10 +129,12 @@ class Marcus:
 
             # Arrêt du programme principal
             if self.args.stop:
-                if (not get_input("P8_7")
-                        or not get_input("P8_8")
-                        or not get_input("P8_9")
-                        or not get_input("P8_10")):
+                if (self.bmpr_avant_droite.value()
+                    or self.bmpr_avant_gauche.value()
+                    or self.bmpr_arrie_droite.value()
+                    or self.bmpr_arrie_gauche.value()
+                    ):
+
                     self.quit()
 
             # Interrogation des arbitres

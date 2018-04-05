@@ -8,7 +8,7 @@ from random import random, choice
 # Librairies spéciales
 #======================
 from base import Comportement
-from peripheriques.gp2d12 import get_dist
+from peripheriques.gp2d12 import GP2D12
 
 # Vecteur moteur
 #================
@@ -28,15 +28,18 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 class EvasionBrusque(Comportement):
 
     def variables(self):
+        self.rf_avant_centre = GP2D12(32)
+        self.rf_avant_gauche = GP2D12(35)
+        self.rf_avant_droite = GP2D12(34)
 
         self.seuil_avant = 45 # Seuil de détection, en cm
         self.seuil_cote = 20 # Seuil de détection, en cm
         self.duree_rotation_min = 0.5 # en s
 
     def decision(self):
-        av_mi = get_dist('AIN0') # Avant milieu
-        av_ga = get_dist('AIN1') # Avant gauche
-        av_dr = get_dist('AIN2') # Avant droit
+        av_mi = self.rf_avant_centre.get_dist()
+        av_ga = self.rf_avant_gauche.get_dist()
+        av_dr = self.rf_avant_droite.get_dist()
 
         # Obstacle à gauche (pas à droite)
         if av_ga <= self.seuil_cote and av_dr > self.seuil_cote:

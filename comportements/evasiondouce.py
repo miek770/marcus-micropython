@@ -28,12 +28,15 @@ Une nouvelle commande doit interrompre une manoeuvre en cours.
 class EvasionDouce(Comportement):
 
     def variables(self):
+        self.rf_avant_centre = GP2D12(32)
+        self.rf_avant_gauche = GP2D12(35)
+        self.rf_avant_droite = GP2D12(34)
 
         self.seuil = 80 # En cm
 
     def decision(self):
-        av_ga = get_dist('AIN1') # Avant gauche
-        av_dr = get_dist('AIN2') # Avant droit
+        av_ga = self.rf_avant_gauche.get_dist()
+        av_dr = self.rf_avant_droite.get_dist()
 
         # Obstacle à gauche mais pas à droite
         if av_ga < self.seuil and av_dr > self.seuil:

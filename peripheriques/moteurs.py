@@ -6,37 +6,38 @@ import time, logging
 
 # Librairies spéciales
 #======================
-#from pins import set_pwm, reset_pwm, stop_pwm, set_duty_cycle, set_output, set_low, set_high
-from pins import *
+from machine import Pin, PWM
 
 class Moteurs:
-    """Pilote d'opération des moteurs.
-
-    P9_12 - Direction moteur droit
-    P9_13 - Direction moteur droit
-    P9_14 - Enable moteur droit (PWM)
-    P9_15 - Direction moteur gauche
-    P9_16 - Enable moteur gauche (PWM)
-    P9_21 - Direction moteur gauche
-    """
+    """Pilote d'opération des moteurs."""
 
     def __init__(self):
 
-        set_output('P9_12')
-        set_output('P9_13')
-        set_pwm('P9_14')
-        set_output('P9_15')
-        set_pwm('P9_16')
-        set_output('P9_21')
+        self.en_droite = PWM(Pin(18), freq=50)
+        self.en_droite.duty(0) # 0 à 1023
+
+        self.av_droite = Pin(19, mode=Pin.OUT)
+        self.av_droite.value(1)
+        self.re_droite = Pin(21, mode=Pin.OUT)
+        self.re_droite.value(1)
+
+        self.en_gauche = PWM(Pin(5), freq=50)
+        self.en_gauche.duty(0) # 0 à 1023
+
+        self.av_gauche = Pin(17, mode=Pin.OUT)
+        self.av_gauche.value(1)
+        self.re_gauche = Pin(16, mode=Pin.OUT)
+        self.re_gauche.value(1)
 
     def arret(self):
-        """Cette méthode est appelée pour tous les arbitres à l'arrêt du
-        programme générale dans main.py.
+        """Cette méthode est appelée pour tous les arbitres à l'arrêt
+        du programme générale dans main.py.
         """
-        stop_pwm("P9_16") # Arrêt moteur gauche
-        stop_pwm("P9_14") # Arrêt moteur droit
-        reset_pwm("P9_14")
-        reset_pwm("P9_16")
+        self.en_droite.duty(0) # 0 à 1023
+        self.en_droite.deinit()
+
+        self.en_gauche.duty(0) # 0 à 1023
+        self.en_gauche.deinit()
 
     def execute(self, action):
         """Exécute l'action demandée (une étape de vecteur, sans
@@ -46,25 +47,23 @@ class Moteurs:
 
         # Moteur gauche
         if action[0] < 0:
-            set_low('P9_12')
-            set_high('P9_13')
-            set_duty_cycle('P9_14', abs(action[0]))
+            self.av_gauche.value(0)
+            self.re_gauche.value(1)
+            self.en_gauche.duty(abs(action[1]*1023/100))
 
         else:
-            # Si le duty cycle est égal à 0 le moteur arrête
-            set_high('P9_12')
-            set_low('P9_13')
-            set_duty_cycle('P9_14', action[0])
+            self.av_gauche.value(1)
+            self.re_gauche.value(0)
+            self.en_gauche.duty(action[1]*1023/100)
 
         # Moteur droit
         if action[1] < 0:
-            set_low('P9_21')
-            set_high('P9_15')
-            set_duty_cycle("P9_16", abs(action[1]))
+            self.av_droite.value(0)
+            self.re_droite.value(1)
+            self.en_droite.duty(abs(action[1]*1023/100))
 
         else:
-            # Si le duty cycle est égal à 0 le moteur arrête
-            set_high('P9_21')
-            set_low('P9_15')
-            set_duty_cycle("P9_16", action[1])
+            self.av_droite.value(1)
+            self.re_droite.value(0)
+            self.en_droite.duty(action[1]*1023/100)
 

@@ -8,7 +8,7 @@ from random import random, randint, choice
 # Librairies spéciales
 #======================
 from base import Comportement
-from peripheriques.pins import get_input
+from machine import Pin
 
 # Vecteur moteur
 #================
@@ -36,10 +36,10 @@ class Collision(Comportement):
 
     def decision(self):
 
-        impact_av_dr = not get_input("P8_7")
-        impact_av_ga = not get_input("P8_8")
-        impact_ar_dr = not get_input("P8_9")
-        impact_ar_ga = not get_input("P8_10")
+        impact_av_dr = self.bmpr_avant_droite.value()
+        impact_av_ga = self.bmpr_avant_gauche.value() 
+        impact_ar_dr = self.bmpr_arrie_droite.value()
+        impact_ar_ga = self.bmpr_arrie_gauche.value()
 
         # Impact avant droit
         if impact_av_dr and not impact_av_ga:
@@ -78,3 +78,22 @@ class Collision(Comportement):
             return [(0, 0, 0)]
 
         return None
+
+    def variables(self):
+        self.bmpr_avant_droite = Pin(
+                25,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+        self.bmpr_avant_gauche = Pin(
+                26,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+        self.bmpr_arrie_droite = Pin(
+                27,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+        self.bmpr_arrie_gauche = Pin(
+                14,
+                mode=Pin.IN,
+                pull=Pin.PULL_DOWN)
+
