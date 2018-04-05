@@ -4,6 +4,7 @@ VERBOSE = True
 LOGFILE = None
 STOP = True
 NO_CAM = True
+NO_MODE = True
 SCAN = False
 
 global track

@@ -1,6 +1,5 @@
 #-*- coding: utf-8 -*-
 
-import argparse
 import logging
 import sys
 from time import sleep
@@ -19,24 +18,22 @@ class Marcus:
     routines et des arbitres, ainsi que la boucle principale du robot.
     """
 
-    def __init__(self, args):
-
-        self.args = args
+    def __init__(self):
 
         # Initialisation du journal d'événements
         log_frmt = "%(asctime)s[%(levelname)s] %(message)s"
         date_frmt = "%Y-%m-%d %H:%M:%S "
-        if self.args.verbose:
+        if config.VERBOSE:
             log_lvl = logging.DEBUG
         else:
             log_lvl = logging.INFO
 
-        logging.basicConfig(filename=self.args.logfile,
+        logging.basicConfig(filename=config.LOGFILE,
                             format=log_frmt,
                             datefmt=date_frmt,
                             level=log_lvl)
 
-        logging.info("Logger initié : {}".format(self.args.logfile))
+        logging.info("Logger initié : {}".format(config.LOGFILE))
         logging.info("Programme lancé")
 
         # Initialisation des pare-chocs
@@ -58,11 +55,11 @@ class Marcus:
                 pull=Pin.PULL_DOWN)
 
         # Initialisation de la CMUCam2+
-        if not self.args.nocam:
+        if not config.NO_CAM:
             self.cmucam_parent_conn, self.cmucam_child_conn = Pipe()
             self.cmucam_sub = Process(
                     target=cmucam.cam,
-                    args=(self.cmucam_child_conn, self.args)
+                    args=(self.cmucam_child_conn)
                     )
             self.cmucam_sub.start()
             message = self.cmucam_parent_conn.recv()
@@ -85,14 +82,14 @@ class Marcus:
             (statisme.Statisme(nom="statisme"), 8),
             (exploration.Exploration(nom="exploration", priorite=9), 9)
             ])
-        if not self.args.nocam:
+        if not config.NO_CAM:
             self.arbitres[m.nom].active([
                 (viser.Viser(nom="viser"), 3),
                 (approche.Approche(nom="approche"), 4)
                 ])
 
         # Arbitre modes
-        if not self.args.nomode:
+        if not config.NO_MODE:
             m = modes.Modes()
             self.arbitres[m.nom] = m
             self.arbitres[m.nom].active([
@@ -106,7 +103,7 @@ class Marcus:
         logging.info("Arrêt du programme.")
         for key in self.arbitres.keys():
             self.arbitres[key].arret()
-        if not self.args.nocam:
+        if not config.NO_CAM:
             self.cmucam_sub.terminate()
         sys.exit()
 
@@ -117,7 +114,7 @@ class Marcus:
             sleep(config.periode)
 
             # Mise à jour de config.track
-            if not self.args.nocam and self.cmucam_parent_conn.poll():
+            if not config.NO_CAM and self.cmucam_parent_conn.poll():
                 try:
                     t = self.cmucam_parent_conn.recv()
                     if t is None:
@@ -128,7 +125,7 @@ class Marcus:
                     self.quit()
 
             # Arrêt du programme principal
-            if self.args.stop:
+            if config.STOP:
                 if (self.bmpr_avant_droite.value()
                     or self.bmpr_avant_gauche.value()
                     or self.bmpr_arrie_droite.value()
@@ -142,49 +139,14 @@ class Marcus:
                 self.arbitres[key].evalue()
 
             # Mise à jour de la période
-            if not self.args.nomode:
-                if not self.args.nocam and config.periode_change:
+            if not config.NO_MODE:
+                if not config.NO_CAM and config.periode_change:
                     config.periode_change = False
                     msg = "periode={}".format(config.periode)
                     self.cmucam_parent_conn.send(msg)
 
 def main():
-    """Routine principale. Traitement des arguments et création de
-    l'objet d'application général Marcus.
-    """
-
-    parser = argparse.ArgumentParser(description='Robot Marcus (BBB) - Michel')
-
-    parser.add_argument('-v',
-                        '--verbose',
-                        action='store_true',
-                        help="Augmente la verbosité du programme.")
-    parser.add_argument('-l',
-                        '--logfile',
-                        action='store',
-                        default=None,
-                        help="Spécifie le chemin du journal d'événement.")
-    parser.add_argument('-s',
-                        '--stop',
-                        action='store_true',
-                        help="""Arrête l'exécution lorsqu'un impact est
-                            détecté.""")
-    parser.add_argument('--nocam',
-                        action='store_true',
-                        help="""Lance le programme sans la caméra et les
-                            comportements qui en dépendent.""")
-    parser.add_argument('--nomode',
-                        action='store_true',
-                        help="""Lance le programme sans l'arbitre de modes et
-                            ses comportements.""")
-    parser.add_argument('--scan',
-                        action='store_true',
-                        help="""Scanne la couleur devant la caméra au
-                            démarrage. Sinon la dernière couleur sauvegardée
-                            est chargée.""")
-
-    marcus = Marcus(args=parser.parse_args())
-
+    marcus = Marcus()
     try:
         marcus.loop()
 
