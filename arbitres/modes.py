@@ -7,7 +7,7 @@ import time, logging
 
 # Librairies spéciales
 #======================
-from base import Arbitre
+from arbitres.base import Arbitre
 import config
 
 class Modes(Arbitre):

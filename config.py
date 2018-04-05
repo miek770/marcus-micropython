@@ -1,7 +1,6 @@
 from _collections import deque
 
 VERBOSE = True
-LOGFILE = None
 STOP = True
 NO_CAM = True
 NO_MODE = True

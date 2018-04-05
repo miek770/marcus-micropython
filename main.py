@@ -5,13 +5,14 @@ import sys
 from time import sleep
 from multiprocessing import Process, Pipe
 
+import config
 from machine import Pin
 from comportements import memoire, collision, evasionbrusque
 from comportements import evasiondouce, viser, approche, statisme
 from comportements import exploration, agressif, paisible
-from peripheriques import cmucam
+if not config.NO_CAM:
+    from peripheriques import cmucam
 from arbitres import moteurs, modes
-import config
 
 class Marcus:
     """Classe d'application générale. Comprend l'activation des sous-
@@ -21,20 +22,12 @@ class Marcus:
     def __init__(self):
 
         # Initialisation du journal d'événements
-        log_frmt = "%(asctime)s[%(levelname)s] %(message)s"
-        date_frmt = "%Y-%m-%d %H:%M:%S "
         if config.VERBOSE:
             log_lvl = logging.DEBUG
         else:
             log_lvl = logging.INFO
-
-        logging.basicConfig(filename=config.LOGFILE,
-                            format=log_frmt,
-                            datefmt=date_frmt,
-                            level=log_lvl)
-
-        logging.info("Logger initié : {}".format(config.LOGFILE))
-        logging.info("Programme lancé")
+        logging.basicConfig(level=log_lvl)
+        logging.info("Logger initié")
 
         # Initialisation des pare-chocs
         self.bmpr_avant_droite = Pin(

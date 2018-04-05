@@ -8,7 +8,7 @@ import time, logging
 # Librairies spéciales
 #======================
 from peripheriques.moteurs import Moteurs as Pilote # Pour éviter la confusion
-from base import Arbitre
+from arbitres.base import Arbitre
 import config
 
 class Moteurs(Arbitre):
