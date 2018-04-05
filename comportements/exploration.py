@@ -8,7 +8,7 @@ from random import random, choice
 
 # Librairies spéciales
 #======================
-from base import Comportement
+from comportements.base import Comportement
 import config
 
 # Vecteur moteur

@@ -7,7 +7,7 @@ from random import random, choice
 
 # Librairies spéciales
 #======================
-from base import Comportement
+from comportements.base import Comportement
 from peripheriques.gp2d12 import GP2D12
 
 # Vecteur moteur

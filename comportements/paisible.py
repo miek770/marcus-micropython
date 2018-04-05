@@ -6,7 +6,7 @@ import logging
 
 # Librairies spéciales
 #======================
-from base import Comportement
+from comportements.base import Comportement
 import config
 
 class Paisible(Comportement):

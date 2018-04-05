@@ -9,7 +9,7 @@ from itertools import islice
 # Librairies spéciales
 #======================
 import config
-from base import Comportement
+from comportements.base import Comportement
 
 # Vecteur moteur
 #================

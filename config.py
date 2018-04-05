@@ -1,4 +1,4 @@
-from collections import deque
+from _collections import deque
 
 VERBOSE = True
 LOGFILE = None

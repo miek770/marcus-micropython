@@ -2,7 +2,7 @@
 
 import logging
 
-from base import Comportement
+from comportements.base import Comportement
 import config
 
 # Vecteur moteur

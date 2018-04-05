@@ -7,7 +7,7 @@ from random import random, randint, choice
 
 # Librairies spéciales
 #======================
-from base import Comportement
+from comportements.base import Comportement
 from machine import Pin
 
 # Vecteur moteur

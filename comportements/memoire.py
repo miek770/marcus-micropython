@@ -3,7 +3,7 @@
 # Librairies spéciales
 #======================
 import config
-from base import Comportement
+from comportements.base import Comportement
 from peripheriques.gp2d12 import GP2D12
 from machine import Pin
 
